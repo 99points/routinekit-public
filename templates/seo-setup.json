@@ -1,0 +1,72 @@
+{
+    "template_key": "seo-setup",
+    "title": "SEO Setup",
+    "description": "Configure Yoast SEO or Rank Math, connect Google tools, and set up essential on-page SEO foundations",
+    "version": "1.0",
+    "steps": [
+        {
+            "sort_order": 10,
+            "title": "Install and configure SEO plugin",
+            "instructions": "Install Yoast SEO or Rank Math. Run the setup wizard. Set organization name, logo, and social profiles.",
+            "deep_link": "plugins.php",
+            "is_required": true,
+            "evidence_required": false
+        },
+        {
+            "sort_order": 20,
+            "title": "Set home page meta title and description",
+            "instructions": "Edit the home page and set a unique, keyword-rich meta title (50–60 chars) and meta description (150–160 chars) in the SEO plugin panel.",
+            "deep_link": "post.php",
+            "is_required": true,
+            "evidence_required": false
+        },
+        {
+            "sort_order": 30,
+            "title": "Configure title templates",
+            "instructions": "Set SEO plugin title templates for posts, pages, categories, and archives. Use %%title%% + %%sitename%% pattern.",
+            "deep_link": "admin.php?page=wpseo_titles",
+            "is_required": true,
+            "evidence_required": false
+        },
+        {
+            "sort_order": 40,
+            "title": "Generate and submit XML sitemap",
+            "instructions": "Enable the sitemap in the SEO plugin. Verify it exists at /sitemap_index.xml. Submit to Google Search Console and Bing Webmaster Tools.",
+            "deep_link": "admin.php?page=wpseo_dashboard",
+            "is_required": true,
+            "evidence_required": true
+        },
+        {
+            "sort_order": 50,
+            "title": "Connect Google Search Console",
+            "instructions": "Verify site ownership in GSC. Submit sitemap. Check for crawl errors after 24 hours.",
+            "deep_link": "admin.php?page=wpseo_dashboard",
+            "is_required": true,
+            "evidence_required": false
+        },
+        {
+            "sort_order": 60,
+            "title": "Install Google Analytics / GA4",
+            "instructions": "Install analytics via Site Kit, MonsterInsights, or manual gtag snippet. Verify data is flowing in GA4 Realtime report.",
+            "deep_link": "plugins.php",
+            "is_required": true,
+            "evidence_required": true
+        },
+        {
+            "sort_order": 70,
+            "title": "Set up robots.txt",
+            "instructions": "Review and customise robots.txt. Disallow /wp-admin/, /wp-login.php. Allow /wp-admin/admin-ajax.php. Add Sitemap: directive.",
+            "deep_link": "admin.php?page=wpseo_tools",
+            "is_required": true,
+            "evidence_required": false
+        },
+        {
+            "sort_order": 80,
+            "title": "Configure social Open Graph meta",
+            "instructions": "Set default Open Graph image (1200×630px). Verify title and description appear correctly when shared on Facebook and X.",
+            "deep_link": "admin.php?page=wpseo_social",
+            "is_required": false,
+            "evidence_required": false
+        }
+    ]
+}

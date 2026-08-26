@@ -1,0 +1,80 @@
+{
+    "template_key": "security-hardening",
+    "title": "Security Hardening",
+    "description": "Essential security configuration steps for every WordPress site before launch",
+    "version": "1.0",
+    "steps": [
+        {
+            "sort_order": 10,
+            "title": "Change default admin username",
+            "instructions": "Ensure no user has the username 'admin'. Create a new admin user with a unique name, then delete the default admin.",
+            "deep_link": "users.php",
+            "is_required": true,
+            "evidence_required": false
+        },
+        {
+            "sort_order": 20,
+            "title": "Enforce strong passwords and 2FA",
+            "instructions": "Install a 2FA plugin (e.g. WP 2FA). Require 2FA for all admin and editor roles.",
+            "deep_link": "plugins.php",
+            "is_required": true,
+            "evidence_required": false
+        },
+        {
+            "sort_order": 30,
+            "title": "Install and configure security plugin",
+            "instructions": "Install Wordfence or Solid Security. Run initial scan. Enable firewall. Configure email alerts.",
+            "deep_link": "plugins.php",
+            "is_required": true,
+            "evidence_required": true
+        },
+        {
+            "sort_order": 40,
+            "title": "Disable XML-RPC",
+            "instructions": "Disable XML-RPC via security plugin or add filter. Verify at yoursite.com/xmlrpc.php — should return 403.",
+            "deep_link": "options-writing.php",
+            "is_required": true,
+            "evidence_required": false
+        },
+        {
+            "sort_order": 50,
+            "title": "Set correct file permissions",
+            "instructions": "wp-config.php: 440. .htaccess: 644. wp-content/uploads: 755. Verify via FTP or SSH.",
+            "deep_link": "site-health.php",
+            "is_required": true,
+            "evidence_required": false
+        },
+        {
+            "sort_order": 60,
+            "title": "Configure SSL and force HTTPS",
+            "instructions": "Ensure SSL certificate is installed. Set WordPress Address and Site Address to https://. Add redirect rule in .htaccess.",
+            "deep_link": "options-general.php",
+            "is_required": true,
+            "evidence_required": true
+        },
+        {
+            "sort_order": 70,
+            "title": "Hide WordPress version",
+            "instructions": "Remove WordPress version from page source. Add remove_action to functions.php or use security plugin setting.",
+            "deep_link": "themes.php?page=theme-editor",
+            "is_required": false,
+            "evidence_required": false
+        },
+        {
+            "sort_order": 80,
+            "title": "Set up automated backups",
+            "instructions": "Install UpdraftPlus or similar. Configure daily backups. Test restore process. Send backups to offsite storage.",
+            "deep_link": "plugins.php",
+            "is_required": true,
+            "evidence_required": true
+        },
+        {
+            "sort_order": 90,
+            "title": "Run Site Health check",
+            "instructions": "Go to Tools > Site Health. Resolve all Critical items. Document any Recommended items for future sprint.",
+            "deep_link": "site-health.php",
+            "is_required": true,
+            "evidence_required": false
+        }
+    ]
+}

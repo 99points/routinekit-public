@@ -1,0 +1,27 @@
+{
+  "name": "alignpress",
+  "version": "1.0.0",
+  "description": "AlignPress WordPress plugin React build",
+  "private": true,
+  "scripts": {
+    "build": "wp-scripts build",
+    "start": "wp-scripts start",
+    "lint:js": "wp-scripts lint-js"
+  },
+  "devDependencies": {
+    "@wordpress/scripts": "^30.0.0"
+  },
+  "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
+    "@wordpress/api-fetch": "*",
+    "@wordpress/components": "*",
+    "@wordpress/data": "*",
+    "@wordpress/element": "*",
+    "@wordpress/i18n": "*",
+    "@wordpress/icons": "*",
+    "@wordpress/notices": "*",
+    "html2canvas": "^1.4.1"
+  }
+}

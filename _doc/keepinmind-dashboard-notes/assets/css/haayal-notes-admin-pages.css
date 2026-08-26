@@ -1,0 +1,1048 @@
+/* Skeleton loader */
+.haayal-notes-skel {
+    display: inline-block;
+    background: linear-gradient(90deg, #ebebeb 25%, #f5f5f5 37%, #ebebeb 63%);
+    background-size: 400% 100%;
+    border-radius: 3px;
+    animation: haayal-skel-shimmer 1.4s ease infinite;
+}
+
+[dir="rtl"] .haayal-notes-skel {
+    animation-direction: reverse;
+}
+
+@keyframes haayal-skel-shimmer {
+    0%   { background-position: 100% 50%; }
+    100% { background-position:   0% 50%; }
+}
+
+/* Settings layout */
+.haayal-notes-settings-layout {
+    display: flex;
+    gap: 28px;
+    align-items: flex-start;
+}
+
+/* Settings page */
+.haayal-notes-settings-form {
+    max-width: 700px;
+}
+
+/* Skeleton loading placeholder */
+.haayal-notes-skeleton {
+    width: 700px;
+    max-width: 100%;
+}
+
+.haayal-notes-skeleton-section {
+    position: relative;
+    overflow: hidden;
+    padding: 0 !important;
+}
+
+.haayal-notes-skeleton-section::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent 0%, #f0f0f1 40%, #e8e8e8 50%, #f0f0f1 60%, transparent 100%);
+    animation: haayal-skeleton-shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes haayal-skeleton-shimmer {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.haayal-notes-settings-section {
+    margin-bottom: 24px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 36px 40px;
+    box-shadow: 5px 5px 15px -5px #00000014;
+}
+
+.haayal-notes-settings-group-title {
+    margin: 0 0 18px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--haayal-notes-brand);
+}
+
+.haayal-notes-settings-separator {
+    border: none;
+    border-top: 1px solid #f0f0f0;
+    margin: 16px 0;
+}
+
+.haayal-notes-settings-section h3 {
+    margin: 0 0 4px;
+    font-size: 14px;
+    color: #1d2327;
+}
+
+.haayal-notes-settings-section h3:not(:has(+ .haayal-notes-settings-description)) {
+  margin-bottom: 12px;
+}
+
+.haayal-notes-settings-description {
+    margin: 0 0 12px;
+    font-size: 12px;
+    color: #8c8f94;
+    font-style: italic;
+}
+
+.haayal-notes-settings-roles {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.haayal-notes-settings-roles label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+}
+
+.haayal-notes-settings-roles label.disabled {
+    opacity: 0.6;
+}
+
+/* User chips */
+.haayal-notes-user-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.haayal-notes-user-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #e7f1f9;
+    border: 1px solid var(--haayal-notes-brand);
+    border-radius: 16px;
+    padding: 2px 10px;
+    font-size: 12px;
+    color: var(--haayal-notes-brand);
+}
+
+.haayal-notes-user-chip-remove {
+    background: none;
+    border: none;
+    color: #d63638;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0;
+    line-height: 1;
+}
+
+.haayal-notes-user-chip-remove:hover {
+    color: #b32d2e;
+}
+
+/* User search */
+.haayal-notes-user-search-wrap {
+    position: relative;
+    margin-top: 8px;
+}
+
+.haayal-notes-settings-form .haayal-notes-user-search-input {
+    width: 100%;
+    max-width: 300px;
+    padding: 6px 10px;
+    border: 1px solid #c3c4c7;
+    border-radius: 8px;
+    font-size: 13px;
+    box-sizing: border-box;
+}
+
+.haayal-notes-user-search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 300px;
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 100;
+    display: none;
+}
+
+.haayal-notes-user-search-results.visible {
+    display: block;
+}
+
+.haayal-notes-user-search-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.haayal-notes-user-search-item:hover {
+    background: #f0f6fc;
+}
+
+/* Visibility toggle (legacy – kept for any remaining uses) */
+.haayal-notes-settings-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+}
+
+/* Toggle row */
+.haayal-notes-toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.haayal-notes-toggle-row-text {
+    flex: 1;
+}
+
+.haayal-notes-toggle-row-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: #1d2327;
+    margin-bottom: 2px;
+}
+
+.haayal-notes-toggle-row .haayal-notes-settings-description {
+    margin: 0;
+}
+
+/* Toggle switch widget */
+.haayal-notes-toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 42px;
+    height: 24px;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.haayal-notes-toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+}
+
+.haayal-notes-toggle-track {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background-color: #c3c4c7;
+    border-radius: 12px;
+    transition: background-color 0.2s;
+}
+
+.haayal-notes-toggle-track::after {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    left: 3px;
+    top: 3px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform 0.2s;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.haayal-notes-toggle-switch input:checked + .haayal-notes-toggle-track {
+    background-color: var(--haayal-notes-brand);
+}
+
+.haayal-notes-toggle-switch input:checked + .haayal-notes-toggle-track::after {
+    transform: translateX(18px);
+}
+
+.haayal-notes-toggle-switch input:focus-visible + .haayal-notes-toggle-track {
+    outline: 2px solid var(--haayal-notes-brand);
+    outline-offset: 2px;
+}
+
+/* Policy radio labels */
+.haayal-notes-policy-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.haayal-notes-policy-label input[type="radio"] {
+    margin-top: 3px;
+}
+
+.haayal-notes-policy-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.haayal-notes-policy-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: #1d2327;
+}
+
+.haayal-notes-policy-desc {
+    font-size: 11px;
+    font-style: italic;
+    color: #8c8f94;
+    margin-top: 1px;
+}
+
+/* Section save button */
+.haayal-notes-section-save {
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid #f0f0f0;
+}
+
+/* Save button */
+.haayal-notes-settings-save {
+    margin-top: 16px;
+}
+
+.haayal-notes-btn-primary {
+    background: var(--haayal-notes-brand);
+    color: #fff;
+    border: none;
+    border-radius: 30px;
+    padding: 8px 24px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.haayal-notes-btn-primary:hover {
+    background: var(--haayal-notes-brand-hover);
+}
+
+.haayal-notes-btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.haayal-notes-btn-secondary {
+    background: #f6f7f7;
+    border: 1px solid #c3c4c7;
+    color: #50575e;
+    border-radius: 30px;
+}
+
+.haayal-notes-settings-toast {
+    position: fixed;
+    bottom: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 10px;
+    background: var(--haayal-notes-brand);
+    color: #fff;
+    text-align: center;
+    padding: 8px 26px;
+    z-index: 100000;
+    font-size: 13px;
+    opacity: 1;
+    transition: opacity 0.4s;
+    pointer-events: none;
+}
+
+.haayal-notes-settings-toast-error {
+    background: #d63638;
+}
+
+/* Dashboard page */
+
+.haayal-notes-dashboard-search {
+    position: relative;
+}
+
+.haayal-notes-search-icon {
+    position: absolute;
+    top: 50%;
+    inset-inline-start: 16px;
+    transform: translateY(-50%);
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: #606367;
+    pointer-events: none;
+}
+
+.haayal-notes-dashboard-search input {
+    width: 250px;
+    padding: 6px 32px 6px 40px;
+    border: 1px solid #c3c4c7;
+    font-size: 13px;
+    border-radius: 20px;
+}
+
+[dir="rtl"] .haayal-notes-dashboard-search input {
+    padding: 6px 40px 6px 32px;
+}
+
+.haayal-notes-dashboard-table {
+    width: 100%;
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-spacing: 0;
+    border-radius: 4px;
+}
+
+.haayal-notes-dashboard-table th {
+    text-align: start;
+    padding: 10px 12px;
+    background: #f6f7f7;
+    border-bottom: 1px solid #c3c4c7;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1d2327;
+}
+
+.haayal-notes-dashboard-table .haayal-notes-col-check {
+    text-align: center;
+}
+
+.haayal-notes-dashboard-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 13px;
+    vertical-align: top;
+}
+
+.haayal-notes-dashboard-table tr:last-child td {
+    border-bottom: none;
+}
+
+.haayal-notes-dashboard-table .haayal-notes-col-content {
+    max-width: 300px;
+    word-break: break-word;
+}
+
+.haayal-notes-dashboard-table .haayal-notes-col-page a {
+    color: var(--haayal-notes-brand);
+    text-decoration: none;
+}
+
+.haayal-notes-dashboard-table .haayal-notes-col-page a:hover {
+    text-decoration: underline;
+}
+
+.haayal-notes-dashboard-table .haayal-notes-col-actions button {
+    background: none;
+    border: none;
+    color: #d63638;
+    cursor: pointer;
+    font-size: 12px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.haayal-notes-dashboard-table .haayal-notes-col-actions button .dashicons {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    line-height: 14px;
+}
+
+.haayal-notes-dashboard-table .haayal-notes-col-actions button:hover {
+    text-decoration: underline;
+}
+
+/* Pagination */
+.haayal-notes-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 16px;
+    font-size: 13px;
+}
+
+.haayal-notes-pagination button {
+    padding: 4px 12px;
+    border: 1px solid #c3c4c7;
+    background: #f6f7f7;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.haayal-notes-pagination button:hover {
+    background: #e0e0e0;
+}
+
+.haayal-notes-pagination button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.haayal-notes-loading {
+    text-align: center;
+    padding: 40px;
+    color: #8c8f94;
+    font-size: 13px;
+}
+
+.haayal-notes-empty {
+    text-align: center;
+    padding: 120px 40px;
+    color: #8c8f94;
+    font-size: 13px;
+    background-color: white;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 5px 5px 15px -5px #00000014;
+}
+
+.haayal-notes-empty-heading {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1d2327;
+    margin: 0 0 8px;
+}
+
+.haayal-notes-empty-desc {
+    font-size: 14px;
+    color: #8c8f94;
+    margin: 0 0 20px;
+}
+
+.haayal-notes-empty-cta {
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.haayal-notes-dash-badge-reply {
+    background: #f0f0f1;
+    color: #50575e;
+    border: 1px solid #c3c4c7;
+}
+
+/* Reply row hierarchy */
+.haayal-notes-reply-row {
+    background: #f9f9fb;
+}
+
+.haayal-notes-reply-icon {
+    color: #3c434a;
+    font-size: 18px;
+    line-height: 1;
+    width: 100%;
+    display: block;
+    text-align: center;
+}
+
+.haayal-notes-reply-row .haayal-notes-col-content {
+    padding-inline-start: 28px;
+}
+
+.haayal-notes-reply-dim {
+    opacity: 0.45;
+}
+
+/* Page title in dashboard table */
+.haayal-notes-page-title {
+    display: block;
+    font-weight: 500;
+    color: #1d2327;
+}
+
+.haayal-notes-page-url {
+    display: block;
+    font-size: 11px;
+    color: #8c8f94;
+    margin-top: 2px;
+}
+
+.haayal-notes-col-page a:hover .haayal-notes-page-title {
+    text-decoration: underline;
+}
+
+/* Dashboard tags (type + private) */
+.haayal-notes-col-tags {
+    white-space: nowrap;
+    width: 1%;
+}
+
+.haayal-notes-col-tags .haayal-notes-dash-badge + .haayal-notes-dash-badge {
+    margin-top: 4px;
+}
+
+
+.haayal-notes-dash-badge {
+    display: block;
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    text-align: center;
+}
+
+.haayal-notes-dash-badge-alert,
+.haayal-notes-dash-badge-open_warning,
+.haayal-notes-dash-badge-sticky_warning {
+    background: var(--haayal-warning-bg);
+    color: var(--haayal-warning-text);
+    border: 1px solid var(--haayal-warning-border);
+}
+
+.haayal-notes-dash-badge-open_important,
+.haayal-notes-dash-badge-sticky_important {
+    background: var(--haayal-important-bg);
+    color: var(--haayal-important-text);
+    border: 1px solid var(--haayal-important-border);
+}
+
+.haayal-notes-dash-badge-open_info,
+.haayal-notes-dash-badge-sticky_info {
+    background: var(--haayal-info-bg);
+    color: var(--haayal-info-text);
+    border: 1px solid var(--haayal-info-border);
+}
+
+.haayal-notes-dash-badge-attention,
+.haayal-notes-dash-badge-open_tip,
+.haayal-notes-dash-badge-sticky_tip {
+    background: var(--haayal-tip-bg);
+    color: var(--haayal-tip-text);
+    border: 1px solid var(--haayal-tip-border);
+}
+
+.haayal-notes-dash-badge-pin {
+    background: #f1eaff;
+    color: #43365f;
+    border: 1px solid #4f22b1;
+}
+
+.haayal-notes-dash-badge-private {
+    background: #f0f0f1;
+    color: #50575e;
+    border: 1px solid #c3c4c7;
+}
+
+/* Content truncation & expand */
+.haayal-notes-content-expandable {
+    cursor: pointer;
+}
+
+.haayal-notes-content-expandable:hover {
+    background: #f9f9f9;
+}
+
+.haayal-notes-content-expanded {
+    background: #f9f9f9;
+}
+
+.haayal-notes-content-wrap {
+    display: inline;
+}
+
+.haayal-notes-content-chevron {
+    display: inline-block;
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    vertical-align: middle;
+    margin-left: 4px;
+    color: #8c8f94;
+    transition: transform 0.2s ease;
+}
+
+.haayal-notes-chevron-open {
+    transform: rotate(180deg);
+}
+
+/* Checkbox column */
+.haayal-notes-col-check {
+    width: 30px;
+    text-align: center;
+}
+
+/* Toolbar: bulk actions + search */
+.haayal-notes-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    gap: 12px;
+}
+
+.haayal-notes-bulk-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.haayal-notes-bulk-delete-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.haayal-notes-bulk-delete-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.haayal-notes-bulk-delete-btn .dashicons {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    line-height: 14px;
+}
+
+/* URL truncation */
+.haayal-notes-url-truncate {
+    display: block;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.haayal-notes-col-page {
+    max-width: 220px;
+}
+
+/* Page layout: sidebar + content */
+.haayal-notes-page-wrap {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    margin-top: 12px;
+}
+
+.haayal-notes-page-sidebar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 200px;
+    flex-shrink: 0;
+    padding: 20px 0;
+    padding-inline-end: 22px;
+    position: sticky;
+    top: 30px;
+}
+
+
+.haayal-notes-page-logo {
+    display: block;
+    width: 160px;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+.haayal-notes-page-content {
+    flex: 1;
+    min-width: 0;
+    padding-top: 20px;
+}
+
+/* Nav tabs — vertical */
+.haayal-notes-nav-tabs {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+}
+
+.haayal-notes-nav-item {
+    display: block;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #50575e;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: color 0.15s, background 0.15s;
+}
+
+.haayal-notes-nav-item:hover {
+    background: #e5dcf1;
+    color: var(--haayal-notes-brand);
+}
+
+.haayal-notes-nav-item-active,
+.haayal-notes-nav-item-active:hover,
+.haayal-notes-nav-item-active:focus {
+    background: var(--haayal-notes-brand);
+    color: #fff;
+    font-weight: 600;
+}
+
+/* Review sidebar card */
+.haayal-notes-review-sidebar {
+    width: 280px;
+    flex-shrink: 0;
+}
+
+.haayal-notes-review-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 28px 24px;
+    box-shadow: 5px 5px 15px -5px #00000014;
+    text-align: center;
+    position: relative;
+}
+
+.haayal-notes-review-stars {
+    font-size: 32px;
+    color: #f5a623;
+    letter-spacing: 4px;
+    line-height: 1;
+    margin-bottom: 14px;
+}
+
+.haayal-notes-review-card h3 {
+    margin: 0 0 8px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #1d2327;
+}
+
+.haayal-notes-review-card p {
+    margin: 0 0 18px;
+    font-size: 13px;
+    color: #646970;
+    line-height: 1.5;
+}
+
+.haayal-notes-review-cta {
+    display: inline-block;
+    background: var(--haayal-notes-brand);
+    color: #fff;
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.15s;
+}
+
+.haayal-notes-review-cta:hover {
+    background: var(--haayal-notes-brand-hover);
+    color: #fff;
+}
+
+/* Tip card */
+.haayal-notes-tip-card {
+    background: linear-gradient(135deg, #f0f9f4 0%, #e3f2e8 100%);
+    border-radius: 12px;
+    padding: 28px 24px;
+    box-shadow: 5px 5px 15px -5px #00000014;
+    text-align: center;
+    margin-top: 20px;
+    border: 1px solid #c8e6d0;
+}
+
+.haayal-notes-tip-icon {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 14px;
+    background: #2f9e44;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.haayal-notes-tip-icon .dashicons {
+    color: #fff;
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+}
+
+.haayal-notes-tip-card h3 {
+    margin: 0 0 8px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #1d2327;
+}
+
+.haayal-notes-tip-card p {
+    margin: 0;
+    font-size: 13px;
+    color: #646970;
+    line-height: 1.5;
+}
+
+/* Promo card */
+.haayal-notes-promo-card {
+    background: linear-gradient(135deg, #f8f5ff 0%, #eee8fc 100%);
+    border-radius: 12px;
+    padding: 28px 24px;
+    box-shadow: 5px 5px 15px -5px #00000014;
+    text-align: center;
+    margin-top: 20px;
+    border: 1px solid #e2d9f3;
+}
+
+.haayal-notes-promo-icon {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 14px;
+    background: var(--haayal-notes-brand);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.haayal-notes-promo-icon .dashicons {
+    color: #fff;
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+}
+
+.haayal-notes-promo-card h3 {
+    margin: 0 0 8px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #1d2327;
+}
+
+.haayal-notes-promo-card p {
+    margin: 0 0 18px;
+    font-size: 13px;
+    color: #646970;
+    line-height: 1.5;
+}
+
+.haayal-notes-promo-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    color: var(--haayal-notes-brand);
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    border: 1px solid var(--haayal-notes-brand);
+    transition: background 0.15s, color 0.15s;
+}
+
+.haayal-notes-promo-cta:hover {
+    background: var(--haayal-notes-brand);
+    color: #fff;
+}
+
+@media (max-width: 960px) {
+    .haayal-notes-page-wrap {
+        flex-direction: column;
+    }
+    .haayal-notes-page-sidebar {
+        width: 100%;
+        padding: 16px 0 12px;
+        margin-bottom: 16px;
+        position: static;
+    }
+    .haayal-notes-nav-tabs {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+    .haayal-notes-page-content {
+        padding-top: 0;
+        width: 100%;
+    }
+    .haayal-notes-settings-layout {
+        flex-direction: column;
+    }
+    .haayal-notes-review-sidebar {
+        width: 100%;
+        max-width: 700px;
+    }
+    .haayal-notes-review-card {
+        position: static;
+    }
+}
+
+.haayal-notes-no-delete-hint {
+    color: #9ca3af;
+    font-size: 12px;
+    font-style: italic;
+}
+
+/* Dashboard toast (matches placement-banner style) */
+.haayal-notes-dashboard-toast {
+    position: fixed;
+    bottom: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 10px;
+    background: var(--haayal-notes-brand);
+    color: #fff;
+    text-align: center;
+    padding: 8px 26px;
+    z-index: 100000;
+    font-size: 13px;
+    opacity: 1;
+    transition: opacity 0.4s;
+    pointer-events: none;
+}
+
+/* Palette preview swatches (vivid colors setting) */
+.haayal-notes-palette-preview {
+    display: flex;
+    gap: 2px;
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+
+.haayal-notes-toggle-row:hover .haayal-notes-palette-preview {
+    opacity: 1;
+}
+
+.haayal-notes-palette-preview .haayal-notes-palette-row--vivid    { display: none; }
+.haayal-notes-palette-preview--vivid .haayal-notes-palette-row--default { display: none; }
+.haayal-notes-palette-preview--vivid .haayal-notes-palette-row--vivid   { display: flex; }
+
+.haayal-notes-palette-row {
+    display: flex;
+    gap: 2px;
+}
+
+.haayal-notes-palette-swatch {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid;
+}
+
+
+.haayal-notes-palette-row--default .haayal-notes-palette-swatch--warning   { background: #fef2f2; border-color: #d63638; }
+.haayal-notes-palette-row--default .haayal-notes-palette-swatch--important { background: #fff8e5; border-color: #dba617; }
+.haayal-notes-palette-row--default .haayal-notes-palette-swatch--info      { background: #f0f6fc; border-color: #2271b1; }
+.haayal-notes-palette-row--default .haayal-notes-palette-swatch--tip       { background: #edfaef; border-color: #00a32a; }
+
+.haayal-notes-palette-row--vivid .haayal-notes-palette-swatch--warning   { background: #f70f14; border-color: #a50007; }
+.haayal-notes-palette-row--vivid .haayal-notes-palette-swatch--important { background: #ffe85a; border-color: #c9a200; }
+.haayal-notes-palette-row--vivid .haayal-notes-palette-swatch--info      { background: #40a9ff; border-color: #096dd9; }
+.haayal-notes-palette-row--vivid .haayal-notes-palette-swatch--tip       { background: #73d13d; border-color: #389e0d; }
+

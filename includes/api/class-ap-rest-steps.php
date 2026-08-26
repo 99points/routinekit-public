@@ -1,0 +1,272 @@
+<?php
+defined( 'ABSPATH' ) || exit;
+
+/**
+ * REST controller for alignpress/v1/workflows/:id/steps
+ */
+class AP_REST_Steps extends WP_REST_Controller {
+
+	protected $namespace = ALIGNPRESS_REST_NAMESPACE;
+
+	/**
+	 * Register all routes.
+	 */
+	public function register_routes(): void {
+		$base = 'workflows/(?P<workflow_id>[\d]+)/steps';
+
+		register_rest_route( $this->namespace, '/' . $base, [
+			[
+				'methods'             => WP_REST_Server::READABLE,
+				'callback'            => [ $this, 'get_items' ],
+				'permission_callback' => [ $this, 'permissions_check' ],
+				'args'                => [ 'workflow_id' => [ 'type' => 'integer', 'sanitize_callback' => 'absint' ] ],
+			],
+			[
+				'methods'             => WP_REST_Server::CREATABLE,
+				'callback'            => [ $this, 'create_item' ],
+				'permission_callback' => [ $this, 'permissions_check' ],
+				'args'                => array_merge(
+					[ 'workflow_id' => [ 'type' => 'integer', 'sanitize_callback' => 'absint' ] ],
+					$this->get_step_args()
+				),
+			],
+		] );
+
+		register_rest_route( $this->namespace, '/' . $base . '/(?P<id>[\d]+)', [
+			[
+				'methods'             => WP_REST_Server::READABLE,
+				'callback'            => [ $this, 'get_item' ],
+				'permission_callback' => [ $this, 'permissions_check' ],
+			],
+			[
+				'methods'             => WP_REST_Server::EDITABLE,
+				'callback'            => [ $this, 'update_item' ],
+				'permission_callback' => [ $this, 'permissions_check' ],
+				'args'                => $this->get_step_args( false ),
+			],
+			[
+				'methods'             => WP_REST_Server::DELETABLE,
+				'callback'            => [ $this, 'delete_item' ],
+				'permission_callback' => [ $this, 'permissions_check' ],
+			],
+		] );
+
+		// Bulk reorder
+		register_rest_route( $this->namespace, '/' . $base . '/reorder', [
+			[
+				'methods'             => WP_REST_Server::EDITABLE,
+				'callback'            => [ $this, 'reorder_items' ],
+				'permission_callback' => [ $this, 'permissions_check' ],
+				'args'                => [
+					'workflow_id' => [ 'type' => 'integer', 'sanitize_callback' => 'absint' ],
+					'order'       => [
+						'required' => true,
+						'type'     => 'array',
+					],
+				],
+			],
+		] );
+	}
+
+	/**
+	 * GET /workflows/:workflow_id/steps
+	 *
+	 * @param WP_REST_Request $request
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function get_items( $request ): WP_REST_Response|WP_Error {
+		$workflow_id = (int) $request['workflow_id'];
+		if ( ! AP_Workflow::get( $workflow_id ) ) {
+			return new WP_Error( 'alignpress_not_found', __( 'Workflow not found.', 'alignpress' ), [ 'status' => 404 ] );
+		}
+
+		$steps = AP_Step::for_workflow( $workflow_id );
+		return rest_ensure_response( array_map( fn( $s ) => $s->to_array(), $steps ) );
+	}
+
+	/**
+	 * GET /workflows/:workflow_id/steps/:id
+	 *
+	 * @param WP_REST_Request $request
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function get_item( $request ): WP_REST_Response|WP_Error {
+		$step = AP_Step::get( (int) $request['id'] );
+		if ( ! $step || $step->workflow_id !== (int) $request['workflow_id'] ) {
+			return new WP_Error( 'alignpress_not_found', __( 'Step not found.', 'alignpress' ), [ 'status' => 404 ] );
+		}
+		return rest_ensure_response( $step->to_array() );
+	}
+
+	/**
+	 * POST /workflows/:workflow_id/steps
+	 *
+	 * @param WP_REST_Request $request
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function create_item( $request ): WP_REST_Response|WP_Error {
+		$workflow_id = (int) $request['workflow_id'];
+		if ( ! AP_Workflow::get( $workflow_id ) ) {
+			return new WP_Error( 'alignpress_not_found', __( 'Workflow not found.', 'alignpress' ), [ 'status' => 404 ] );
+		}
+		if ( alignpress_workflow_steps_locked( $workflow_id ) ) {
+			return new WP_Error( 'alignpress_locked', __( 'Steps cannot be added after a workflow has been pushed to the cloud.', 'alignpress' ), [ 'status' => 403 ] );
+		}
+
+		$step = AP_Step::create( [
+			'workflow_id'       => $workflow_id,
+			'title'             => $request->get_param( 'title' ),
+			'description'       => $request->get_param( 'description' ) ?? '',
+			'deep_link'         => $request->get_param( 'deep_link' ),
+			'deep_link_type'    => $request->get_param( 'deep_link_type' ) ?? 'static',
+			'is_required'       => $request->get_param( 'is_required' ) ?? true,
+			'evidence_required' => $request->get_param( 'evidence_required' ) ?? false,
+			'sort_order'        => $request->get_param( 'sort_order' ),
+		] );
+
+		if ( is_wp_error( $step ) ) {
+			return $step;
+		}
+
+		$response = rest_ensure_response( $step->to_array() );
+		$response->set_status( 201 );
+		return $response;
+	}
+
+	/**
+	 * PATCH /workflows/:workflow_id/steps/:id
+	 *
+	 * @param WP_REST_Request $request
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function update_item( $request ): WP_REST_Response|WP_Error {
+		$id   = (int) $request['id'];
+		$step = AP_Step::get( $id );
+
+		if ( ! $step || $step->workflow_id !== (int) $request['workflow_id'] ) {
+			return new WP_Error( 'alignpress_not_found', __( 'Step not found.', 'alignpress' ), [ 'status' => 404 ] );
+		}
+		if ( alignpress_workflow_steps_locked( $step->workflow_id ) ) {
+			return new WP_Error( 'alignpress_locked', __( 'Steps cannot be edited after a workflow has been pushed to the cloud.', 'alignpress' ), [ 'status' => 403 ] );
+		}
+
+		$data = array_filter( [
+			'title'             => $request->get_param( 'title' ),
+			'description'       => $request->get_param( 'description' ),
+			'deep_link'         => $request->get_param( 'deep_link' ),
+			'deep_link_type'    => $request->get_param( 'deep_link_type' ),
+			'is_required'       => $request->get_param( 'is_required' ),
+			'evidence_required' => $request->get_param( 'evidence_required' ),
+			'sort_order'        => $request->get_param( 'sort_order' ),
+		], fn( $v ) => null !== $v );
+
+		$updated = AP_Step::update( $id, $data );
+		if ( is_wp_error( $updated ) ) {
+			return $updated;
+		}
+
+		return rest_ensure_response( $updated->to_array() );
+	}
+
+	/**
+	 * DELETE /workflows/:workflow_id/steps/:id
+	 *
+	 * @param WP_REST_Request $request
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function delete_item( $request ): WP_REST_Response|WP_Error {
+		$id   = (int) $request['id'];
+		$step = AP_Step::get( $id );
+
+		if ( ! $step || $step->workflow_id !== (int) $request['workflow_id'] ) {
+			return new WP_Error( 'alignpress_not_found', __( 'Step not found.', 'alignpress' ), [ 'status' => 404 ] );
+		}
+		if ( alignpress_workflow_steps_locked( $step->workflow_id ) ) {
+			return new WP_Error( 'alignpress_locked', __( 'Steps cannot be deleted after a workflow has been pushed to the cloud.', 'alignpress' ), [ 'status' => 403 ] );
+		}
+
+		AP_Step::delete( $id );
+		return rest_ensure_response( [ 'deleted' => true, 'id' => $id ] );
+	}
+
+	/**
+	 * PATCH /workflows/:workflow_id/steps/reorder
+	 *
+	 * @param WP_REST_Request $request
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function reorder_items( $request ): WP_REST_Response|WP_Error {
+		$workflow_id = (int) $request['workflow_id'];
+		if ( ! AP_Workflow::get( $workflow_id ) ) {
+			return new WP_Error( 'alignpress_not_found', __( 'Workflow not found.', 'alignpress' ), [ 'status' => 404 ] );
+		}
+		if ( alignpress_workflow_steps_locked( $workflow_id ) ) {
+			return new WP_Error( 'alignpress_locked', __( 'Steps cannot be reordered after a workflow has been pushed to the cloud.', 'alignpress' ), [ 'status' => 403 ] );
+		}
+
+		$order = $request->get_param( 'order' );
+		if ( ! is_array( $order ) ) {
+			return new WP_Error( 'alignpress_invalid', __( 'order must be an array of {id, sort_order} objects.', 'alignpress' ), [ 'status' => 400 ] );
+		}
+
+		AP_Step::reorder( $order );
+
+		$steps = AP_Step::for_workflow( $workflow_id );
+		return rest_ensure_response( array_map( fn( $s ) => $s->to_array(), $steps ) );
+	}
+
+	/**
+	 * Permission check — same dual-auth as the workflow controller.
+	 *
+	 * @param WP_REST_Request $request
+	 * @return bool|WP_Error
+	 */
+	public function permissions_check( WP_REST_Request $request ): bool|WP_Error {
+		if ( current_user_can( 'manage_options' ) ) {
+			return true;
+		}
+		return new WP_Error( 'alignpress_forbidden', __( 'You do not have permission to access this resource.', 'alignpress' ), [ 'status' => 403 ] );
+	}
+
+	/**
+	 * Step argument schemas.
+	 *
+	 * @param bool $require_title
+	 * @return array
+	 */
+	private function get_step_args( bool $require_title = true ): array {
+		return [
+			'title' => [
+				'type'              => 'string',
+				'required'          => $require_title,
+				'minLength'         => 1,
+				'maxLength'         => 255,
+				'sanitize_callback' => 'sanitize_text_field',
+			],
+			'description' => [
+				'type'              => 'string',
+				'sanitize_callback' => 'sanitize_textarea_field',
+			],
+			'deep_link' => [
+				'type'              => 'string',
+				'sanitize_callback' => 'esc_url_raw',
+			],
+			'deep_link_type' => [
+				'type'              => 'string',
+				'enum'              => [ 'static', 'dynamic' ],
+				'sanitize_callback' => 'sanitize_text_field',
+			],
+			'is_required' => [
+				'type' => 'boolean',
+			],
+			'evidence_required' => [
+				'type' => 'boolean',
+			],
+			'sort_order' => [
+				'type'              => 'integer',
+				'minimum'           => 0,
+				'sanitize_callback' => 'absint',
+			],
+		];
+	}
+}

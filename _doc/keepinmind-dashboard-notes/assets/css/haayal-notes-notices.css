@@ -1,0 +1,20 @@
+/* Review notice */
+.haayal-notes-review-notice.notice-info { border-inline-start-color: #4f22b1; }
+.haayal-notes-review-notice-inner { display: flex; align-items: center; gap: 16px; padding: 6px 0; }
+.haayal-notes-review-notice-stars { font-size: 28px; color: #f5a623; letter-spacing: 2px; line-height: 1; flex-shrink: 0; }
+.haayal-notes-review-notice-body { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+.haayal-notes-review-notice-body strong { font-size: 14px; color: #1d2327; }
+.haayal-notes-review-notice-body span { font-size: 13px; color: #646970; }
+a.haayal-notes-review-notice-cta {
+    display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0;
+    background: #4f22b1; color: #fff; padding: 8px 20px; border-radius: 26px;
+    font-size: 13px; font-weight: 600; text-decoration: none; transition: background 0.15s;
+}
+.haayal-notes-review-notice-cta:hover { background: #3d1a8c; color: #fff; }
+
+/* Activation notice */
+.haayal-notes-activation-notice.notice-success { border-inline-start-color: #4f22b1; padding-inline-start: 30px; }
+
+@media (max-width: 767px) {
+    .haayal-notes-review-notice-inner { flex-direction: column; align-items: flex-start; }
+}

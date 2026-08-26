@@ -1,0 +1,88 @@
+{
+    "template_key": "site-migration",
+    "title": "Site Migration",
+    "description": "Checklist for migrating a WordPress site to a new host — database, files, DNS, and post-migration verification",
+    "version": "1.0",
+    "steps": [
+        {
+            "sort_order": 10,
+            "title": "Put source site into maintenance mode",
+            "instructions": "Enable maintenance mode on the old site to prevent new content being created during migration. Use a plugin or add define('WP_MAINTENANCE', true) to wp-config.php.",
+            "deep_link": "plugins.php",
+            "is_required": true,
+            "evidence_required": false
+        },
+        {
+            "sort_order": 20,
+            "title": "Export full database backup",
+            "instructions": "Export the full database via phpMyAdmin, WP-CLI (wp db export), or UpdraftPlus. Verify the .sql file is not empty and is not corrupted.",
+            "deep_link": "admin.php?page=updraftplus",
+            "is_required": true,
+            "evidence_required": true
+        },
+        {
+            "sort_order": 30,
+            "title": "Copy all files to new host",
+            "instructions": "Transfer wp-content/ via FTP/SFTP or file manager. Include all themes, plugins, and uploads. Do not copy wp-config.php — create a new one.",
+            "deep_link": "site-health.php",
+            "is_required": true,
+            "evidence_required": false
+        },
+        {
+            "sort_order": 40,
+            "title": "Create database on new host and import",
+            "instructions": "Create a new MySQL database and user on the new host. Import the .sql backup. Verify row counts match source.",
+            "deep_link": "site-health.php",
+            "is_required": true,
+            "evidence_required": false
+        },
+        {
+            "sort_order": 50,
+            "title": "Update wp-config.php on new host",
+            "instructions": "Set DB_NAME, DB_USER, DB_PASSWORD, DB_HOST for the new database. Generate fresh salts from wordpress.org/secret-key/1.1/salt/.",
+            "deep_link": "site-health.php",
+            "is_required": true,
+            "evidence_required": false
+        },
+        {
+            "sort_order": 60,
+            "title": "Run search-replace for new domain",
+            "instructions": "Run WP-CLI: wp search-replace 'old-domain.com' 'new-domain.com' --all-tables. Or use Better Search Replace plugin. Verify serialised data is handled correctly.",
+            "deep_link": "plugins.php",
+            "is_required": true,
+            "evidence_required": false
+        },
+        {
+            "sort_order": 70,
+            "title": "Update WordPress Address and Site Address",
+            "instructions": "Go to Settings > General. Update WordPress Address (URL) and Site Address (URL) to the new domain.",
+            "deep_link": "options-general.php",
+            "is_required": true,
+            "evidence_required": false
+        },
+        {
+            "sort_order": 80,
+            "title": "Flush permalinks",
+            "instructions": "Go to Settings > Permalinks. Click Save Changes without changing anything. This regenerates .htaccess rewrite rules.",
+            "deep_link": "options-permalink.php",
+            "is_required": true,
+            "evidence_required": false
+        },
+        {
+            "sort_order": 90,
+            "title": "Update DNS records",
+            "instructions": "Update A record (or CNAME) at the domain registrar to point to the new host's IP. Note: propagation can take up to 48 hours.",
+            "deep_link": "site-health.php",
+            "is_required": true,
+            "evidence_required": false
+        },
+        {
+            "sort_order": 100,
+            "title": "Verify site on new host and remove maintenance mode",
+            "instructions": "Test all pages, forms, payment flows, and email on the new host using hosts file or temporary URL. Once verified, disable maintenance mode and confirm DNS has propagated.",
+            "deep_link": "site-health.php",
+            "is_required": true,
+            "evidence_required": true
+        }
+    ]
+}

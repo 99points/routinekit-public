@@ -1,0 +1,2197 @@
+# Copyright (C) 2026 Zeeshan Rasool
+# This file is distributed under the GPL v2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: AlignPress 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/alignpress\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-08-23T09:55:01+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: alignpress\n"
+
+#. Plugin Name of the plugin
+#: alignpress.php
+#: includes/admin/class-ap-admin.php:32
+#: includes/admin/class-ap-admin.php:33
+#: includes/class-alignpress.php:128
+msgid "AlignPress"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: alignpress.php
+msgid "https://alignpress.app"
+msgstr ""
+
+#. Description of the plugin
+#: alignpress.php
+msgid "Reusable configuration workflows for WordPress agencies managing multiple client sites."
+msgstr ""
+
+#. Author of the plugin
+#: alignpress.php
+msgid "Zeeshan Rasool"
+msgstr ""
+
+#. Author URI of the plugin
+#: alignpress.php
+msgid "https://profiles.wordpress.org/codeleftover/"
+msgstr ""
+
+#: includes/admin/class-ap-admin.php:43
+#: includes/admin/class-ap-admin.php:44
+#: assets/js/149.js:1
+#: src/workflow-manager/WorkflowManager.jsx:58
+msgid "Workflows"
+msgstr ""
+
+#: includes/admin/class-ap-admin.php:52
+#: includes/admin/class-ap-admin.php:53
+msgid "Settings"
+msgstr ""
+
+#: includes/admin/class-ap-admin.php:62
+#: includes/admin/class-ap-admin.php:63
+#: assets/js/132.js:1
+#: src/capture/CapturePage.jsx:83
+msgid "Captured Steps"
+msgstr ""
+
+#: includes/admin/class-ap-admin.php:73
+msgid "Upgrade to Pro"
+msgstr ""
+
+#: includes/admin/class-ap-admin.php:74
+msgid "⭐ Upgrade to Pro"
+msgstr ""
+
+#: includes/admin/class-ap-admin.php:336
+#: includes/admin/class-ap-admin.php:349
+#: includes/admin/class-ap-admin.php:356
+#: includes/admin/class-ap-admin.php:367
+msgid "You do not have permission to access this page."
+msgstr ""
+
+#: includes/admin/class-ap-notices.php:41
+#, php-format
+msgid "You have reached the <strong>%1$d active workflow</strong> limit on the free plan. <a href=\"%2$s\">Upgrade to Pro</a> for unlimited workflows."
+msgstr ""
+
+#: includes/admin/class-ap-saas-admin.php:15
+#: includes/admin/class-ap-saas-admin.php:42
+msgid "Insufficient permissions."
+msgstr ""
+
+#: includes/admin/class-ap-saas-admin.php:23
+msgid "API key is required."
+msgstr ""
+
+#: includes/api/class-ap-rest-capture.php:137
+#: includes/api/class-ap-rest-saas.php:86
+#: includes/api/class-ap-rest-steps.php:80
+#: includes/api/class-ap-rest-steps.php:110
+#: includes/api/class-ap-rest-steps.php:192
+#: includes/api/class-ap-rest-workflows.php:144
+#: includes/api/class-ap-rest-workflows.php:196
+#: includes/api/class-ap-rest-workflows.php:225
+#: includes/api/class-ap-rest-workflows.php:245
+#: includes/api/class-ap-rest-workflows.php:250
+#: includes/core/class-ap-execution.php:102
+#: includes/core/class-ap-workflow.php:186
+msgid "Workflow not found."
+msgstr ""
+
+#: includes/api/class-ap-rest-capture.php:141
+msgid "capture_ids cannot be empty."
+msgstr ""
+
+#: includes/api/class-ap-rest-capture.php:158
+msgid "No matching captures found."
+msgstr ""
+
+#: includes/api/class-ap-rest-capture.php:293
+#: includes/api/class-ap-rest-executions.php:283
+#: includes/api/class-ap-rest-steps.php:216
+#: includes/api/class-ap-rest-workflows.php:390
+msgid "You do not have permission to access this resource."
+msgstr ""
+
+#: includes/api/class-ap-rest-evidence.php:60
+#: includes/api/class-ap-rest-evidence.php:138
+msgid "Step completion not found."
+msgstr ""
+
+#: includes/api/class-ap-rest-evidence.php:69
+msgid "No file uploaded. Send the file as multipart/form-data with key \"evidence\"."
+msgstr ""
+
+#: includes/api/class-ap-rest-evidence.php:90
+msgid "Unsupported file type. Allowed: JPEG, PNG, GIF, WebP, PDF."
+msgstr ""
+
+#: includes/api/class-ap-rest-evidence.php:99
+msgid "Evidence file must be 10 MB or smaller."
+msgstr ""
+
+#: includes/api/class-ap-rest-evidence.php:157
+msgid "You do not have permission to upload evidence."
+msgstr ""
+
+#: includes/api/class-ap-rest-executions.php:137
+#: includes/api/class-ap-rest-executions.php:152
+#: includes/api/class-ap-rest-executions.php:171
+#: includes/api/class-ap-rest-executions.php:209
+msgid "Execution not found."
+msgstr ""
+
+#: includes/api/class-ap-rest-executions.php:238
+msgid "Unknown"
+msgstr ""
+
+#: includes/api/class-ap-rest-executions.php:271
+msgid "You do not have permission to run workflows."
+msgstr ""
+
+#: includes/api/class-ap-rest-saas.php:73
+#: includes/api/class-ap-rest-saas.php:136
+msgid "Not connected to AlignPress Cloud."
+msgstr ""
+
+#: includes/api/class-ap-rest-steps.php:96
+#: includes/api/class-ap-rest-steps.php:144
+#: includes/api/class-ap-rest-steps.php:176
+#: includes/core/class-ap-step.php:183
+msgid "Step not found."
+msgstr ""
+
+#: includes/api/class-ap-rest-steps.php:197
+msgid "order must be an array of {id, sort_order} objects."
+msgstr ""
+
+#. translators: %d: limit
+#: includes/api/class-ap-rest-workflows.php:161
+#, php-format
+msgid "Free plan is limited to %d active workflows. Upgrade to Pro for unlimited workflows."
+msgstr ""
+
+#: includes/api/class-ap-rest-workflows.php:230
+msgid "Could not delete workflow."
+msgstr ""
+
+#: includes/api/class-ap-rest-workflows.php:279
+#: includes/api/class-ap-rest-workflows.php:320
+msgid "Workflow limit reached."
+msgstr ""
+
+#: includes/api/class-ap-rest-workflows.php:284
+msgid "Invalid workflow JSON. title and steps are required."
+msgstr ""
+
+#: includes/api/class-ap-rest-workflows.php:317
+msgid "Import from URL requires a Pro license."
+msgstr ""
+
+#. translators: %s: error message
+#: includes/api/class-ap-rest-workflows.php:335
+#, php-format
+msgid "Could not fetch URL: %s"
+msgstr ""
+
+#. translators: %d: HTTP status code
+#: includes/api/class-ap-rest-workflows.php:348
+#, php-format
+msgid "Remote URL returned status %d."
+msgstr ""
+
+#: includes/api/class-ap-rest-workflows.php:359
+msgid "URL did not return valid workflow JSON. title and steps are required."
+msgstr ""
+
+#: includes/class-alignpress.php:129
+msgid "AlignPress captures wp_options changes during admin sessions to help build workflow steps (Auto-Capture). This data is stored only in your own database and is never sent to external servers on the free plan."
+msgstr ""
+
+#: includes/class-alignpress.php:130
+msgid "Data stored locally: option name, old value, new value, admin page URL, and the user ID of the person who made the change. Retained for a configurable period (default 7 days) and deleted automatically."
+msgstr ""
+
+#: includes/class-alignpress.php:131
+msgid "Execution audit trails store: which user ran a workflow, which steps were completed or skipped, timestamps, and any uploaded evidence files."
+msgstr ""
+
+#. translators: %s: URL to AlignPress privacy policy
+#: includes/class-alignpress.php:135
+#, php-format
+msgid "If you connect to AlignPress Cloud (Pro), see the <a href=\"%s\">AlignPress Cloud Privacy Policy</a>."
+msgstr ""
+
+#: includes/core/class-ap-execution.php:128
+msgid "Could not start execution."
+msgstr ""
+
+#: includes/core/class-ap-execution.php:281
+msgid "Invalid SaaS assignment payload."
+msgstr ""
+
+#: includes/core/class-ap-execution.php:306
+msgid "Could not create execution from assignment."
+msgstr ""
+
+#: includes/core/class-ap-step.php:91
+msgid "workflow_id is required."
+msgstr ""
+
+#: includes/core/class-ap-step.php:96
+msgid "Step title is required."
+msgstr ""
+
+#: includes/core/class-ap-step.php:134
+msgid "Could not create step."
+msgstr ""
+
+#: includes/core/class-ap-step.php:195
+msgid "Could not update step."
+msgstr ""
+
+#: includes/core/class-ap-templates.php:49
+msgid "Template not found."
+msgstr ""
+
+#: includes/core/class-ap-templates.php:54
+msgid "Template file is invalid JSON."
+msgstr ""
+
+#: includes/core/class-ap-workflow.php:133
+msgid "Workflow title is required."
+msgstr ""
+
+#: includes/core/class-ap-workflow.php:144
+msgid "Could not create workflow."
+msgstr ""
+
+#: includes/core/class-ap-workflow.php:198
+msgid "Could not update workflow."
+msgstr ""
+
+#: includes/saas/class-ap-saas-auth.php:25
+msgid "Invalid response from SaaS."
+msgstr ""
+
+#: assets/js/132.js:1
+#: assets/js/296.js:1
+#: src/capture/CapturePreview.jsx:10
+msgid "Detected changes:"
+msgstr ""
+
+#: assets/js/132.js:1
+#: assets/js/296.js:1
+#: src/capture/AddToWorkflowModal.jsx:46
+msgid "Configure"
+msgstr ""
+
+#: assets/js/132.js:1
+#: assets/js/296.js:1
+#: src/capture/AddToWorkflowModal.jsx:51
+#: src/capture/CapturePage.jsx:137
+#: src/capture/CaptureToast.jsx:98
+msgid "Add to Workflow"
+msgstr ""
+
+#: assets/js/132.js:1
+#: assets/js/149.js:1
+#: assets/js/296.js:1
+#: assets/js/707.js:1
+#: assets/js/707.js:2
+#: assets/js/887.js:1
+#: assets/js/945.js:1
+#: src/capture/AddToWorkflowModal.jsx:57
+#: src/runner/RunnerStep.jsx:122
+#: src/settings/Settings.jsx:699
+#: src/step-builder/AddStepForm.jsx:102
+#: src/step-builder/StepBuilder.jsx:266
+#: src/step-builder/StepItem.jsx:99
+#: src/workflow-manager/CreateWorkflowModal.jsx:35
+#: src/workflow-manager/ImportUrlModal.jsx:64
+#: src/workflow-manager/TemplatePickerModal.jsx:65
+msgid "Cancel"
+msgstr ""
+
+#: assets/js/132.js:1
+#: assets/js/296.js:1
+#: assets/js/707.js:1
+#: src/capture/AddToWorkflowModal.jsx:65
+#: src/step-builder/AddStepForm.jsx:99
+msgid "Adding…"
+msgstr ""
+
+#: assets/js/132.js:1
+#: assets/js/296.js:1
+#: assets/js/707.js:1
+#: src/capture/AddToWorkflowModal.jsx:65
+#: src/step-builder/AddStepForm.jsx:40
+#: src/step-builder/AddStepForm.jsx:99
+msgid "Add Step"
+msgstr ""
+
+#: assets/js/132.js:1
+#: assets/js/296.js:1
+#: src/capture/AddToWorkflowModal.jsx:40
+msgid "Something went wrong."
+msgstr ""
+
+#: assets/js/132.js:1
+#: assets/js/296.js:1
+#: src/capture/AddToWorkflowModal.jsx:77
+msgid "Workflow"
+msgstr ""
+
+#: assets/js/132.js:1
+#: assets/js/296.js:1
+#: src/capture/AddToWorkflowModal.jsx:82
+msgid "No active workflows found. Create a workflow first."
+msgstr ""
+
+#: assets/js/132.js:1
+#: assets/js/296.js:1
+#: src/capture/AddToWorkflowModal.jsx:92
+msgid "— Select a workflow —"
+msgstr ""
+
+#: assets/js/132.js:1
+#: assets/js/296.js:1
+#: assets/js/707.js:1
+#: src/capture/AddToWorkflowModal.jsx:102
+#: src/step-builder/StepItem.jsx:57
+msgid "Step Title"
+msgstr ""
+
+#: assets/js/132.js:1
+#: assets/js/296.js:1
+#: src/capture/AddToWorkflowModal.jsx:110
+msgid "Auto-generated from page name"
+msgstr ""
+
+#: assets/js/132.js:1
+#: src/capture/CapturePage.jsx:85
+msgid "Back to Workflows"
+msgstr ""
+
+#: assets/js/132.js:1
+#: src/capture/CapturePage.jsx:89
+msgid "AlignPress detected these setting changes. Select one or more to add as a workflow step, or dismiss them."
+msgstr ""
+
+#: assets/js/132.js:1
+#: src/capture/CapturePage.jsx:102
+msgid "Loading…"
+msgstr ""
+
+#: assets/js/132.js:1
+#: src/capture/CapturePage.jsx:108
+msgid "No pending captured changes."
+msgstr ""
+
+#: assets/js/132.js:1
+#: src/capture/CapturePage.jsx:110
+msgid "AlignPress will detect setting changes as you navigate WP admin."
+msgstr ""
+
+#: assets/js/132.js:1
+#: src/capture/CapturePage.jsx:125
+msgid "selected"
+msgstr ""
+
+#: assets/js/132.js:1
+#: src/capture/CapturePage.jsx:126
+msgid "Select all"
+msgstr ""
+
+#: assets/js/132.js:1
+#: assets/js/296.js:1
+#: assets/js/887.js:1
+#: src/capture/CapturePage.jsx:145
+#: src/capture/CaptureToast.jsx:105
+#: src/runner/Runner.jsx:112
+msgid "Dismiss"
+msgstr ""
+
+#: assets/js/132.js:1
+#: src/capture/CapturePage.jsx:57
+msgid "Clear all captured changes? This cannot be undone."
+msgstr ""
+
+#: assets/js/132.js:1
+#: src/capture/CapturePage.jsx:63
+msgid "All captured changes cleared."
+msgstr ""
+
+#: assets/js/132.js:1
+#: assets/js/945.js:1
+#: src/capture/CapturePage.jsx:155
+#: src/settings/Settings.jsx:766
+msgid "Clearing…"
+msgstr ""
+
+#: assets/js/132.js:1
+#: src/capture/CapturePage.jsx:155
+msgid "Clear All"
+msgstr ""
+
+#: assets/js/132.js:1
+#: src/capture/CapturePage.jsx:164
+msgid "Page"
+msgstr ""
+
+#: assets/js/132.js:1
+#: src/capture/CapturePage.jsx:165
+msgid "Setting"
+msgstr ""
+
+#: assets/js/132.js:1
+#: src/capture/CapturePage.jsx:166
+msgid "Old Value"
+msgstr ""
+
+#: assets/js/132.js:1
+#: src/capture/CapturePage.jsx:167
+msgid "New Value"
+msgstr ""
+
+#: assets/js/132.js:1
+#: assets/js/707.js:1
+#: src/capture/CapturePage.jsx:168
+#: src/step-builder/StepItem.jsx:121
+msgid "Captured"
+msgstr ""
+
+#: assets/js/132.js:1
+#: src/capture/CapturePage.jsx:202
+#: src/capture/CapturePage.jsx:207
+msgid "(empty)"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/WorkflowRow.jsx:14
+msgid "Today"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/WorkflowRow.jsx:15
+msgid "1 day ago"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/WorkflowRow.jsx:16
+msgid "days ago"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/WorkflowRow.jsx:17
+msgid "weeks ago"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/WorkflowRow.jsx:29
+msgid "Not started"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/WorkflowRow.jsx:107
+msgid "Assigned"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/WorkflowRow.jsx:107
+msgid "Imported"
+msgstr ""
+
+#: assets/js/149.js:1
+#: assets/js/707.js:1
+#: assets/js/707.js:2
+#: src/step-builder/StepBuilder.jsx:282
+#: src/step-builder/StepItem.jsx:131
+#: src/workflow-manager/WorkflowRow.jsx:112
+msgid "Edit"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/WorkflowRow.jsx:73
+msgid "(Copy)"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/WorkflowRow.jsx:115
+msgid "Duplicate"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/WorkflowRow.jsx:119
+msgid "Export (JSON)"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/WorkflowRow.jsx:64
+msgid "Delete this workflow? This cannot be undone."
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/WorkflowRow.jsx:123
+msgid "Deleting…"
+msgstr ""
+
+#: assets/js/149.js:1
+#: assets/js/707.js:1
+#: src/step-builder/StepItem.jsx:140
+#: src/workflow-manager/WorkflowRow.jsx:123
+msgid "Delete"
+msgstr ""
+
+#: assets/js/149.js:1
+#: assets/js/707.js:1
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:275
+#: src/step-builder/StepBuilder.jsx:146
+#: src/step-builder/StepBuilder.jsx:150
+#: src/workflow-manager/CreateWorkflowModal.jsx:90
+#: src/workflow-manager/WorkflowList.jsx:45
+#: src/workflow-manager/WorkflowRow.jsx:139
+msgid "Active"
+msgstr ""
+
+#: assets/js/149.js:1
+#: assets/js/707.js:1
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:275
+#: src/step-builder/StepBuilder.jsx:146
+#: src/step-builder/StepBuilder.jsx:150
+#: src/workflow-manager/CreateWorkflowModal.jsx:91
+#: src/workflow-manager/WorkflowList.jsx:46
+#: src/workflow-manager/WorkflowRow.jsx:140
+msgid "Draft"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/WorkflowList.jsx:47
+#: src/workflow-manager/WorkflowRow.jsx:141
+msgid "Archived"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/WorkflowRow.jsx:151
+msgid "This workflow is currently running"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/WorkflowRow.jsx:156
+msgid "Running…"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/WorkflowRow.jsx:157
+msgid "Starting…"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/WorkflowRow.jsx:158
+msgid "Started!"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/WorkflowRow.jsx:159
+msgid "Run Workflow"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/WorkflowRow.jsx:164
+msgid "Edit Draft"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/EmptyState.jsx:6
+msgid "No workflows yet"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/EmptyState.jsx:8
+msgid "Create your first workflow to start building reusable configuration checklists for your client sites."
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/TemplatePickerModal.jsx:95
+#: src/workflow-manager/WorkflowList.jsx:44
+msgid "All"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/WorkflowList.jsx:75
+msgid "item"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/WorkflowList.jsx:75
+msgid "items"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/WorkflowList.jsx:87
+msgid "Workflow Name"
+msgstr ""
+
+#: assets/js/149.js:1
+#: assets/js/707.js:2
+#: src/step-builder/StepBuilder.jsx:294
+#: src/workflow-manager/WorkflowList.jsx:88
+msgid "Steps"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/WorkflowList.jsx:89
+msgid "Last Run"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/WorkflowList.jsx:90
+msgid "Progress"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/CreateWorkflowModal.jsx:82
+#: src/workflow-manager/WorkflowList.jsx:91
+msgid "Status"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/WorkflowList.jsx:99
+msgid "No workflows match your filter."
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/CreateWorkflowModal.jsx:30
+msgid "Create New Workflow"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/CreateWorkflowModal.jsx:43
+msgid "Creating…"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/CreateWorkflowModal.jsx:43
+msgid "Create Workflow"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/CreateWorkflowModal.jsx:51
+msgid "Workflow Title"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/CreateWorkflowModal.jsx:60
+msgid "e.g. New Site Setup"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/CreateWorkflowModal.jsx:68
+msgid "Description"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/CreateWorkflowModal.jsx:75
+msgid "Optional — describe when to use this workflow."
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/ImportUrlModal.jsx:59
+msgid "Import Workflow from URL"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/ImportUrlModal.jsx:72
+#: src/workflow-manager/TemplatePickerModal.jsx:68
+msgid "Importing…"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/ImportUrlModal.jsx:72
+msgid "Import"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/ImportUrlModal.jsx:52
+msgid "Failed to import from URL."
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/ImportUrlModal.jsx:81
+msgid "Workflow JSON URL"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/ImportUrlModal.jsx:95
+msgid "Paste the URL of a workflow JSON exported from another AlignPress installation."
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/TemplatePickerModal.jsx:60
+msgid "Choose a Template"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/TemplatePickerModal.jsx:53
+msgid "Failed to import template."
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/TemplatePickerModal.jsx:68
+msgid "Import Template"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/TemplatePickerModal.jsx:79
+msgid "No templates available. Contact your AlignPress admin."
+msgstr ""
+
+#: assets/js/149.js:1
+#: assets/js/707.js:2
+#: src/step-builder/StepBuilder.jsx:298
+#: src/workflow-manager/TemplatePickerModal.jsx:137
+msgid "steps"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/WorkflowManager.jsx:67
+msgid "Templates"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/WorkflowManager.jsx:74
+msgid "Import from URL requires Pro"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/WorkflowManager.jsx:76
+msgid "Import URL"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/WorkflowManager.jsx:85
+msgid "Upgrade for More"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/WorkflowManager.jsx:86
+msgid "Add New Workflow"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/WorkflowManager.jsx:95
+msgid "You've reached the 3-workflow limit on the free plan."
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/WorkflowManager.jsx:99
+msgid "Upgrade to Pro for unlimited workflows →"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/WorkflowManager.jsx:107
+msgid "Loading workflows…"
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/WorkflowManager.jsx:121
+msgid "Auto-capture is on."
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/WorkflowManager.jsx:122
+msgid "AlignPress is watching for setting changes on this site."
+msgstr ""
+
+#: assets/js/149.js:1
+#: src/workflow-manager/WorkflowManager.jsx:125
+msgid "View uncaptured steps →"
+msgstr ""
+
+#: assets/js/296.js:1
+#: src/capture/CaptureToast.jsx:78
+msgid "Close"
+msgstr ""
+
+#: assets/js/296.js:1
+#: src/capture/CaptureToast.jsx:85
+msgid "setting changed"
+msgstr ""
+
+#: assets/js/296.js:1
+#: src/capture/CaptureToast.jsx:86
+msgid "settings changed"
+msgstr ""
+
+#: assets/js/296.js:1
+#: src/capture/CaptureToast.jsx:89
+msgid "Add to workflow?"
+msgstr ""
+
+#: assets/js/648.js:1
+#: src/upgrade/UpgradePage.jsx:14
+msgid "Active workflows per site"
+msgstr ""
+
+#: assets/js/648.js:1
+#: src/upgrade/UpgradePage.jsx:15
+msgid "Connected sites"
+msgstr ""
+
+#: assets/js/648.js:1
+#: src/upgrade/UpgradePage.jsx:16
+msgid "Auto-capture retention"
+msgstr ""
+
+#: assets/js/648.js:1
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:458
+#: src/upgrade/UpgradePage.jsx:17
+msgid "JSON export"
+msgstr ""
+
+#: assets/js/648.js:1
+#: src/upgrade/UpgradePage.jsx:18
+msgid "Workflow template library"
+msgstr ""
+
+#: assets/js/648.js:1
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:477
+#: src/upgrade/UpgradePage.jsx:19
+msgid "Import from URL"
+msgstr ""
+
+#: assets/js/648.js:1
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:475
+#: src/upgrade/UpgradePage.jsx:20
+msgid "Site groups & fleet assignment"
+msgstr ""
+
+#: assets/js/648.js:1
+#: src/upgrade/UpgradePage.jsx:21
+msgid "Team members (Owner + Executor)"
+msgstr ""
+
+#: assets/js/648.js:1
+#: src/upgrade/UpgradePage.jsx:22
+msgid "Fleet dashboard"
+msgstr ""
+
+#: assets/js/648.js:1
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:498
+#: src/upgrade/UpgradePage.jsx:23
+msgid "Priority email support"
+msgstr ""
+
+#: assets/js/648.js:1
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:499
+#: src/upgrade/UpgradePage.jsx:24
+msgid "Early access to new features"
+msgstr ""
+
+#: assets/js/648.js:1
+#: src/upgrade/UpgradePage.jsx:41
+#: src/upgrade/UpgradePage.jsx:171
+msgid "Agency"
+msgstr ""
+
+#: assets/js/648.js:1
+#: src/upgrade/UpgradePage.jsx:43
+#: src/upgrade/UpgradePage.jsx:54
+msgid "/yr"
+msgstr ""
+
+#: assets/js/648.js:1
+#: src/upgrade/UpgradePage.jsx:44
+msgid "~$12/mo billed annually"
+msgstr ""
+
+#: assets/js/648.js:1
+#: src/upgrade/UpgradePage.jsx:45
+msgid "Up to 50 sites"
+msgstr ""
+
+#: assets/js/648.js:1
+#: src/upgrade/UpgradePage.jsx:46
+msgid "That's just $0.25/site/mo"
+msgstr ""
+
+#: assets/js/648.js:1
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:483
+#: src/upgrade/UpgradePage.jsx:48
+msgid "Get Agency →"
+msgstr ""
+
+#: assets/js/648.js:1
+#: src/upgrade/UpgradePage.jsx:52
+#: src/upgrade/UpgradePage.jsx:172
+msgid "Agency Pro"
+msgstr ""
+
+#: assets/js/648.js:1
+#: src/upgrade/UpgradePage.jsx:55
+msgid "~$21/mo billed annually"
+msgstr ""
+
+#: assets/js/648.js:1
+#: src/upgrade/UpgradePage.jsx:56
+msgid "Unlimited sites"
+msgstr ""
+
+#: assets/js/648.js:1
+#: src/upgrade/UpgradePage.jsx:57
+msgid "$0.42/site/mo at 50 sites — less as you grow"
+msgstr ""
+
+#: assets/js/648.js:1
+#: src/upgrade/UpgradePage.jsx:59
+msgid "BEST VALUE"
+msgstr ""
+
+#: assets/js/648.js:1
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:503
+#: src/upgrade/UpgradePage.jsx:60
+msgid "Get Agency Pro →"
+msgstr ""
+
+#: assets/js/648.js:1
+#: src/upgrade/UpgradePage.jsx:78
+msgid "You're on AlignPress Pro"
+msgstr ""
+
+#: assets/js/648.js:1
+#: src/upgrade/UpgradePage.jsx:79
+msgid "All Pro features are unlocked on this site."
+msgstr ""
+
+#: assets/js/648.js:1
+#: src/upgrade/UpgradePage.jsx:80
+msgid "← Back to Settings"
+msgstr ""
+
+#: assets/js/648.js:1
+#: src/upgrade/UpgradePage.jsx:102
+msgid "Activation failed. Check your license key and try again."
+msgstr ""
+
+#: assets/js/648.js:1
+#: src/upgrade/UpgradePage.jsx:114
+msgid "Upgrade to AlignPress Pro"
+msgstr ""
+
+#: assets/js/648.js:1
+#: src/upgrade/UpgradePage.jsx:116
+msgid "Billed annually. No per-site fees. Cancel anytime."
+msgstr ""
+
+#: assets/js/648.js:1
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:453
+#: src/upgrade/UpgradePage.jsx:124
+#: src/upgrade/UpgradePage.jsx:170
+msgid "Free"
+msgstr ""
+
+#: assets/js/648.js:1
+#: src/upgrade/UpgradePage.jsx:128
+msgid "1 site"
+msgstr ""
+
+#: assets/js/648.js:1
+#: src/upgrade/UpgradePage.jsx:130
+msgid "Current plan"
+msgstr ""
+
+#: assets/js/648.js:1
+#: src/upgrade/UpgradePage.jsx:165
+msgid "Compare plans"
+msgstr ""
+
+#: assets/js/648.js:1
+#: src/upgrade/UpgradePage.jsx:169
+msgid "Feature"
+msgstr ""
+
+#: assets/js/648.js:1
+#: src/upgrade/UpgradePage.jsx:192
+msgid "How to get started"
+msgstr ""
+
+#: assets/js/648.js:1
+#: src/upgrade/UpgradePage.jsx:195
+msgid "Choose a plan above"
+msgstr ""
+
+#: assets/js/648.js:1
+#: src/upgrade/UpgradePage.jsx:195
+msgid "Click \"Get Agency\" or \"Get Agency Pro\" — you'll be taken to the AlignPress dashboard to create your account."
+msgstr ""
+
+#: assets/js/648.js:1
+#: src/upgrade/UpgradePage.jsx:196
+msgid "Copy your license key"
+msgstr ""
+
+#: assets/js/648.js:1
+#: src/upgrade/UpgradePage.jsx:196
+msgid "After subscribing, find your license key in the AlignPress dashboard. It looks like AP-XXXX-XXXX-XXXX-XXXX."
+msgstr ""
+
+#: assets/js/648.js:1
+#: src/upgrade/UpgradePage.jsx:197
+msgid "Activate below"
+msgstr ""
+
+#: assets/js/648.js:1
+#: src/upgrade/UpgradePage.jsx:197
+msgid "Paste the key into the field below and click Activate. Pro features unlock instantly — no restart needed."
+msgstr ""
+
+#: assets/js/648.js:1
+#: src/upgrade/UpgradePage.jsx:210
+msgid "Already have a license key?"
+msgstr ""
+
+#: assets/js/648.js:1
+#: src/upgrade/UpgradePage.jsx:213
+msgid "✓ License activated! Reloading…"
+msgstr ""
+
+#: assets/js/648.js:1
+#: src/upgrade/UpgradePage.jsx:228
+msgid "Activating…"
+msgstr ""
+
+#: assets/js/648.js:1
+#: src/upgrade/UpgradePage.jsx:228
+msgid "Activate"
+msgstr ""
+
+#: assets/js/648.js:1
+#: src/upgrade/UpgradePage.jsx:233
+msgid "You can also activate in "
+msgstr ""
+
+#: assets/js/648.js:1
+#: src/upgrade/UpgradePage.jsx:234
+msgid "Settings → Cloud"
+msgstr ""
+
+#: assets/js/648.js:1
+#: src/upgrade/UpgradePage.jsx:235
+msgid "."
+msgstr ""
+
+#: assets/js/707.js:1
+#: src/step-builder/DeepLinkInput.jsx:54
+msgid "Browse deep-links"
+msgstr ""
+
+#: assets/js/707.js:1
+#: src/step-builder/DeepLinkInput.jsx:56
+msgid "Browse"
+msgstr ""
+
+#: assets/js/707.js:1
+#: src/step-builder/DeepLinkInput.jsx:68
+msgid "Search deep-links…"
+msgstr ""
+
+#: assets/js/707.js:1
+#: src/step-builder/DeepLinkInput.jsx:73
+msgid "No results"
+msgstr ""
+
+#: assets/js/707.js:1
+#: src/step-builder/AddStepForm.jsx:69
+#: src/step-builder/StepItem.jsx:68
+msgid "Instructions"
+msgstr ""
+
+#: assets/js/707.js:1
+#: src/step-builder/StepItem.jsx:73
+msgid "Optional step instructions or notes…"
+msgstr ""
+
+#: assets/js/707.js:1
+#: src/step-builder/StepItem.jsx:79
+msgid "Deep Link (where to perform this step)"
+msgstr ""
+
+#: assets/js/707.js:1
+#: src/step-builder/AddStepForm.jsx:93
+#: src/step-builder/StepItem.jsx:90
+msgid "Required step"
+msgstr ""
+
+#: assets/js/707.js:1
+#: assets/js/707.js:2
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:405
+#: src/step-builder/StepBuilder.jsx:263
+#: src/step-builder/StepItem.jsx:96
+msgid "Saving…"
+msgstr ""
+
+#: assets/js/707.js:1
+#: src/step-builder/StepItem.jsx:96
+msgid "Save Step"
+msgstr ""
+
+#: assets/js/707.js:1
+#: src/step-builder/StepItem.jsx:40
+msgid "Delete this step? This cannot be undone."
+msgstr ""
+
+#: assets/js/707.js:1
+#: src/step-builder/StepList.jsx:26
+msgid "No steps yet. Add your first step below."
+msgstr ""
+
+#: assets/js/707.js:1
+#: src/step-builder/AddStepForm.jsx:48
+msgid "New Step"
+msgstr ""
+
+#: assets/js/707.js:1
+#: src/step-builder/AddStepForm.jsx:52
+msgid "Title"
+msgstr ""
+
+#: assets/js/707.js:1
+#: src/step-builder/AddStepForm.jsx:61
+msgid "e.g. Install security plugin"
+msgstr ""
+
+#: assets/js/707.js:1
+#: src/step-builder/AddStepForm.jsx:76
+msgid "Optional notes for the person running this step…"
+msgstr ""
+
+#: assets/js/707.js:1
+#: src/step-builder/AddStepForm.jsx:82
+msgid "Deep Link"
+msgstr ""
+
+#: assets/js/707.js:1
+#: src/step-builder/CapturedStepsPanel.jsx:37
+msgid "Auto-Captured Steps"
+msgstr ""
+
+#: assets/js/707.js:1
+#: src/step-builder/CapturedStepsPanel.jsx:46
+msgid "No recently detected option changes on this site."
+msgstr ""
+
+#: assets/js/707.js:1
+#: src/step-builder/CapturedStepsPanel.jsx:51
+msgid "Recently detected option changes on this site:"
+msgstr ""
+
+#: assets/js/707.js:1
+#: src/step-builder/CapturedStepsPanel.jsx:72
+msgid "+ Add"
+msgstr ""
+
+#: assets/js/707.js:1
+#: src/step-builder/StepBuilder.jsx:70
+msgid "Assign to Group"
+msgstr ""
+
+#: assets/js/707.js:1
+#: src/step-builder/StepBuilder.jsx:74
+msgid "Push this workflow to all sites in a group."
+msgstr ""
+
+#: assets/js/707.js:1
+#: src/step-builder/StepBuilder.jsx:47
+msgid "No other sites in this group yet."
+msgstr ""
+
+#: assets/js/707.js:1
+#: src/step-builder/StepBuilder.jsx:50
+msgid "Assignment failed."
+msgstr ""
+
+#: assets/js/707.js:1
+#: src/step-builder/StepBuilder.jsx:85
+msgid "Assigning…"
+msgstr ""
+
+#: assets/js/707.js:1
+#: src/step-builder/StepBuilder.jsx:85
+msgid "Assign"
+msgstr ""
+
+#: assets/js/707.js:1
+#: src/step-builder/StepBuilder.jsx:61
+msgid "This site is not in any groups yet. Ask your SaaS admin to add it."
+msgstr ""
+
+#: assets/js/707.js:1
+#: assets/js/887.js:1
+#: src/runner/AuditTrail.jsx:24
+#: src/step-builder/StepBuilder.jsx:122
+msgid "—"
+msgstr ""
+
+#: assets/js/707.js:1
+#: src/step-builder/StepBuilder.jsx:133
+msgid "Playbook Settings"
+msgstr ""
+
+#: assets/js/707.js:1
+#: src/step-builder/StepBuilder.jsx:140
+msgid "STATUS"
+msgstr ""
+
+#: assets/js/707.js:1
+#: src/step-builder/StepBuilder.jsx:156
+msgid "CATEGORY"
+msgstr ""
+
+#: assets/js/707.js:1
+#: src/step-builder/StepBuilder.jsx:165
+#: src/step-builder/StepBuilder.jsx:169
+msgid "— None —"
+msgstr ""
+
+#: assets/js/707.js:1
+#: src/step-builder/StepBuilder.jsx:174
+msgid "CREATED"
+msgstr ""
+
+#: assets/js/707.js:1
+#: src/step-builder/StepBuilder.jsx:179
+msgid "LAST MODIFIED"
+msgstr ""
+
+#: assets/js/707.js:1
+#: src/step-builder/StepBuilder.jsx:184
+msgid "TIMES RUN"
+msgstr ""
+
+#. translators: %d: number of times run
+#: assets/js/707.js:2
+#: src/step-builder/StepBuilder.jsx:189
+#, js-format
+msgid "%d times"
+msgstr ""
+
+#: assets/js/707.js:2
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:640
+#: src/step-builder/StepBuilder.jsx:192
+msgid "Never"
+msgstr ""
+
+#: assets/js/707.js:2
+#: src/step-builder/StepBuilder.jsx:241
+msgid "All Workflows"
+msgstr ""
+
+#: assets/js/707.js:2
+#: src/step-builder/StepBuilder.jsx:258
+msgid "Description (optional)"
+msgstr ""
+
+#: assets/js/707.js:2
+#: src/step-builder/StepBuilder.jsx:263
+msgid "Save"
+msgstr ""
+
+#: assets/js/707.js:2
+#: src/step-builder/StepBuilder.jsx:297
+msgid "step"
+msgstr ""
+
+#: assets/js/887.js:1
+#: src/runner/RunnerProgress.jsx:21
+msgid "Step"
+msgstr ""
+
+#: assets/js/887.js:1
+#: src/runner/RunnerProgress.jsx:21
+msgid "of"
+msgstr ""
+
+#: assets/js/887.js:1
+#: src/runner/RunnerNotes.jsx:21
+msgid "Notes"
+msgstr ""
+
+#: assets/js/887.js:1
+#: src/runner/RunnerNotes.jsx:28
+msgid "Optional notes for this step…"
+msgstr ""
+
+#: assets/js/887.js:1
+#: src/runner/RunnerNotes.jsx:16
+msgid "Add a note"
+msgstr ""
+
+#: assets/js/887.js:1
+#: src/runner/EvidenceUpload.jsx:79
+#: src/runner/EvidenceUpload.jsx:88
+msgid "Evidence"
+msgstr ""
+
+#: assets/js/887.js:1
+#: src/runner/EvidenceUpload.jsx:91
+msgid "View uploaded evidence"
+msgstr ""
+
+#: assets/js/887.js:1
+#: src/runner/EvidenceUpload.jsx:70
+msgid "Could not remove evidence."
+msgstr ""
+
+#: assets/js/887.js:1
+#: src/runner/EvidenceUpload.jsx:100
+msgid "Remove"
+msgstr ""
+
+#: assets/js/887.js:1
+#: src/runner/EvidenceUpload.jsx:21
+msgid "Unsupported file type. Use JPEG, PNG, GIF, WebP, or PDF."
+msgstr ""
+
+#: assets/js/887.js:1
+#: src/runner/EvidenceUpload.jsx:25
+msgid "File must be"
+msgstr ""
+
+#: assets/js/887.js:1
+#: src/runner/EvidenceUpload.jsx:25
+msgid "or smaller."
+msgstr ""
+
+#: assets/js/887.js:1
+#: src/runner/EvidenceUpload.jsx:44
+msgid "Upload failed."
+msgstr ""
+
+#: assets/js/887.js:1
+#: src/runner/EvidenceUpload.jsx:114
+msgid "Uploading…"
+msgstr ""
+
+#: assets/js/887.js:1
+#: src/runner/EvidenceUpload.jsx:114
+msgid "Upload screenshot or PDF"
+msgstr ""
+
+#: assets/js/887.js:1
+#: src/runner/RunnerStep.jsx:58
+msgid "Go to settings →"
+msgstr ""
+
+#: assets/js/887.js:1
+#: src/runner/RunnerStep.jsx:81
+msgid "Upload evidence before completing this step"
+msgstr ""
+
+#: assets/js/887.js:1
+#: src/runner/RunnerStep.jsx:84
+msgid "Marking done…"
+msgstr ""
+
+#: assets/js/887.js:1
+#: src/runner/RunnerStep.jsx:85
+msgid "Mark Complete"
+msgstr ""
+
+#: assets/js/887.js:1
+#: src/runner/RunnerStep.jsx:94
+msgid "Skip"
+msgstr ""
+
+#: assets/js/887.js:1
+#: src/runner/RunnerStep.jsx:106
+msgid "Reason for skipping (optional)…"
+msgstr ""
+
+#: assets/js/887.js:1
+#: src/runner/RunnerStep.jsx:115
+msgid "Skipping…"
+msgstr ""
+
+#: assets/js/887.js:1
+#: src/runner/RunnerStep.jsx:115
+msgid "Confirm Skip"
+msgstr ""
+
+#: assets/js/887.js:1
+#: src/runner/AuditTrail.jsx:62
+#: src/runner/RunnerStep.jsx:135
+msgid "Skipped:"
+msgstr ""
+
+#: assets/js/887.js:1
+#: src/runner/Runner.jsx:90
+#: src/runner/RunnerLauncher.jsx:17
+msgid "Minimise runner"
+msgstr ""
+
+#: assets/js/887.js:1
+#: src/runner/RunnerLauncher.jsx:18
+msgid "Open runner"
+msgstr ""
+
+#: assets/js/887.js:1
+#: src/runner/RunnerLauncher.jsx:20
+msgid "AlignPress Runner — workflow in progress"
+msgstr ""
+
+#: assets/js/887.js:1
+#: src/runner/RunnerLauncher.jsx:21
+msgid "AlignPress Runner"
+msgstr ""
+
+#: assets/js/887.js:1
+#: src/runner/AuditTrail.jsx:18
+msgid "Loading audit trail…"
+msgstr ""
+
+#: assets/js/887.js:1
+#: src/runner/AuditTrail.jsx:32
+msgid "Started:"
+msgstr ""
+
+#: assets/js/887.js:1
+#: src/runner/AuditTrail.jsx:34
+msgid "Completed:"
+msgstr ""
+
+#: assets/js/887.js:1
+#: src/runner/AuditTrail.jsx:39
+msgid "No steps completed yet."
+msgstr ""
+
+#: assets/js/887.js:1
+#: src/runner/AuditTrail.jsx:73
+msgid "View evidence"
+msgstr ""
+
+#: assets/js/887.js:1
+#: src/runner/AuditTrail.jsx:85
+msgid "▲ Hide changes"
+msgstr ""
+
+#: assets/js/887.js:1
+#: src/runner/AuditTrail.jsx:86
+msgid "▼ View option changes"
+msgstr ""
+
+#: assets/js/887.js:1
+#: src/runner/AuditTrail.jsx:93
+msgid "Option"
+msgstr ""
+
+#: assets/js/887.js:1
+#: src/runner/AuditTrail.jsx:94
+msgid "After"
+msgstr ""
+
+#: assets/js/887.js:1
+#: src/runner/Runner.jsx:81
+msgid "Workflow Runner"
+msgstr ""
+
+#: assets/js/887.js:1
+#: src/runner/Runner.jsx:105
+msgid "Workflow complete!"
+msgstr ""
+
+#: assets/js/887.js:1
+#: src/runner/Runner.jsx:127
+msgid "All steps"
+msgstr ""
+
+#: assets/js/887.js:1
+#: src/runner/Runner.jsx:72
+msgid "Abandon this workflow run? Progress will be lost."
+msgstr ""
+
+#: assets/js/887.js:1
+#: src/runner/Runner.jsx:151
+msgid "Abandon run"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:60
+msgid "Save failed."
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:102
+msgid "Administrator"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:103
+msgid "Editor"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:104
+msgid "Author"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:105
+msgid "Contributor"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:129
+msgid "only"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:140
+msgid "Auto-Capture"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:141
+msgid "Automatically detect and record WordPress option changes as playbook steps."
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:144
+msgid "Enable Auto-Capture"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:145
+msgid "Monitor this site for setting changes in real time."
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:155
+msgid "Capture Scope"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:156
+msgid "Which option changes should be recorded."
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:163
+msgid "All option changes"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:164
+msgid "Plugin settings pages only"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:169
+msgid "Exclude options"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:170
+msgid "Comma-separated option names to always ignore. Wildcards (*) supported."
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:182
+msgid "Capture retention"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:183
+msgid "How long to keep unassigned captured steps before auto-deleting."
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:191
+msgid "days"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:199
+msgid "Notifications & Toast"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:200
+msgid "Control when and how the floating notification appears."
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:203
+msgid "Show toast notifications"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:204
+msgid "Display a floating prompt when changes are detected."
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:214
+msgid "Minimum changes to trigger toast"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:215
+msgid "Only show the toast when this many or more options changed."
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:227
+msgid "changes"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:232
+msgid "Toast auto-dismiss"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:233
+msgid "Automatically hide the toast after a period of inactivity."
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:240
+msgid "Never (manual dismiss)"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:241
+msgid "5 seconds"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:242
+msgid "8 seconds"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:243
+msgid "15 seconds"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:244
+msgid "30 seconds"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:249
+msgid "Persistent launcher button"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:250
+msgid "Show the AlignPress floating button on every admin page."
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:259
+msgid "This is the ▶ AlignPress button visible in the bottom-right corner."
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:267
+msgid "Playbook Defaults"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:268
+msgid "Default values applied when creating a new playbook."
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:271
+msgid "Default status"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:272
+msgid "New playbooks start as Active or Draft."
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:291
+msgid "Default category"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:292
+msgid "Pre-fill the category field on new playbooks."
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:299
+msgid "Uncategorized"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:304
+msgid "Show \"Run\" button in list table"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:305
+msgid "Display the Run Playbook button in the playbooks table."
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:317
+msgid "Team & Access"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:318
+msgid "Control which WordPress user roles can view and run playbooks on this site."
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:321
+msgid "Roles that can view playbooks"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:322
+msgid "These roles will see the AlignPress menu item."
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:328
+msgid "Roles that can run playbooks"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:329
+msgid "Restrict who can execute a playbook on this site."
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:335
+msgid "Roles that can edit playbooks"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:336
+msgid "Who can create, edit, and delete playbooks on this site."
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:344
+msgid "Email Notifications"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:345
+msgid "Send email alerts for key playbook events on this site."
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:348
+msgid "Notify when playbook assigned"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:349
+msgid "Email admin when a new playbook is pushed to this site from the agency dashboard."
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:359
+msgid "Notify when playbook completed"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:360
+msgid "Email admin when a user finishes all steps of a playbook."
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:370
+msgid "Notify when step skipped"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:371
+msgid "Email when a required step is skipped with a reason."
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:381
+msgid "Notification email address"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:382
+msgid "Where these emails are sent. Defaults to the site admin email."
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:389
+msgid "admin@clientsite.com"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:405
+msgid "Save Settings"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:407
+msgid "✓ Saved"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:410
+msgid "Documentation"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:412
+msgid "Support"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:436
+msgid "License & Pro Features"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:437
+msgid "Unlock multi-site management, template library, team sharing, and more."
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:445
+msgid "Your site is connected to AlignPress Cloud."
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:455
+msgid "3 active workflows"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:456
+msgid "Single site"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:457
+msgid "Auto-capture (7 days)"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:459
+msgid "Multi-site management"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:460
+#: src/settings/Settings.jsx:476
+msgid "Template library"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:461
+#: src/settings/Settings.jsx:478
+msgid "Team members"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:468
+msgid "$149 / year"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:470
+msgid "Up to 50 sites — just $0.25/site/mo"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:473
+msgid "Unlimited workflows"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:474
+msgid "Up to 50 connected sites"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:479
+msgid "Auto-capture (90 days)"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:491
+msgid "$249 / year"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:493
+msgid "Unlimited sites — $0.42/site/mo at 50 sites, less as you grow"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:496
+msgid "Everything in Agency"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:497
+msgid "Unlimited connected sites"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:508
+msgid "Upgrade to Agency Pro →"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:529
+msgid "AlignPress Cloud"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:530
+msgid "Manage multiple WordPress sites from one agency dashboard."
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:534
+msgid "Cloud Connection is a Pro feature"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:536
+msgid "Upgrade to Agency or Agency Pro to connect this site to your AlignPress dashboard, assign workflows across sites, share templates with your team, and manage everything from one place."
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:539
+msgid "✓ Multi-site management"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:540
+msgid "✓ Workflow template library"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:541
+msgid "✓ Fleet assignment"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:542
+msgid "✓ Team members"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:545
+msgid "Upgrade to Pro →"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:583
+msgid "AlignPress Cloud Connection"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:584
+msgid "Connect to your AlignPress agency account to sync and assign playbooks across sites."
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:588
+msgid "Connected"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:588
+msgid "Not Connected"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:592
+msgid "License Key"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:593
+msgid "Enter your AlignPress Pro license key to connect."
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:608
+msgid "Disconnect"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:626
+msgid "Connect"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:635
+msgid "Last Sync"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:636
+msgid "When playbooks were last synced from your agency account."
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:572
+msgid "Sync complete."
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:574
+msgid "Sync failed."
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:643
+msgid "Syncing…"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:643
+msgid "↻ Sync Now"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:650
+msgid "Site Nickname"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:651
+msgid "How this site appears in your AlignPress agency dashboard."
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:658
+msgid "e.g. ClientSite — Production"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:677
+msgid "Type"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:679
+msgid "to confirm:"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:747
+#: src/settings/Settings.jsx:817
+msgid "Danger Zone"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:748
+msgid "These actions are irreversible. Proceed with caution."
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:756
+msgid "Delete All Captured Steps"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:757
+msgid "Remove all unassigned auto-captured steps. Assigned steps in playbooks are unaffected."
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:759
+msgid "✓ Captured steps cleared."
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:725
+msgid "Failed to clear captures."
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:767
+msgid "Yes, Clear"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:774
+msgid "Clear Captured Steps"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:782
+msgid "Reset All Plugin Data"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:783
+msgid "Permanently delete all playbooks, steps, and settings. This cannot be undone."
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:738
+msgid "Reset failed."
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:791
+msgid "Resetting…"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:792
+msgid "Yes, Reset Everything"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:796
+msgid "Reset Everything"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:815
+msgid "General"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:816
+msgid "Cloud Connection"
+msgstr ""
+
+#: assets/js/945.js:1
+#: src/settings/Settings.jsx:822
+msgid "AlignPress Settings"
+msgstr ""

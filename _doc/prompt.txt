@@ -1,0 +1,161 @@
+Free plugin 
+
+Workflow manager in wp-admin
+Step builder
+Auto-capture (basic)
+Floating runner sidebar
+JSON export/import
+5 starter templates
+Upgrade to Pro prompt (functional, leads to real checkout)
+
+SaaS MVP 
+
+Account creation and login
+License key generation via Freemius
+Connect sites via license key
+Assign workflows to connected sites
+Basic fleet completion dashboard (done/pending/in-progress per site)
+Team member invite (Owner + Executor only, skip Manager tier for MVP)
+
+Practical Build Sequence
+
+Rather than "free first then SaaS," do this:
+
+Phase 1 (build in parallel)
+
+Free plugin core features
+SaaS auth, license, site connection
+
+Phase 2 (complete before launch)
+
+Pro feature activation via license key
+Fleet assignment and dashboard
+End-to-end test: free install → upgrade → SaaS connect → assign workflow → execute on second site
+
+Phase 3 (launch)
+
+Free plugin on WordPress.org
+SaaS at alignpress.app
+Freemius checkout live
+
+Phase 4 
+
+Advanced permissions
+Version locking
+Auto-capture noise filtering
+Template library expansion
+--
+Advanced permissions
+The Manager tier (middle role between Owner and Executor) plus granular controls like restricting specific workflows to specific team members.
+
+Version locking
+When a workflow is edited mid-execution, sites already running it stay on the old version. New assignments get the updated version. Keeps audit trails clean.
+
+Auto-capture noise filtering
+The basic auto-capture catches every wp_options change including junk — transients, heartbeat, cache keys. Noise filtering intelligently surfaces only meaningful plugin/theme settings changes and ignores the garbage.
+
+Template library expansion
+Beyond the 5 launch templates, a growing library of community and official workflow templates — WooCommerce setup, SMTP configuration, security hardening, etc. Potentially a public template marketplace in v2.
+---
+
+The Core Mental Model (Version locking) The below is discussion with claude, you can ask question or suggest while checking current implementation in our plugin.
+
+Think of it exactly like Google Docs version history, or how app stores handle updates:
+
+The workflow is the template. The execution is a snapshot of that template at the moment it started.
+
+Once a site starts running a workflow, it runs against a frozen copy. The live workflow can be edited freely without disrupting anything in progress.
+
+How It Works — Step by Step
+
+When a workflow is created or edited:
+
+Every time an Owner/Manager saves changes to a workflow, a new version is created
+Versions are numbered simply: v1, v2, v3
+The latest version is always what gets assigned to new sites
+Old versions are stored but not editable
+
+When a site starts executing:
+
+The moment "Run Workflow" is pressed, the system takes a snapshot of the current version
+That execution is permanently linked to that version number
+Even if v3 is released tomorrow, this site finishes on v2
+
+When a workflow is updated while sites are mid-run:
+
+Sites already running: stay on their current version, complete normally
+Sites not yet started: get the new version automatically
+SaaS dashboard shows version number per site so the Owner can see "Site A is running v2, Sites B-D will run v3"
+
+When an execution is complete:
+
+The completion record stores which version was executed
+Audit trail shows: who ran it, on which site, which version, when completed
+What the User Sees
+
+In the SaaS dashboard (fleet view):
+
+Site	Workflow	Version	Status
+clientsite-a.com	WooCommerce Setup	v3	✅ Complete
+clientsite-b.com	WooCommerce Setup	v2	🔄 In Progress
+clientsite-c.com	WooCommerce Setup	v3	⏳ Pending
+
+A small banner appears when sites are running different versions:
+
+"2 sites are running an older version of this workflow. They will complete on v2 — new assignments use v3."
+
+In wp-admin (executor view):
+A subtle label in the runner sidebar:
+
+"Running: WooCommerce Setup — v2"
+
+No confusion, no interruption. They just see which version they're on.
+
+When editing an active workflow:
+Before saving, a modal prompt:
+
+"This workflow is currently running on 3 sites. Your changes will apply to new assignments only. Sites in progress will complete on the current version."
+
+[ Save as New Version ] [ Cancel ]
+
+No silent updates. The Owner always knows what's happening.
+
+DB Design (Simple)
+
+Three things to store:
+
+Workflow versions table
+
+workflow_id
+version_number
+steps_snapshot (JSON — full copy of all steps at that version)
+created_at
+created_by
+
+Executions table
+
+execution_id
+workflow_id
+version_number (locked at start)
+site_id
+status (pending / in_progress / complete)
+started_at
+completed_at
+
+Step completions table
+
+execution_id
+step_id
+completed_by
+completed_at
+notes
+Edge Cases to Handle
+
+What if a workflow is deleted while sites are mid-run?
+Soft delete only — never hard delete an active workflow. Show a warning: "3 sites are currently running this workflow. Archive instead of delete?"
+
+What if steps are reordered in a new version?
+The execution snapshot preserves the original step order. Reordering only affects new executions.
+
+What if a site was offline when a new version was assigned?
+When it reconnects, it gets the latest unstarted version. If it was already mid-run, it stays on its locked version.

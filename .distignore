@@ -1,0 +1,12 @@
+.git
+.gitignore
+.distignore
+.DS_Store
+node_modules
+src
+_doc
+package.json
+package-lock.json
+webpack.config.js
+build-zip.sh
+*.map
