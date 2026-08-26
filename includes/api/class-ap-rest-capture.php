@@ -71,13 +71,14 @@ class AP_REST_Capture extends WP_REST_Controller {
 				'callback'            => [ $this, 'manual_capture' ],
 				'permission_callback' => [ $this, 'permissions_check' ],
 				'args'                => [
-					'label'      => [ 'required' => true,  'type' => 'string', 'sanitize_callback' => 'sanitize_text_field' ],
-					'field_key'  => [ 'required' => false, 'type' => 'string', 'sanitize_callback' => 'sanitize_text_field' ],
-					'old_value'  => [ 'required' => false, 'type' => 'string', 'sanitize_callback' => 'sanitize_textarea_field' ],
-					'new_value'  => [ 'required' => false, 'type' => 'string', 'sanitize_callback' => 'sanitize_textarea_field' ],
-					'page_url'     => [ 'required' => false, 'type' => 'string', 'sanitize_callback' => 'esc_url_raw' ],
-					'page_title'   => [ 'required' => false, 'type' => 'string', 'sanitize_callback' => 'sanitize_text_field' ],
-					'instructions' => [ 'required' => false, 'type' => 'string', 'sanitize_callback' => 'sanitize_textarea_field' ],
+					'label'       => [ 'required' => true,  'type' => 'string',  'sanitize_callback' => 'sanitize_text_field' ],
+					'field_key'   => [ 'required' => false, 'type' => 'string',  'sanitize_callback' => 'sanitize_text_field' ],
+					'old_value'   => [ 'required' => false, 'type' => 'string',  'sanitize_callback' => 'sanitize_textarea_field' ],
+					'new_value'   => [ 'required' => false, 'type' => 'string',  'sanitize_callback' => 'sanitize_textarea_field' ],
+					'page_url'    => [ 'required' => false, 'type' => 'string',  'sanitize_callback' => 'esc_url_raw' ],
+					'page_title'  => [ 'required' => false, 'type' => 'string',  'sanitize_callback' => 'sanitize_text_field' ],
+					'instructions'=> [ 'required' => false, 'type' => 'string',  'sanitize_callback' => 'sanitize_textarea_field' ],
+					'workflow_id' => [ 'required' => false, 'type' => 'integer', 'sanitize_callback' => 'absint' ],
 				],
 			],
 		] );
@@ -249,17 +250,12 @@ class AP_REST_Capture extends WP_REST_Controller {
 		$new_value    = $request->get_param( 'new_value' ) ?? '';
 		$page_url     = $request->get_param( 'page_url' ) ?? '';
 		$instructions = (string) ( $request->get_param( 'instructions' ) ?? '' );
+		$workflow_id  = (int) ( $request->get_param( 'workflow_id' ) ?? 0 );
 		$user_id      = get_current_user_id();
 
-		// Append instructions to option_label so they surface in the capture review UI.
-		if ( $instructions !== '' ) {
-			$label = $label . "\n\n" . $instructions;
-		}
-
-		// Build insert data — omit 'source' if the column doesn't exist yet
-		// (migration runs on next page load after DB version bump).
-		$table    = $wpdb->prefix . 'alignpress_capture_buffer';
-		$cols     = $wpdb->get_col( "DESC {$table}", 0 ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching
+		// Build insert data — omit 'source' if the column doesn't exist yet.
+		$table      = $wpdb->prefix . 'alignpress_capture_buffer';
+		$cols       = $wpdb->get_col( "DESC {$table}", 0 ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching
 		$has_source = in_array( 'source', $cols, true );
 
 		$row = [
@@ -284,10 +280,54 @@ class AP_REST_Capture extends WP_REST_Controller {
 			return new WP_Error( 'alignpress_db_error', __( 'Could not save capture.', 'alignpress' ), [ 'status' => 500 ] );
 		}
 
-		// Signal the toast — same mechanism the PHP option hook uses.
+		$capture_id = $wpdb->insert_id;
+
+		// If a workflow was selected, immediately create a step from this capture.
+		if ( $workflow_id > 0 ) {
+			$workflow = AP_Workflow::get( $workflow_id );
+			if ( $workflow ) {
+				$deep_link = '';
+				if ( $page_url ) {
+					$path      = wp_parse_url( $page_url, PHP_URL_PATH ) ?? '';
+					$query     = wp_parse_url( $page_url, PHP_URL_QUERY );
+					$deep_link = ltrim( $path . ( $query ? '?' . $query : '' ), '/' );
+				}
+
+				$step_label = $instructions !== '' ? $label . "\n\n" . $instructions : $label;
+
+				$step = AP_Step::create( [
+					'workflow_id'      => $workflow_id,
+					'title'            => $label,
+					'deep_link'        => $deep_link,
+					'captured_options' => [
+						[
+							'option_name'  => $row['option_name'],
+							'option_label' => $step_label,
+							'old_value'    => $old_value,
+							'new_value'    => $new_value,
+						],
+					],
+				] );
+
+				// Mark capture as added so it doesn't show in the pending review list.
+				$wpdb->update(
+					$table,
+					[ 'status' => 'added' ],
+					[ 'id' => $capture_id ],
+					[ '%s' ],
+					[ '%d' ]
+				);
+
+				if ( ! is_wp_error( $step ) ) {
+					return rest_ensure_response( [ 'success' => true, 'id' => $capture_id, 'step' => $step->to_array() ] );
+				}
+			}
+		}
+
+		// No workflow selected — queue to buffer for later review.
 		set_transient( 'alignpress_pending_captures_' . $user_id, true, 5 * MINUTE_IN_SECONDS );
 
-		return rest_ensure_response( [ 'success' => true, 'id' => $wpdb->insert_id ] );
+		return rest_ensure_response( [ 'success' => true, 'id' => $capture_id ] );
 	}
 
 	/**

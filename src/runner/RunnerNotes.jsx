@@ -212,19 +212,58 @@ const Compose = ( { stepId, onPosted, isSaas } ) => {
 	const handleCapture = async () => {
 		setCapturing( true );
 		setPostErr( null );
+
+		// Disable stylesheet rules that contain broken SVG data URIs — these crash
+		// html2canvas's CSS parser ("Error parsing CSS component value, unexpected EOF").
+		// We find the offending CSSRule objects, disable them temporarily, then restore.
+		const disabledRules = [];
 		try {
-			const canvas = await html2canvas( document.body, { useCORS: true, allowTaint: true, logging: false } );
+			for ( const sheet of document.styleSheets ) {
+				try {
+					const rules = sheet.cssRules || [];
+					for ( let i = 0; i < rules.length; i++ ) {
+						const rule = rules[ i ];
+						const text = rule.cssText || '';
+						if ( text.includes( 'data:image/svg' ) && text.includes( 'transition-property' ) ) {
+							disabledRules.push( { sheet, index: i, text } );
+						}
+					}
+				} catch { /* cross-origin sheet — skip */ }
+			}
+			// Disable by deleting (we'll re-insert after).
+			// Work backwards so indices stay valid.
+			for ( let i = disabledRules.length - 1; i >= 0; i-- ) {
+				const { sheet, index } = disabledRules[ i ];
+				try { sheet.deleteRule( index ); } catch { /* ignore */ }
+			}
+		} catch { /* ignore */ }
+
+		try {
+			const canvas = await html2canvas( document.body, {
+				useCORS:               true,
+				allowTaint:            false,
+				logging:               false,
+				foreignObjectRendering:false,
+				ignoreElements: ( el ) => [ 'IFRAME', 'SCRIPT', 'NOSCRIPT' ].includes( el.tagName ),
+			} );
 			canvas.toBlob( ( blob ) => {
 				if ( blob ) {
 					applyFile( new File( [ blob ], 'screenshot.png', { type: 'image/png' } ) );
 				} else {
+					console.error( '[AP screenshot] toBlob returned null' );
 					setPostErr( __( 'Capture failed. Try pasting a screenshot instead.', 'alignpress' ) );
 				}
 				setCapturing( false );
 			}, 'image/png' );
-		} catch {
+		} catch ( err ) {
+			console.error( '[AP screenshot]', err );
 			setPostErr( __( 'Capture failed. Try pasting a screenshot instead.', 'alignpress' ) );
 			setCapturing( false );
+		} finally {
+			// Re-insert deleted rules at original positions.
+			for ( const { sheet, index, text } of disabledRules ) {
+				try { sheet.insertRule( text, index ); } catch { /* ignore */ }
+			}
 		}
 	};
 

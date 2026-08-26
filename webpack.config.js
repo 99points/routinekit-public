@@ -1,6 +1,8 @@
 const defaultConfig = require( '@wordpress/scripts/config/webpack.config' );
 const path = require( 'path' );
 
+const CopyPlugin = require( 'copy-webpack-plugin' );
+
 module.exports = {
 	...defaultConfig,
 	entry: {
@@ -23,4 +25,15 @@ module.exports = {
 		// chunk registry — avoids the two-runtime collision on AP admin pages.
 		runtimeChunk: 'single',
 	},
+	plugins: [
+		...( defaultConfig.plugins || [] ),
+		// Copy hand-authored vanilla JS files into assets/js so they survive
+		// webpack's clean pass (which wipes the output directory on each build).
+		new CopyPlugin( {
+			patterns: [
+				{ from: path.resolve( __dirname, 'src/vanilla/capture-watcher.js' ),  to: 'capture-watcher.js' },
+				{ from: path.resolve( __dirname, 'src/vanilla/html2canvas.min.js' ),  to: 'html2canvas.min.js' },
+			],
+		} ),
+	],
 };

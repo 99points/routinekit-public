@@ -9,10 +9,3 @@ if ( runnerRoot ) {
 	} );
 }
 
-// Capture toast — shown when pending captures exist
-const captureRoot = document.getElementById( 'alignpress-capture-root' );
-if ( captureRoot ) {
-	import( './capture/CaptureToast' ).then( ( { default: CaptureToast } ) => {
-		render( <CaptureToast />, captureRoot );
-	} );
-}
