@@ -25,24 +25,24 @@ const {
 	saasConnected = false,
 	isPro         = false,
 	upgradeUrl    = '#',
-} = window.alignpressData ?? {};
+} = window.stepwiseData ?? {};
 
 // ── SaaS Connect CTA (shown in sidebar when not connected) ───────────────────
 const SaasConnectCta = () => {
-	const settingsUrl = ( window.alignpressData?.adminUrl ?? '' ) + 'admin.php?page=alignpress-settings#cloud';
+	const settingsUrl = ( window.stepwiseData?.adminUrl ?? '' ) + 'admin.php?page=stepwise-settings#cloud';
 
 	return (
 		<div className="ap-saas-cta">
 			<div className="ap-saas-cta__icon">⚡</div>
 			<div className="ap-saas-cta__body">
 				<strong className="ap-saas-cta__heading">
-					{ __( 'Run this on multiple sites', 'alignpress' ) }
+					{ __( 'Run this on multiple sites', 'stepwise' ) }
 				</strong>
 				<p className="ap-saas-cta__text">
-					{ __( 'Connect your free AlignPress account and push this workflow to up to 3 sites instantly — no re-building required.', 'alignpress' ) }
+					{ __( 'Connect your free Stepwise account and push this workflow to up to 3 sites instantly — no re-building required.', 'stepwise' ) }
 				</p>
 				<a href={ settingsUrl } className="ap-saas-cta__btn">
-					{ __( 'Connect free →', 'alignpress' ) }
+					{ __( 'Connect free →', 'stepwise' ) }
 				</a>
 			</div>
 		</div>
@@ -65,47 +65,47 @@ const WorkflowChecklist = ( { workflow, steps } ) => {
 
 	const proItems = [
 		{
-			label:  __( 'Activate the workflow', 'alignpress' ),
-			detail: __( 'Set status to Active so it can be run.', 'alignpress' ),
+			label:  __( 'Activate the workflow', 'stepwise' ),
+			detail: __( 'Set status to Active so it can be run.', 'stepwise' ),
 			done:   isActive,
 		},
 		{
-			label:  __( 'Run the workflow', 'alignpress' ),
-			detail: __( 'Hit Run — the runner appears on every admin page while it\'s active.', 'alignpress' ),
+			label:  __( 'Run the workflow', 'stepwise' ),
+			detail: __( 'Hit Run — the runner appears on every admin page while it\'s active.', 'stepwise' ),
 			done:   hasRunBefore,
 		},
 		{
-			label:  __( 'Add steps as you go', 'alignpress' ),
-			detail: __( 'Document each task from the runner. Steps stay editable until you push to cloud.', 'alignpress' ),
+			label:  __( 'Add steps as you go', 'stepwise' ),
+			detail: __( 'Document each task from the runner. Steps stay editable until you push to cloud.', 'stepwise' ),
 			done:   hasSteps,
 		},
 		{
-			label:  __( 'Push to Cloud', 'alignpress' ),
-			detail: __( 'When steps are finalised — locks them and uploads to your cloud.', 'alignpress' ),
+			label:  __( 'Push to Cloud', 'stepwise' ),
+			detail: __( 'When steps are finalised — locks them and uploads to your cloud.', 'stepwise' ),
 			done:   isPushed,
 			divider: true,
 		},
 		{
-			label:  __( 'Assign to a group', 'alignpress' ),
-			detail: __( 'Distribute to all sites in a group.', 'alignpress' ),
+			label:  __( 'Assign to a group', 'stepwise' ),
+			detail: __( 'Distribute to all sites in a group.', 'stepwise' ),
 			done:   isAssigned,
 		},
 	];
 
 	const freeItems = [
 		{
-			label:  __( 'Activate the workflow', 'alignpress' ),
-			detail: __( 'Set status to Active so it can be run.', 'alignpress' ),
+			label:  __( 'Activate the workflow', 'stepwise' ),
+			detail: __( 'Set status to Active so it can be run.', 'stepwise' ),
 			done:   isActive,
 		},
 		{
-			label:  __( 'Run the workflow', 'alignpress' ),
-			detail: __( 'Hit Run — the runner appears on every admin page while it\'s active.', 'alignpress' ),
+			label:  __( 'Run the workflow', 'stepwise' ),
+			detail: __( 'Hit Run — the runner appears on every admin page while it\'s active.', 'stepwise' ),
 			done:   hasRunBefore,
 		},
 		{
-			label:  __( 'Add steps as you go', 'alignpress' ),
-			detail: __( 'Document each task from the runner sidebar.', 'alignpress' ),
+			label:  __( 'Add steps as you go', 'stepwise' ),
+			detail: __( 'Document each task from the runner sidebar.', 'stepwise' ),
 			done:   hasSteps,
 		},
 	];
@@ -125,16 +125,16 @@ const WorkflowChecklist = ( { workflow, steps } ) => {
 				<div className="ap-wf-checklist__head-left">
 					<span className="ap-wf-checklist__eyebrow">
 						{ allDone
-							? __( 'Workflow ready', 'alignpress' )
-							: sprintf( __( '%1$d of %2$d complete', 'alignpress' ), doneCount, items.length ) }
+							? __( 'Workflow ready', 'stepwise' )
+							: sprintf( __( '%1$d of %2$d complete', 'stepwise' ), doneCount, items.length ) }
 					</span>
 					<h3 className="ap-wf-checklist__title">
 						{ allDone
-							? __( 'You\'re all set — this workflow is live.', 'alignpress' )
-							: __( 'Get this workflow ready to run', 'alignpress' ) }
+							? __( 'You\'re all set — this workflow is live.', 'stepwise' )
+							: __( 'Get this workflow ready to run', 'stepwise' ) }
 					</h3>
 				</div>
-				<button className="ap-wf-checklist__dismiss" onClick={ handleDismiss } aria-label={ __( 'Dismiss', 'alignpress' ) }>
+				<button className="ap-wf-checklist__dismiss" onClick={ handleDismiss } aria-label={ __( 'Dismiss', 'stepwise' ) }>
 					✕
 				</button>
 			</div>
@@ -170,35 +170,35 @@ const GroupAssignPanel = ( { workflowId, pushedGroupIds = [], category = '' } ) 
 	const [ assignedIds, setAssignedIds ] = useState( pushedGroupIds.map( Number ) );
 	const [ error, setError ]             = useState( null );
 
-	const { fetchWorkflows } = useDispatch( 'alignpress/workflows' );
+	const { fetchWorkflows } = useDispatch( 'stepwise/workflows' );
 
 	useEffect( () => {
-		apiFetch( { path: '/alignpress/v1/saas/groups' } )
+		apiFetch( { path: '/stepwise/v1/saas/groups' } )
 			.then( ( res ) => setGroups( res.groups ?? [] ) )
-			.catch( () => setError( __( 'Could not load groups.', 'alignpress' ) ) )
+			.catch( () => setError( __( 'Could not load groups.', 'stepwise' ) ) )
 			.finally( () => setLoading( false ) );
 	}, [] );
 
 	const handleAssign = async ( groupId ) => {
 		if ( ! category ) {
-			alert( __( 'Please select a category in Playbook Settings before assigning to a group.', 'alignpress' ) );
+			alert( __( 'Please select a category in Playbook Settings before assigning to a group.', 'stepwise' ) );
 			return;
 		}
-		if ( ! window.confirm( __( 'Push this workflow to all sites in the selected group? Steps will be locked and cannot be edited after pushing.', 'alignpress' ) ) ) {
+		if ( ! window.confirm( __( 'Push this workflow to all sites in the selected group? Steps will be locked and cannot be edited after pushing.', 'stepwise' ) ) ) {
 			return;
 		}
 		setPushing( groupId );
 		setError( null );
 		try {
 			await apiFetch( {
-				path:   `/alignpress/v1/saas/groups/${ groupId }/assign`,
+				path:   `/stepwise/v1/saas/groups/${ groupId }/assign`,
 				method: 'POST',
 				data:   { workflow_id: workflowId },
 			} );
 			setAssignedIds( ( prev ) => [ ...prev, Number( groupId ) ] );
 			await fetchWorkflows();
 		} catch ( e ) {
-			setError( e.message ?? __( 'Assignment failed.', 'alignpress' ) );
+			setError( e.message ?? __( 'Assignment failed.', 'stepwise' ) );
 		} finally {
 			setPushing( null );
 		}
@@ -209,7 +209,7 @@ const GroupAssignPanel = ( { workflowId, pushedGroupIds = [], category = '' } ) 
 		<div className="ap-sidebar-panel">
 			<div className="ap-sidebar-panel__body">
 				<p className="ap-sidebar-panel__empty" style={ { fontSize: '12px', color: '#888' } }>
-					{ __( 'This site has not been added to any groups yet. Groups are created and managed from your AlignPress Cloud dashboard — add this site to a group there first.', 'alignpress' ) }
+					{ __( 'This site has not been added to any groups yet. Groups are created and managed from your Stepwise Cloud dashboard — add this site to a group there first.', 'stepwise' ) }
 				</p>
 			</div>
 		</div>
@@ -218,11 +218,11 @@ const GroupAssignPanel = ( { workflowId, pushedGroupIds = [], category = '' } ) 
 	return (
 		<div className="ap-sidebar-panel">
 			<div className="ap-sidebar-panel__toggle" style={ { cursor: 'default' } }>
-				<span className="ap-sidebar-panel__title">{ __( 'Assign to Group', 'alignpress' ) }</span>
+				<span className="ap-sidebar-panel__title">{ __( 'Assign to Group', 'stepwise' ) }</span>
 			</div>
 			<div className="ap-sidebar-panel__body">
 				<p style={ { fontSize: '12px', color: '#666', marginBottom: '8px' } }>
-					{ __( 'Push this workflow to every site in a group. Groups are created and managed from your AlignPress Cloud dashboard.', 'alignpress' ) }
+					{ __( 'Push this workflow to every site in a group. Groups are created and managed from your Stepwise Cloud dashboard.', 'stepwise' ) }
 				</p>
 				{ error && <p style={ { fontSize: '12px', color: '#dc2626', marginBottom: '8px' } }>{ error }</p> }
 				{ groups.map( ( group ) => {
@@ -233,7 +233,7 @@ const GroupAssignPanel = ( { workflowId, pushedGroupIds = [], category = '' } ) 
 							<span style={ { fontSize: '13px', fontWeight: 500 } }>{ group.name }</span>
 							{ isAssigned ? (
 								<span style={ { fontSize: '12px', fontWeight: 500, color: '#16a34a' } }>
-									{ __( 'Assigned ✓', 'alignpress' ) }
+									{ __( 'Assigned ✓', 'stepwise' ) }
 								</span>
 							) : (
 								<Button
@@ -242,7 +242,7 @@ const GroupAssignPanel = ( { workflowId, pushedGroupIds = [], category = '' } ) 
 									onClick={ () => handleAssign( group.id ) }
 									disabled={ isBusy || pushing !== null }
 								>
-									{ isBusy ? __( 'Assigning…', 'alignpress' ) : __( 'Assign', 'alignpress' ) }
+									{ isBusy ? __( 'Assigning…', 'stepwise' ) : __( 'Assign', 'stepwise' ) }
 								</Button>
 							) }
 						</div>
@@ -260,7 +260,7 @@ const PlaybookSettingsPanel = ( { workflow, workflowId } ) => {
 	const [ saving, setSaving ]         = useState( false );
 	const [ showConfirm, setShowConfirm ] = useState( false );
 
-	const { saveWorkflow } = useDispatch( 'alignpress/workflows' );
+	const { saveWorkflow } = useDispatch( 'stepwise/workflows' );
 
 
 	const handleStatusToggle = ( val ) => {
@@ -288,7 +288,7 @@ const PlaybookSettingsPanel = ( { workflow, workflowId } ) => {
 	};
 
 	const fmt = ( dateStr ) => {
-		if ( ! dateStr ) return __( '—', 'alignpress' );
+		if ( ! dateStr ) return __( '—', 'stepwise' );
 		return new Date( dateStr ).toLocaleDateString( undefined, { year: 'numeric', month: 'long', day: 'numeric' } );
 	};
 
@@ -299,66 +299,66 @@ const PlaybookSettingsPanel = ( { workflow, workflowId } ) => {
 				onClick={ () => setOpen( o => ! o ) }
 				aria-expanded={ open }
 			>
-				<span className="ap-sidebar-panel__title">{ __( 'Playbook Settings', 'alignpress' ) }</span>
+				<span className="ap-sidebar-panel__title">{ __( 'Playbook Settings', 'stepwise' ) }</span>
 				<span className="ap-sidebar-panel__chevron">{ open ? '∧' : '∨' }</span>
 			</button>
 
 			{ open && (
 				<div className="ap-sidebar-panel__body">
 					<div className="ap-sidebar-panel__row">
-						<span className="ap-sidebar-panel__label">{ __( 'STATUS', 'alignpress' ) }</span>
+						<span className="ap-sidebar-panel__label">{ __( 'STATUS', 'stepwise' ) }</span>
 						{ canEdit ? (
 							<Toggle
 								id={ `workflow-status-${ workflowId }` }
 								checked={ status }
 								onChange={ handleStatusToggle }
-								label={ status ? __( 'Active', 'alignpress' ) : __( 'Draft', 'alignpress' ) }
+								label={ status ? __( 'Active', 'stepwise' ) : __( 'Draft', 'stepwise' ) }
 							/>
 						) : (
-							<span className={ `alignpress-badge alignpress-badge--${ status ? 'active' : 'draft' }` }>
-								{ status ? __( 'Active', 'alignpress' ) : __( 'Draft', 'alignpress' ) }
+							<span className={ `stepwise-badge stepwise-badge--${ status ? 'active' : 'draft' }` }>
+								{ status ? __( 'Active', 'stepwise' ) : __( 'Draft', 'stepwise' ) }
 							</span>
 						) }
 					</div>
 
 					<div className="ap-sidebar-panel__row ap-sidebar-panel__row--stack">
-						<span className="ap-sidebar-panel__label">{ __( 'CATEGORY', 'alignpress' ) }</span>
+						<span className="ap-sidebar-panel__label">{ __( 'CATEGORY', 'stepwise' ) }</span>
 						{ canEdit ? (
 							<select
-								className="alignpress-select"
+								className="stepwise-select"
 								value={ category }
 								onChange={ ( e ) => handleCategoryChange( e.target.value ) }
 								disabled={ saving }
 							>
 								{ CATEGORIES.map( ( c ) => (
-									<option key={ c } value={ c }>{ c || __( '— None —', 'alignpress' ) }</option>
+									<option key={ c } value={ c }>{ c || __( '— None —', 'stepwise' ) }</option>
 								) ) }
 							</select>
 						) : (
-							<span className="ap-sidebar-panel__value">{ category || __( '— None —', 'alignpress' ) }</span>
+							<span className="ap-sidebar-panel__value">{ category || __( '— None —', 'stepwise' ) }</span>
 						) }
 					</div>
 
 					<div className="ap-sidebar-panel__row ap-sidebar-panel__row--stack">
-						<span className="ap-sidebar-panel__label">{ __( 'CREATED', 'alignpress' ) }</span>
+						<span className="ap-sidebar-panel__label">{ __( 'CREATED', 'stepwise' ) }</span>
 						<span className="ap-sidebar-panel__value">{ fmt( workflow.created_at ) }</span>
 					</div>
 
 					<div className="ap-sidebar-panel__row ap-sidebar-panel__row--stack">
-						<span className="ap-sidebar-panel__label">{ __( 'LAST MODIFIED', 'alignpress' ) }</span>
+						<span className="ap-sidebar-panel__label">{ __( 'LAST MODIFIED', 'stepwise' ) }</span>
 						<span className="ap-sidebar-panel__value">{ fmt( workflow.updated_at ) }</span>
 					</div>
 
 					<div className="ap-sidebar-panel__row ap-sidebar-panel__row--stack">
-						<span className="ap-sidebar-panel__label">{ __( 'TIMES RUN', 'alignpress' ) }</span>
+						<span className="ap-sidebar-panel__label">{ __( 'TIMES RUN', 'stepwise' ) }</span>
 						<span className="ap-sidebar-panel__value">
 							{ workflow.run_count > 0
 								? sprintf(
 									/* translators: %d: number of times run */
-									__( '%d times', 'alignpress' ),
+									__( '%d times', 'stepwise' ),
 									workflow.run_count
 								)
-								: __( 'Never', 'alignpress' )
+								: __( 'Never', 'stepwise' )
 							}
 						</span>
 					</div>
@@ -367,25 +367,25 @@ const PlaybookSettingsPanel = ( { workflow, workflowId } ) => {
 
 			{ showConfirm && (
 				<Modal
-					title={ __( 'Deactivate Workflow?', 'alignpress' ) }
+					title={ __( 'Deactivate Workflow?', 'stepwise' ) }
 					onClose={ () => setShowConfirm( false ) }
 					size="sm"
 					footer={
 						<>
 							<Button variant="ghost" onClick={ () => setShowConfirm( false ) }>
-								{ __( 'Cancel', 'alignpress' ) }
+								{ __( 'Cancel', 'stepwise' ) }
 							</Button>
 							<Button variant="danger" onClick={ () => confirmStatusChange( false ) }>
-								{ __( 'Yes, Deactivate', 'alignpress' ) }
+								{ __( 'Yes, Deactivate', 'stepwise' ) }
 							</Button>
 						</>
 					}
 				>
-					<p>{ __( 'Setting this workflow to Draft will:', 'alignpress' ) }</p>
+					<p>{ __( 'Setting this workflow to Draft will:', 'stepwise' ) }</p>
 					<ul className="ap-confirm-list">
-						<li>{ __( 'Hide it from the Run Workflow list', 'alignpress' ) }</li>
-						<li>{ __( 'Prevent anyone from starting a new run', 'alignpress' ) }</li>
-						<li>{ __( 'Any run currently in progress will be allowed to finish', 'alignpress' ) }</li>
+						<li>{ __( 'Hide it from the Run Workflow list', 'stepwise' ) }</li>
+						<li>{ __( 'Prevent anyone from starting a new run', 'stepwise' ) }</li>
+						<li>{ __( 'Any run currently in progress will be allowed to finish', 'stepwise' ) }</li>
 					</ul>
 				</Modal>
 			) }
@@ -400,12 +400,12 @@ const StepBuilder = ( { workflowId } ) => {
 	const [ activeTab, setActiveTab ]             = useState( 'steps' );
 	const [ showPushModal, setShowPushModal ]     = useState( false );
 
-	const { fetchWorkflows, saveWorkflow } = useDispatch( 'alignpress/workflows' );
-	const { fetchSteps }                   = useDispatch( 'alignpress/steps' );
+	const { fetchWorkflows, saveWorkflow } = useDispatch( 'stepwise/workflows' );
+	const { fetchSteps }                   = useDispatch( 'stepwise/steps' );
 
-	const workflow = useSelect( ( select ) => select( 'alignpress/workflows' ).getWorkflow( workflowId ) );
-	const steps    = useSelect( ( select ) => select( 'alignpress/steps' ).getSteps( workflowId ) );
-	const isSaving = useSelect( ( select ) => select( 'alignpress/workflows' ).isSaving() );
+	const workflow = useSelect( ( select ) => select( 'stepwise/workflows' ).getWorkflow( workflowId ) );
+	const steps    = useSelect( ( select ) => select( 'stepwise/steps' ).getSteps( workflowId ) );
+	const isSaving = useSelect( ( select ) => select( 'stepwise/workflows' ).isSaving() );
 
 	useEffect( () => {
 		fetchWorkflows();
@@ -429,7 +429,7 @@ const StepBuilder = ( { workflowId } ) => {
 	const handleOpenPushModal = () => {
 		if ( ! workflow.category ) {
 			// eslint-disable-next-line no-alert
-			alert( __( 'Please select a category in Playbook Settings before pushing to the cloud.', 'alignpress' ) );
+			alert( __( 'Please select a category in Playbook Settings before pushing to the cloud.', 'stepwise' ) );
 			return;
 		}
 		setShowPushModal( true );
@@ -440,13 +440,13 @@ const StepBuilder = ( { workflowId } ) => {
 		setEditingWorkflow( false );
 	};
 
-	const backUrl = `${ window.alignpressData?.adminUrl ?? '' }admin.php?page=alignpress`;
+	const backUrl = `${ window.stepwiseData?.adminUrl ?? '' }admin.php?page=stepwise`;
 
 	return (
 		<div className="ap-step-builder">
 			<div className="ap-step-builder__header">
 				<a href={ backUrl } className="ap-back-link">
-					← { __( 'All Workflows', 'alignpress' ) }
+					← { __( 'All Workflows', 'stepwise' ) }
 				</a>
 
 				<div className="ap-step-builder__title-row">
@@ -454,24 +454,24 @@ const StepBuilder = ( { workflowId } ) => {
 						<div className="ap-step-builder__title-edit">
 							<input
 								type="text"
-								className="alignpress-input alignpress-input--title"
+								className="stepwise-input stepwise-input--title"
 								value={ titleDraft }
 								onChange={ ( e ) => setTitleDraft( e.target.value ) }
 								autoFocus
 							/>
 							<textarea
-								className="alignpress-input ap-textarea"
+								className="stepwise-input ap-textarea"
 								value={ descDraft }
 								onChange={ ( e ) => setDescDraft( e.target.value ) }
-								placeholder={ __( 'Description (optional)', 'alignpress' ) }
+								placeholder={ __( 'Description (optional)', 'stepwise' ) }
 								rows={ 2 }
 							/>
 							<div className="ap-step-builder__title-actions">
 								<Button variant="primary" size="sm" onClick={ handleSaveWorkflow } disabled={ isSaving }>
-									{ isSaving ? __( 'Saving…', 'alignpress' ) : __( 'Save', 'alignpress' ) }
+									{ isSaving ? __( 'Saving…', 'stepwise' ) : __( 'Save', 'stepwise' ) }
 								</Button>
 								<Button variant="ghost" size="sm" onClick={ () => setEditingWorkflow( false ) }>
-									{ __( 'Cancel', 'alignpress' ) }
+									{ __( 'Cancel', 'stepwise' ) }
 								</Button>
 							</div>
 						</div>
@@ -487,17 +487,17 @@ const StepBuilder = ( { workflowId } ) => {
 								<Badge variant={ workflow.status }>{ workflow.status }</Badge>
 								{ isPushed && (
 									<span className="ap-pushed-badge">
-										{ __( '✓ Pushed to Cloud', 'alignpress' ) }
+										{ __( '✓ Pushed to Cloud', 'stepwise' ) }
 									</span>
 								) }
 								{ canEdit && saasConnected && (
 									<Button variant={ isPushed ? 'secondary' : 'primary' } size="sm" onClick={ handleOpenPushModal }>
-										{ isPushed ? __( 'Assign to Group', 'alignpress' ) : __( 'Push to Cloud', 'alignpress' ) }
+										{ isPushed ? __( 'Assign to Group', 'stepwise' ) : __( 'Push to Cloud', 'stepwise' ) }
 									</Button>
 								) }
 								{ canEdit && (
 									<Button variant="ghost" size="sm" onClick={ () => setEditingWorkflow( true ) }>
-										{ __( 'Edit', 'alignpress' ) }
+										{ __( 'Edit', 'stepwise' ) }
 									</Button>
 								) }
 							</div>
@@ -510,7 +510,7 @@ const StepBuilder = ( { workflowId } ) => {
 						className={ `ap-workflow-tab ${ activeTab === 'steps' ? 'is-active' : '' }` }
 						onClick={ () => setActiveTab( 'steps' ) }
 					>
-						{ __( 'Steps', 'alignpress' ) }
+						{ __( 'Steps', 'stepwise' ) }
 						<span className="ap-workflow-tab__count">{ steps.length }</span>
 					</button>
 					{ canEdit && (
@@ -518,7 +518,7 @@ const StepBuilder = ( { workflowId } ) => {
 							className={ `ap-workflow-tab ${ activeTab === 'history' ? 'is-active' : '' }` }
 							onClick={ () => setActiveTab( 'history' ) }
 						>
-							{ __( 'Run History', 'alignpress' ) }
+							{ __( 'Run History', 'stepwise' ) }
 						</button>
 					) }
 				</div>
@@ -531,17 +531,17 @@ const StepBuilder = ( { workflowId } ) => {
 						<WorkflowChecklist workflow={ workflow } steps={ steps } />
 					) }
 						<div className="ap-step-builder__steps-header">
-							<h2>{ __( 'Steps', 'alignpress' ) }</h2>
+							<h2>{ __( 'Steps', 'stepwise' ) }</h2>
 							<span className="ap-step-count">
 								{ steps.length } { steps.length === 1
-									? __( 'step', 'alignpress' )
-									: __( 'steps', 'alignpress' ) }
+									? __( 'step', 'stepwise' )
+									: __( 'steps', 'stepwise' ) }
 							</span>
 						</div>
 
 						{ stepsLocked && (
 							<div className="ap-steps-locked-notice">
-								{ __( 'Steps are locked — this workflow has been pushed to the cloud.', 'alignpress' ) }
+								{ __( 'Steps are locked — this workflow has been pushed to the cloud.', 'stepwise' ) }
 							</div>
 						) }
 						<StepList workflowId={ workflowId } steps={ steps } canEdit={ canEdit && ! stepsLocked } />

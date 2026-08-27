@@ -1,18 +1,18 @@
 import PropTypes from 'prop-types';
 
 const Toggle = ( { checked, onChange, label, id } ) => (
-	<label className="alignpress-toggle" htmlFor={ id }>
-		<span className="alignpress-toggle__switch">
+	<label className="stepwise-toggle" htmlFor={ id }>
+		<span className="stepwise-toggle__switch">
 			<input
 				id={ id }
 				type="checkbox"
-				className="alignpress-toggle__input"
+				className="stepwise-toggle__input"
 				checked={ checked }
 				onChange={ ( e ) => onChange( e.target.checked ) }
 			/>
-			<span className="alignpress-toggle__track" aria-hidden="true" />
+			<span className="stepwise-toggle__track" aria-hidden="true" />
 		</span>
-		{ label && <span className="alignpress-toggle__label">{ label }</span> }
+		{ label && <span className="stepwise-toggle__label">{ label }</span> }
 	</label>
 );
 

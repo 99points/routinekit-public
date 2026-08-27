@@ -5,7 +5,7 @@ import { __ } from '@wordpress/i18n';
 import AddToWorkflowModal from './AddToWorkflowModal';
 import '../store';
 
-const { captureAutodismiss = 8, captureEnabled = true } = window.alignpressData ?? {};
+const { captureAutodismiss = 8, captureEnabled = true } = window.stepwiseData ?? {};
 
 const CLOSED_KEY = 'ap_toast_closed_ids';
 
@@ -23,17 +23,17 @@ const CaptureToast = () => {
 	const [ visible, setVisible ]     = useState( false );
 	const [ showModal, setShowModal ] = useState( false );
 
-	const { fetchActiveExecution }  = useDispatch( 'alignpress/execution' );
-	const activeExecution = useSelect( ( select ) => select( 'alignpress/execution' ).getActiveExecution() );
+	const { fetchActiveExecution }  = useDispatch( 'stepwise/execution' );
+	const activeExecution = useSelect( ( select ) => select( 'stepwise/execution' ).getActiveExecution() );
 	const hasActiveRun    = !! activeExecution && activeExecution.status === 'in_progress';
 
 	// On mount: fetch execution state, then fetch captures only if a run is active.
 	useEffect( () => {
 		if ( ! captureEnabled ) return;
 		fetchActiveExecution().then( () => {
-			const exec = window.wp?.data?.select( 'alignpress/execution' )?.getActiveExecution();
+			const exec = window.wp?.data?.select( 'stepwise/execution' )?.getActiveExecution();
 			if ( ! exec || exec.status !== 'in_progress' ) return;
-			apiFetch( { path: '/alignpress/v1/capture/all' } )
+			apiFetch( { path: '/stepwise/v1/capture/all' } )
 				.then( ( data ) => {
 					if ( data?.changes?.length > 0 ) {
 						const closedIds  = getClosedIds();
@@ -73,7 +73,7 @@ const CaptureToast = () => {
 
 	const handleDismiss = () => {
 		apiFetch( {
-			path:   '/alignpress/v1/capture/dismiss',
+			path:   '/stepwise/v1/capture/dismiss',
 			method: 'DELETE',
 			data:   { capture_ids: changes.map( ( c ) => c.id ) },
 		} ).catch( () => {} );
@@ -90,34 +90,34 @@ const CaptureToast = () => {
 					type="button"
 					className="ap-capture-toast__close"
 					onClick={ handleClose }
-					aria-label={ __( 'Close', 'alignpress' ) }
+					aria-label={ __( 'Close', 'stepwise' ) }
 				>
 					&times;
 				</button>
 				<div className="ap-capture-toast__body">
 					<strong>
 						{ count } { count === 1
-							? __( 'setting changed', 'alignpress' )
-							: __( 'settings changed', 'alignpress' ) }
+							? __( 'setting changed', 'stepwise' )
+							: __( 'settings changed', 'stepwise' ) }
 					</strong>
 					<span className="ap-capture-toast__sub">
-						{ __( 'Add to workflow?', 'alignpress' ) }
+						{ __( 'Add to workflow?', 'stepwise' ) }
 					</span>
 				</div>
 				<div className="ap-capture-toast__actions">
 					<button
 						type="button"
-						className="alignpress-btn alignpress-btn--primary alignpress-btn--sm"
+						className="stepwise-btn stepwise-btn--primary stepwise-btn--sm"
 						onClick={ () => setShowModal( true ) }
 					>
-						{ __( 'Add to Workflow', 'alignpress' ) }
+						{ __( 'Add to Workflow', 'stepwise' ) }
 					</button>
 					<button
 						type="button"
-						className="alignpress-btn alignpress-btn--ghost alignpress-btn--sm"
+						className="stepwise-btn stepwise-btn--ghost stepwise-btn--sm"
 						onClick={ handleDismiss }
 					>
-						{ __( 'Dismiss', 'alignpress' ) }
+						{ __( 'Dismiss', 'stepwise' ) }
 					</button>
 				</div>
 			</div>

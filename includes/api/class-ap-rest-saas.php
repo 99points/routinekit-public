@@ -8,17 +8,17 @@ defined( 'ABSPATH' ) || exit;
  */
 class AP_REST_SaaS {
 
-	protected string $namespace = ALIGNPRESS_REST_NAMESPACE;
+	protected string $namespace = STEPWISE_REST_NAMESPACE;
 
 	public function register_routes(): void {
-		// GET /alignpress/v1/saas/groups
+		// GET /stepwise/v1/saas/groups
 		register_rest_route( $this->namespace, '/saas/groups', [
 			'methods'             => WP_REST_Server::READABLE,
 			'callback'            => [ $this, 'get_groups' ],
 			'permission_callback' => [ $this, 'edit_permission' ],
 		] );
 
-		// POST /alignpress/v1/saas/groups/{id}/assign
+		// POST /stepwise/v1/saas/groups/{id}/assign
 		register_rest_route( $this->namespace, '/saas/groups/(?P<id>[\d]+)/assign', [
 			'methods'             => WP_REST_Server::CREATABLE,
 			'callback'            => [ $this, 'assign_to_group' ],
@@ -29,14 +29,14 @@ class AP_REST_SaaS {
 			],
 		] );
 
-		// GET /alignpress/v1/saas/templates — local bundled templates available to all editors; SaaS templates require Pro
+		// GET /stepwise/v1/saas/templates — local bundled templates available to all editors; SaaS templates require Pro
 		register_rest_route( $this->namespace, '/saas/templates', [
 			'methods'             => WP_REST_Server::READABLE,
 			'callback'            => [ $this, 'get_templates' ],
 			'permission_callback' => [ $this, 'editor_permission' ],
 		] );
 
-		// POST /alignpress/v1/saas/import-url
+		// POST /stepwise/v1/saas/import-url
 		register_rest_route( $this->namespace, '/saas/import-url', [
 			'methods'             => WP_REST_Server::CREATABLE,
 			'callback'            => [ $this, 'import_url' ],
@@ -52,7 +52,7 @@ class AP_REST_SaaS {
 			return rest_ensure_response( [ 'groups' => [] ] );
 		}
 
-		$cached = get_transient( 'alignpress_saas_groups' );
+		$cached = get_transient( 'stepwise_saas_groups' );
 		if ( $cached !== false ) {
 			return rest_ensure_response( [ 'groups' => $cached ] );
 		}
@@ -60,18 +60,18 @@ class AP_REST_SaaS {
 		$result = ( new AP_SaaS_Client() )->get_groups();
 
 		if ( is_wp_error( $result ) ) {
-			return new WP_Error( 'alignpress_saas_error', $result->get_error_message(), [ 'status' => 502 ] );
+			return new WP_Error( 'stepwise_saas_error', $result->get_error_message(), [ 'status' => 502 ] );
 		}
 
 		$groups = $result['groups'] ?? [];
-		set_transient( 'alignpress_saas_groups', $groups, 5 * MINUTE_IN_SECONDS );
+		set_transient( 'stepwise_saas_groups', $groups, 5 * MINUTE_IN_SECONDS );
 
 		return rest_ensure_response( [ 'groups' => $groups ] );
 	}
 
 	public function assign_to_group( WP_REST_Request $request ): WP_REST_Response|WP_Error {
 		if ( ! AP_SaaS_Auth::is_connected() ) {
-			return new WP_Error( 'alignpress_not_connected', __( 'Not connected to AlignPress Cloud.', 'alignpress' ), [ 'status' => 400 ] );
+			return new WP_Error( 'stepwise_not_connected', __( 'Not connected to Stepwise Cloud.', 'stepwise' ), [ 'status' => 400 ] );
 		}
 
 		$group_id    = (int) $request['id'];
@@ -79,18 +79,31 @@ class AP_REST_SaaS {
 
 		global $wpdb;
 		$workflow = $wpdb->get_row( $wpdb->prepare(
-			"SELECT * FROM {$wpdb->prefix}alignpress_workflows WHERE id = %d LIMIT 1",
+			"SELECT * FROM {$wpdb->prefix}stepwise_workflows WHERE id = %d LIMIT 1",
 			$workflow_id
 		) );
 
 		if ( ! $workflow ) {
-			return new WP_Error( 'alignpress_not_found', __( 'Workflow not found.', 'alignpress' ), [ 'status' => 404 ] );
+			return new WP_Error( 'stepwise_not_found', __( 'Workflow not found.', 'stepwise' ), [ 'status' => 404 ] );
 		}
 
-		$steps = $wpdb->get_results( $wpdb->prepare(
-			"SELECT * FROM {$wpdb->prefix}alignpress_steps WHERE workflow_id = %d ORDER BY sort_order ASC",
+		$raw_steps = $wpdb->get_results( $wpdb->prepare(
+			"SELECT * FROM {$wpdb->prefix}stepwise_steps WHERE workflow_id = %d ORDER BY sort_order ASC",
 			$workflow_id
 		), ARRAY_A );
+
+		// Whitelist the fields the SaaS needs — never send captured_options (may contain sensitive setting values).
+		$steps = array_map( static function ( $s ) {
+			return [
+				'title'             => $s['title'],
+				'description'       => $s['description'],
+				'deep_link'         => $s['deep_link'],
+				'deep_link_type'    => $s['deep_link_type'],
+				'is_required'       => $s['is_required'],
+				'evidence_required' => $s['evidence_required'],
+				'sort_order'        => $s['sort_order'],
+			];
+		}, $raw_steps );
 
 		// Lock locally BEFORE pushing to the SaaS so the workflow is never in an
 		// unlocked state after distribution. Roll back the lock if the SaaS call fails.
@@ -104,7 +117,7 @@ class AP_REST_SaaS {
 			'pushed_group_ids' => wp_json_encode( $merged_group_ids ),
 		] );
 		if ( is_wp_error( $locked ) ) {
-			return new WP_Error( 'alignpress_db_error', __( 'Could not lock workflow before pushing. Please try again.', 'alignpress' ), [ 'status' => 500 ] );
+			return new WP_Error( 'stepwise_db_error', __( 'Could not lock workflow before pushing. Please try again.', 'stepwise' ), [ 'status' => 500 ] );
 		}
 
 		$result = ( new AP_SaaS_Client() )->assign_workflow_to_group( $group_id, [
@@ -136,17 +149,17 @@ class AP_REST_SaaS {
 		$saas      = [];
 
 		if ( AP_SaaS_Auth::is_connected() ) {
-			$cached = get_transient( 'alignpress_saas_templates' );
+			$cached = get_transient( 'stepwise_saas_templates' );
 			if ( $cached !== false ) {
 				$saas = $cached;
 			} else {
 				$result = ( new AP_SaaS_Client() )->get_templates();
 				if ( is_wp_error( $result ) ) {
 					// SaaS unreachable — log and fall back to local templates only.
-					alignpress_log( 'SaaS templates fetch failed: ' . $result->get_error_message(), 'saas' );
+					stepwise_log( 'SaaS templates fetch failed: ' . $result->get_error_message(), 'saas' );
 				} else {
 					$saas = $result['templates'] ?? [];
-					set_transient( 'alignpress_saas_templates', $saas, 15 * MINUTE_IN_SECONDS );
+					set_transient( 'stepwise_saas_templates', $saas, 15 * MINUTE_IN_SECONDS );
 				}
 			}
 		}
@@ -156,7 +169,7 @@ class AP_REST_SaaS {
 
 	public function import_url( WP_REST_Request $request ): WP_REST_Response|WP_Error {
 		if ( ! AP_SaaS_Auth::is_connected() ) {
-			return new WP_Error( 'alignpress_not_connected', __( 'Not connected to AlignPress Cloud.', 'alignpress' ), [ 'status' => 400 ] );
+			return new WP_Error( 'stepwise_not_connected', __( 'Not connected to Stepwise Cloud.', 'stepwise' ), [ 'status' => 400 ] );
 		}
 
 		$url    = $request->get_param( 'url' );

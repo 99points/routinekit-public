@@ -3,14 +3,14 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * REST controller for alignpress/v1/capture
+ * REST controller for stepwise/v1/capture
  *
  * Serves pending captures to the React toast component, and handles
  * adding captured changes to a workflow as steps.
  */
 class AP_REST_Capture extends WP_REST_Controller {
 
-	protected $namespace = ALIGNPRESS_REST_NAMESPACE;
+	protected $namespace = STEPWISE_REST_NAMESPACE;
 
 	/**
 	 * Register routes.
@@ -109,7 +109,7 @@ class AP_REST_Capture extends WP_REST_Controller {
 	 */
 	public function get_pending( $request ): WP_REST_Response {
 		$user_id     = get_current_user_id();
-		$transient   = get_transient( 'alignpress_pending_captures_' . $user_id );
+		$transient   = get_transient( 'stepwise_pending_captures_' . $user_id );
 
 		// No signal — return empty early
 		if ( false === $transient ) {
@@ -120,7 +120,7 @@ class AP_REST_Capture extends WP_REST_Controller {
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT id, option_name, option_label, old_value, new_value, page_url, captured_at
-				 FROM {$wpdb->prefix}alignpress_capture_buffer
+				 FROM {$wpdb->prefix}stepwise_capture_buffer
 				 WHERE captured_by = %d AND status = 'pending'
 				 ORDER BY captured_at DESC
 				 LIMIT 50",
@@ -130,7 +130,7 @@ class AP_REST_Capture extends WP_REST_Controller {
 		);
 
 		// Consume the transient so it doesn't fire again this page cycle
-		delete_transient( 'alignpress_pending_captures_' . $user_id );
+		delete_transient( 'stepwise_pending_captures_' . $user_id );
 
 		return rest_ensure_response( [
 			'changes' => $rows,
@@ -154,25 +154,25 @@ class AP_REST_Capture extends WP_REST_Controller {
 
 		$workflow = AP_Workflow::get( $workflow_id );
 		if ( ! $workflow ) {
-			return new WP_Error( 'alignpress_not_found', __( 'Workflow not found.', 'alignpress' ), [ 'status' => 404 ] );
+			return new WP_Error( 'stepwise_not_found', __( 'Workflow not found.', 'stepwise' ), [ 'status' => 404 ] );
 		}
 
 		if ( empty( $capture_ids ) ) {
-			return new WP_Error( 'alignpress_invalid', __( 'capture_ids cannot be empty.', 'alignpress' ), [ 'status' => 400 ] );
+			return new WP_Error( 'stepwise_invalid', __( 'capture_ids cannot be empty.', 'stepwise' ), [ 'status' => 400 ] );
 		}
 
 		// Fetch the captures
 		$placeholders = implode( ',', array_fill( 0, count( $capture_ids ), '%d' ) );
 		$rows         = $wpdb->get_results( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}alignpress_capture_buffer WHERE id IN ($placeholders) AND captured_by = %d", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+				"SELECT * FROM {$wpdb->prefix}stepwise_capture_buffer WHERE id IN ($placeholders) AND captured_by = %d", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 				array_merge( $capture_ids, [ $user_id ] )
 			),
 			ARRAY_A
 		);
 
 		if ( empty( $rows ) ) {
-			return new WP_Error( 'alignpress_not_found', __( 'No matching captures found.', 'alignpress' ), [ 'status' => 404 ] );
+			return new WP_Error( 'stepwise_not_found', __( 'No matching captures found.', 'stepwise' ), [ 'status' => 404 ] );
 		}
 
 		// Build a snapshot of captured options for the step
@@ -192,7 +192,7 @@ class AP_REST_Capture extends WP_REST_Controller {
 			if ( count( $rows ) > 1 ) {
 				$step_title .= ' ' . sprintf(
 					/* translators: %d: number of additional captured option changes */
-					__( '(+%d more)', 'alignpress' ),
+					__( '(+%d more)', 'stepwise' ),
 					count( $rows ) - 1
 				);
 			}
@@ -221,7 +221,7 @@ class AP_REST_Capture extends WP_REST_Controller {
 		// Mark captures as added
 		$wpdb->query( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			$wpdb->prepare(
-				"UPDATE {$wpdb->prefix}alignpress_capture_buffer SET status = 'added' WHERE id IN ($placeholders)", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+				"UPDATE {$wpdb->prefix}stepwise_capture_buffer SET status = 'added' WHERE id IN ($placeholders)", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 				$capture_ids
 			)
 		);
@@ -254,7 +254,7 @@ class AP_REST_Capture extends WP_REST_Controller {
 		$user_id      = get_current_user_id();
 
 		// Build insert data — omit 'source' if the column doesn't exist yet.
-		$table      = $wpdb->prefix . 'alignpress_capture_buffer';
+		$table      = $wpdb->prefix . 'stepwise_capture_buffer';
 		$cols       = $wpdb->get_col( "DESC {$table}", 0 ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching
 		$has_source = in_array( 'source', $cols, true );
 
@@ -277,7 +277,7 @@ class AP_REST_Capture extends WP_REST_Controller {
 		$inserted = $wpdb->insert( $table, $row, $formats );
 
 		if ( false === $inserted ) {
-			return new WP_Error( 'alignpress_db_error', __( 'Could not save capture.', 'alignpress' ), [ 'status' => 500 ] );
+			return new WP_Error( 'stepwise_db_error', __( 'Could not save capture.', 'stepwise' ), [ 'status' => 500 ] );
 		}
 
 		$capture_id = $wpdb->insert_id;
@@ -293,8 +293,6 @@ class AP_REST_Capture extends WP_REST_Controller {
 					$deep_link = ltrim( $path . ( $query ? '?' . $query : '' ), '/' );
 				}
 
-				$step_label = $instructions !== '' ? $label . "\n\n" . $instructions : $label;
-
 				$step = AP_Step::create( [
 					'workflow_id'      => $workflow_id,
 					'title'            => $label,
@@ -302,30 +300,29 @@ class AP_REST_Capture extends WP_REST_Controller {
 					'captured_options' => [
 						[
 							'option_name'  => $row['option_name'],
-							'option_label' => $step_label,
+							'option_label' => $label,
 							'old_value'    => $old_value,
 							'new_value'    => $new_value,
 						],
 					],
 				] );
 
-				// Mark capture as added so it doesn't show in the pending review list.
-				$wpdb->update(
-					$table,
-					[ 'status' => 'added' ],
-					[ 'id' => $capture_id ],
-					[ '%s' ],
-					[ '%d' ]
-				);
-
 				if ( ! is_wp_error( $step ) ) {
+					// Mark capture as added only once the step is confirmed created.
+					$wpdb->update(
+						$table,
+						[ 'status' => 'added' ],
+						[ 'id' => $capture_id ],
+						[ '%s' ],
+						[ '%d' ]
+					);
 					return rest_ensure_response( [ 'success' => true, 'id' => $capture_id, 'step' => $step->to_array() ] );
 				}
 			}
 		}
 
 		// No workflow selected — queue to buffer for later review.
-		set_transient( 'alignpress_pending_captures_' . $user_id, true, 5 * MINUTE_IN_SECONDS );
+		set_transient( 'stepwise_pending_captures_' . $user_id, true, 5 * MINUTE_IN_SECONDS );
 
 		return rest_ensure_response( [ 'success' => true, 'id' => $capture_id ] );
 	}
@@ -339,14 +336,19 @@ class AP_REST_Capture extends WP_REST_Controller {
 	public function dismiss( $request ): WP_REST_Response {
 		global $wpdb;
 
-		$capture_ids  = array_map( 'absint', (array) $request->get_param( 'capture_ids' ) );
+		$capture_ids = array_values( array_filter( array_map( 'absint', (array) $request->get_param( 'capture_ids' ) ) ) );
+
+		if ( empty( $capture_ids ) ) {
+			return rest_ensure_response( [ 'dismissed' => true ] );
+		}
+
 		$user_id      = get_current_user_id();
 		$placeholders = implode( ',', array_fill( 0, count( $capture_ids ), '%d' ) );
 
 		$wpdb->query(
 			$wpdb->prepare(
 				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				"UPDATE {$wpdb->prefix}alignpress_capture_buffer SET status = 'dismissed' WHERE id IN ($placeholders) AND captured_by = %d",
+				"UPDATE {$wpdb->prefix}stepwise_capture_buffer SET status = 'dismissed' WHERE id IN ($placeholders) AND captured_by = %d",
 				array_merge( $capture_ids, [ $user_id ] )
 			)
 		);
@@ -369,7 +371,7 @@ class AP_REST_Capture extends WP_REST_Controller {
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT id, option_name, option_label, old_value, new_value, page_url, captured_at
-				 FROM {$wpdb->prefix}alignpress_capture_buffer
+				 FROM {$wpdb->prefix}stepwise_capture_buffer
 				 WHERE captured_by = %d AND status = 'pending'
 				 ORDER BY captured_at DESC
 				 LIMIT 200",
@@ -397,7 +399,7 @@ class AP_REST_Capture extends WP_REST_Controller {
 		global $wpdb;
 
 		$wpdb->query( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- static query, no user input
-			"DELETE FROM {$wpdb->prefix}alignpress_capture_buffer WHERE status IN ('pending', 'dismissed')"
+			"DELETE FROM {$wpdb->prefix}stepwise_capture_buffer WHERE status IN ('pending', 'dismissed')"
 		);
 
 		return rest_ensure_response( [ 'cleared' => true, 'rows_deleted' => $wpdb->rows_affected ] );
@@ -412,6 +414,6 @@ class AP_REST_Capture extends WP_REST_Controller {
 		if ( current_user_can( 'manage_options' ) ) {
 			return true;
 		}
-		return new WP_Error( 'alignpress_forbidden', __( 'You do not have permission to access this resource.', 'alignpress' ), [ 'status' => 403 ] );
+		return new WP_Error( 'stepwise_forbidden', __( 'You do not have permission to access this resource.', 'stepwise' ), [ 'status' => 403 ] );
 	}
 }

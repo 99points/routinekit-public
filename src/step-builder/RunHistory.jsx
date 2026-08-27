@@ -4,15 +4,17 @@ import { __ } from '@wordpress/i18n';
 import AuditTrail from '../runner/AuditTrail';
 
 const STATUS_LABEL = {
-	completed:   __( 'Completed', 'alignpress' ),
-	in_progress: __( 'In Progress', 'alignpress' ),
-	abandoned:   __( 'Abandoned', 'alignpress' ),
-	pending:     __( 'Pending', 'alignpress' ),
+	completed:   __( 'Completed', 'stepwise' ),
+	in_progress: __( 'In Progress', 'stepwise' ),
+	paused:      __( 'Paused', 'stepwise' ),
+	abandoned:   __( 'Abandoned', 'stepwise' ),
+	pending:     __( 'Pending', 'stepwise' ),
 };
 
 const STATUS_CLASS = {
 	completed:   'completed',
 	in_progress: 'active',
+	paused:      'paused',
 	abandoned:   'draft',
 	pending:     'draft',
 };
@@ -30,7 +32,7 @@ const RunHistory = ( { workflowId, workflowTitle } ) => {
 	const [ expandedId, setExpandedId ] = useState( null );
 
 	useEffect( () => {
-		apiFetch( { path: `/alignpress/v1/executions?workflow_id=${ workflowId }` } )
+		apiFetch( { path: `/stepwise/v1/executions?workflow_id=${ workflowId }` } )
 			.then( ( data ) => setExecutions( Array.isArray( data ) ? data : [] ) )
 			.catch( () => setExecutions( [] ) )
 			.finally( () => setLoading( false ) );
@@ -43,7 +45,7 @@ const RunHistory = ( { workflowId, workflowTitle } ) => {
 			<div className="ap-run-history">
 				<div className="ap-loading">
 					<span className="spinner is-active" />
-					{ __( 'Loading run history…', 'alignpress' ) }
+					{ __( 'Loading run history…', 'stepwise' ) }
 				</div>
 			</div>
 		);
@@ -53,9 +55,9 @@ const RunHistory = ( { workflowId, workflowTitle } ) => {
 		return (
 			<div className="ap-run-history">
 				<div className="ap-run-history__empty">
-					<p>{ __( 'No runs yet.', 'alignpress' ) }</p>
+					<p>{ __( 'No runs yet.', 'stepwise' ) }</p>
 					<p className="ap-run-history__empty-sub">
-						{ __( 'Use the Run button on the Workflows list to start a run.', 'alignpress' ) }
+						{ __( 'Use the Run button on the Workflows list to start a run.', 'stepwise' ) }
 					</p>
 				</div>
 			</div>
@@ -68,18 +70,18 @@ const RunHistory = ( { workflowId, workflowTitle } ) => {
 				<span className="ap-run-history__count">
 					{ executions.length }{ ' ' }
 					{ executions.length === 1
-						? __( 'run', 'alignpress' )
-						: __( 'runs', 'alignpress' ) }
+						? __( 'run', 'stepwise' )
+						: __( 'runs', 'stepwise' ) }
 				</span>
 			</div>
 
-			<table className="alignpress-table ap-run-history__table">
+			<table className="stepwise-table ap-run-history__table">
 				<thead>
 					<tr>
-						<th>{ __( 'Status', 'alignpress' ) }</th>
-						<th>{ __( 'Started', 'alignpress' ) }</th>
-						<th>{ __( 'Completed', 'alignpress' ) }</th>
-						<th>{ __( 'Run by', 'alignpress' ) }</th>
+						<th>{ __( 'Status', 'stepwise' ) }</th>
+						<th>{ __( 'Started', 'stepwise' ) }</th>
+						<th>{ __( 'Completed / Paused', 'stepwise' ) }</th>
+						<th>{ __( 'Run by', 'stepwise' ) }</th>
 						<th></th>
 					</tr>
 				</thead>
@@ -90,13 +92,22 @@ const RunHistory = ( { workflowId, workflowTitle } ) => {
 								className={ `ap-run-history__row ${ expandedId === ex.id ? 'ap-run-history__row--expanded' : '' }` }
 							>
 								<td>
-									<span className={ `alignpress-badge alignpress-badge--${ STATUS_CLASS[ ex.status ] ?? 'draft' }` }>
+									<span className={ `stepwise-badge stepwise-badge--${ STATUS_CLASS[ ex.status ] ?? 'draft' }` }>
 										{ STATUS_LABEL[ ex.status ] ?? ex.status }
 									</span>
 								</td>
 								<td className="ap-run-history__date">{ fmt( ex.started_at ) }</td>
-								<td className="ap-run-history__date">{ fmt( ex.completed_at ) }</td>
-								<td className="ap-run-history__user">{ ex.started_by }</td>
+								<td className="ap-run-history__date">
+									{ ex.status === 'paused' ? fmt( ex.paused_at ) : fmt( ex.completed_at ) }
+								</td>
+								<td className="ap-run-history__user">
+									{ ex.started_by }
+									{ ex.status === 'paused' && ex.paused_by && (
+										<span className="ap-run-history__paused-by">
+											{ ' · ' }{ __( 'paused by', 'stepwise' ) }{ ' ' }{ ex.paused_by }
+										</span>
+									) }
+								</td>
 								<td className="ap-run-history__action">
 									{ ex.status === 'completed' && (
 										<button
@@ -105,8 +116,8 @@ const RunHistory = ( { workflowId, workflowTitle } ) => {
 											onClick={ () => toggleAudit( ex.id ) }
 										>
 											{ expandedId === ex.id
-												? __( 'Hide audit trail ▲', 'alignpress' )
-												: __( 'View audit trail ▼', 'alignpress' ) }
+												? __( 'Hide audit trail ▲', 'stepwise' )
+												: __( 'View audit trail ▼', 'stepwise' ) }
 										</button>
 									) }
 								</td>

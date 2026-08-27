@@ -11,39 +11,39 @@ class AP_Settings {
 	 */
 	public function register_settings(): void {
 		// Auto-capture
-		register_setting( 'alignpress_capture', 'alignpress_capture_enabled',     [ 'type' => 'boolean', 'default' => true,            'sanitize_callback' => 'rest_sanitize_boolean' ] );
-		register_setting( 'alignpress_capture', 'alignpress_capture_scope',       [ 'type' => 'string',  'default' => 'all_changes',   'sanitize_callback' => [ $this, 'sanitize_capture_scope' ] ] );
-		register_setting( 'alignpress_capture', 'alignpress_capture_exclude',     [ 'type' => 'string',  'default' => 'session_tokens, transient_*, _site_transient_*', 'sanitize_callback' => 'sanitize_text_field' ] );
-		register_setting( 'alignpress_capture', 'alignpress_capture_retention',   [ 'type' => 'integer', 'default' => 7,               'sanitize_callback' => 'absint' ] );
-		register_setting( 'alignpress_capture', 'alignpress_capture_min_changes', [ 'type' => 'integer', 'default' => 1,               'sanitize_callback' => 'absint' ] );
+		register_setting( 'stepwise_capture', 'stepwise_capture_enabled',     [ 'type' => 'boolean', 'default' => true,            'sanitize_callback' => 'rest_sanitize_boolean' ] );
+		register_setting( 'stepwise_capture', 'stepwise_capture_scope',       [ 'type' => 'string',  'default' => 'all_changes',   'sanitize_callback' => [ $this, 'sanitize_capture_scope' ] ] );
+		register_setting( 'stepwise_capture', 'stepwise_capture_exclude',     [ 'type' => 'string',  'default' => 'session_tokens, transient_*, _site_transient_*', 'sanitize_callback' => 'sanitize_text_field' ] );
+		register_setting( 'stepwise_capture', 'stepwise_capture_retention',   [ 'type' => 'integer', 'default' => 30,              'sanitize_callback' => 'absint' ] );
+		register_setting( 'stepwise_capture', 'stepwise_capture_min_changes', [ 'type' => 'integer', 'default' => 1,               'sanitize_callback' => 'absint' ] );
 
 		// Notifications & Toast
-		register_setting( 'alignpress_ui', 'alignpress_toast_enabled',     [ 'type' => 'boolean', 'default' => true,  'sanitize_callback' => 'rest_sanitize_boolean' ] );
-		register_setting( 'alignpress_ui', 'alignpress_toast_autodismiss', [ 'type' => 'integer', 'default' => 0,     'sanitize_callback' => 'absint' ] );
-		register_setting( 'alignpress_ui', 'alignpress_launcher_enabled',  [ 'type' => 'boolean', 'default' => true,  'sanitize_callback' => 'rest_sanitize_boolean' ] );
-		register_setting( 'alignpress_ui', 'alignpress_runner_position',   [ 'type' => 'string',  'default' => 'right', 'sanitize_callback' => [ $this, 'sanitize_runner_position' ] ] );
+		register_setting( 'stepwise_ui', 'stepwise_toast_enabled',     [ 'type' => 'boolean', 'default' => true,  'sanitize_callback' => 'rest_sanitize_boolean' ] );
+		register_setting( 'stepwise_ui', 'stepwise_toast_autodismiss', [ 'type' => 'integer', 'default' => 0,     'sanitize_callback' => 'absint' ] );
+		register_setting( 'stepwise_ui', 'stepwise_launcher_enabled',  [ 'type' => 'boolean', 'default' => true,  'sanitize_callback' => 'rest_sanitize_boolean' ] );
+		register_setting( 'stepwise_ui', 'stepwise_runner_position',   [ 'type' => 'string',  'default' => 'right', 'sanitize_callback' => [ $this, 'sanitize_runner_position' ] ] );
 
 		// Playbook defaults
-		register_setting( 'alignpress_defaults', 'alignpress_default_status',   [ 'type' => 'string',  'default' => 'active', 'sanitize_callback' => [ $this, 'sanitize_default_status' ] ] );
-		register_setting( 'alignpress_defaults', 'alignpress_default_category', [ 'type' => 'string',  'default' => '',       'sanitize_callback' => 'sanitize_text_field' ] );
-		register_setting( 'alignpress_defaults', 'alignpress_show_run_button',  [ 'type' => 'boolean', 'default' => true,     'sanitize_callback' => 'rest_sanitize_boolean' ] );
+		register_setting( 'stepwise_defaults', 'stepwise_default_status',   [ 'type' => 'string',  'default' => 'active', 'sanitize_callback' => [ $this, 'sanitize_default_status' ] ] );
+		register_setting( 'stepwise_defaults', 'stepwise_default_category', [ 'type' => 'string',  'default' => '',       'sanitize_callback' => 'sanitize_text_field' ] );
+		register_setting( 'stepwise_defaults', 'stepwise_show_run_button',  [ 'type' => 'boolean', 'default' => true,     'sanitize_callback' => 'rest_sanitize_boolean' ] );
 
 		// Team & access
-		register_setting( 'alignpress_access', 'alignpress_roles_view', [ 'type' => 'array', 'default' => [ 'administrator' ], 'sanitize_callback' => [ $this, 'sanitize_roles' ] ] );
-		register_setting( 'alignpress_access', 'alignpress_roles_run',  [ 'type' => 'array', 'default' => [ 'administrator' ], 'sanitize_callback' => [ $this, 'sanitize_roles' ] ] );
-		register_setting( 'alignpress_access', 'alignpress_roles_edit', [ 'type' => 'array', 'default' => [ 'administrator' ], 'sanitize_callback' => [ $this, 'sanitize_roles' ] ] );
+		register_setting( 'stepwise_access', 'stepwise_roles_view', [ 'type' => 'array', 'default' => [ 'administrator' ], 'sanitize_callback' => [ $this, 'sanitize_roles' ] ] );
+		register_setting( 'stepwise_access', 'stepwise_roles_run',  [ 'type' => 'array', 'default' => [ 'administrator' ], 'sanitize_callback' => [ $this, 'sanitize_roles' ] ] );
+		register_setting( 'stepwise_access', 'stepwise_roles_edit', [ 'type' => 'array', 'default' => [ 'administrator' ], 'sanitize_callback' => [ $this, 'sanitize_roles' ] ] );
 
 		// Email notifications
-		register_setting( 'alignpress_notifications', 'alignpress_notify_assigned',  [ 'type' => 'boolean', 'default' => true,  'sanitize_callback' => 'rest_sanitize_boolean' ] );
-		register_setting( 'alignpress_notifications', 'alignpress_notify_completed', [ 'type' => 'boolean', 'default' => true,  'sanitize_callback' => 'rest_sanitize_boolean' ] );
-		register_setting( 'alignpress_notifications', 'alignpress_notify_skipped',   [ 'type' => 'boolean', 'default' => false, 'sanitize_callback' => 'rest_sanitize_boolean' ] );
-		register_setting( 'alignpress_notifications', 'alignpress_notify_email',     [ 'type' => 'string',  'default' => '',    'sanitize_callback' => 'sanitize_email' ] );
+		register_setting( 'stepwise_notifications', 'stepwise_notify_assigned',  [ 'type' => 'boolean', 'default' => true,  'sanitize_callback' => 'rest_sanitize_boolean' ] );
+		register_setting( 'stepwise_notifications', 'stepwise_notify_completed', [ 'type' => 'boolean', 'default' => true,  'sanitize_callback' => 'rest_sanitize_boolean' ] );
+		register_setting( 'stepwise_notifications', 'stepwise_notify_skipped',   [ 'type' => 'boolean', 'default' => false, 'sanitize_callback' => 'rest_sanitize_boolean' ] );
+		register_setting( 'stepwise_notifications', 'stepwise_notify_email',     [ 'type' => 'string',  'default' => '',    'sanitize_callback' => 'sanitize_email' ] );
 
 		// SaaS / cloud
-		register_setting( 'alignpress_saas', 'alignpress_saas_url',       [ 'type' => 'string', 'default' => ALIGNPRESS_SAAS_DEFAULT_URL, 'sanitize_callback' => 'esc_url_raw' ] );
-		register_setting( 'alignpress_saas', 'alignpress_site_token',     [ 'type' => 'string', 'default' => '',                         'sanitize_callback' => 'sanitize_text_field' ] );
-		register_setting( 'alignpress_saas', 'alignpress_site_nickname',  [ 'type' => 'string', 'default' => '',                         'sanitize_callback' => 'sanitize_text_field' ] );
-		register_setting( 'alignpress_saas', 'alignpress_last_sync',      [ 'type' => 'string', 'default' => '',                         'sanitize_callback' => 'sanitize_text_field' ] );
+		register_setting( 'stepwise_saas', 'stepwise_saas_url',       [ 'type' => 'string', 'default' => STEPWISE_SAAS_DEFAULT_URL, 'sanitize_callback' => 'esc_url_raw' ] );
+		register_setting( 'stepwise_saas', 'stepwise_site_token',     [ 'type' => 'string', 'default' => '',                         'sanitize_callback' => 'sanitize_text_field' ] );
+		register_setting( 'stepwise_saas', 'stepwise_site_nickname',  [ 'type' => 'string', 'default' => '',                         'sanitize_callback' => 'sanitize_text_field' ] );
+		register_setting( 'stepwise_saas', 'stepwise_last_sync',      [ 'type' => 'string', 'default' => '',                         'sanitize_callback' => 'sanitize_text_field' ] );
 	}
 
 	/**
@@ -51,20 +51,20 @@ class AP_Settings {
 	 * Called on rest_api_init.
 	 */
 	public function register_rest_routes(): void {
-		register_rest_route( ALIGNPRESS_REST_NAMESPACE, '/settings', [
+		register_rest_route( STEPWISE_REST_NAMESPACE, '/settings', [
 			'methods'             => WP_REST_Server::CREATABLE,
 			'callback'            => [ $this, 'rest_save_settings' ],
 			'permission_callback' => static fn() => current_user_can( 'manage_options' ),
 		] );
 
-		register_rest_route( ALIGNPRESS_REST_NAMESPACE, '/reset', [
+		register_rest_route( STEPWISE_REST_NAMESPACE, '/reset', [
 			'methods'             => WP_REST_Server::DELETABLE,
 			'callback'            => [ $this, 'rest_reset_all' ],
 			'permission_callback' => static fn() => current_user_can( 'manage_options' ),
 		] );
 
-		// POST /alignpress/v1/settings/saas/connect — activate a license key (used by Upgrade page)
-		register_rest_route( ALIGNPRESS_REST_NAMESPACE, '/settings/saas/connect', [
+		// POST /stepwise/v1/settings/saas/connect — activate a license key (used by Upgrade page)
+		register_rest_route( STEPWISE_REST_NAMESPACE, '/settings/saas/connect', [
 			'methods'             => WP_REST_Server::CREATABLE,
 			'callback'            => [ $this, 'rest_saas_connect' ],
 			'permission_callback' => static fn() => current_user_can( 'manage_options' ),
@@ -73,15 +73,15 @@ class AP_Settings {
 			],
 		] );
 
-		// POST /alignpress/v1/settings/saas/disconnect — disconnect the site
-		register_rest_route( ALIGNPRESS_REST_NAMESPACE, '/settings/saas/disconnect', [
+		// POST /stepwise/v1/settings/saas/disconnect — disconnect the site
+		register_rest_route( STEPWISE_REST_NAMESPACE, '/settings/saas/disconnect', [
 			'methods'             => WP_REST_Server::CREATABLE,
 			'callback'            => [ $this, 'rest_saas_disconnect' ],
 			'permission_callback' => static fn() => current_user_can( 'manage_options' ),
 		] );
 
-		// POST /alignpress/v1/settings/saas/staging — toggle staging mode
-		register_rest_route( ALIGNPRESS_REST_NAMESPACE, '/settings/saas/staging', [
+		// POST /stepwise/v1/settings/saas/staging — toggle staging mode
+		register_rest_route( STEPWISE_REST_NAMESPACE, '/settings/saas/staging', [
 			'methods'             => WP_REST_Server::CREATABLE,
 			'callback'            => [ $this, 'rest_saas_staging' ],
 			'permission_callback' => static fn() => current_user_can( 'manage_options' ),
@@ -95,40 +95,31 @@ class AP_Settings {
 	 * Save all general settings via REST.
 	 */
 	public function rest_save_settings( WP_REST_Request $request ): WP_REST_Response {
-		// Retention is plan-gated: free plan capped at 7, Pro at 90. Never let the
-		// client write an arbitrary value — compute it from the actual plan instead.
-		$retention_param = $request->get_param( 'alignpress_capture_retention' );
-		if ( null !== $retention_param ) {
-			$is_pro    = alignpress_is_pro();
-			$max       = $is_pro ? 90 : 7;
-			$requested = absint( $retention_param );
-			update_option( 'alignpress_capture_retention', min( $requested, $max ) );
-		}
-
 		$map = [
-			// capture (retention handled above)
-			'alignpress_capture_enabled'     => 'rest_sanitize_boolean',
-			'alignpress_capture_scope'       => [ $this, 'sanitize_capture_scope' ],
-			'alignpress_capture_exclude'     => 'sanitize_text_field',
-			'alignpress_capture_min_changes' => 'absint',
+			// capture
+			'stepwise_capture_enabled'     => 'rest_sanitize_boolean',
+			'stepwise_capture_scope'       => [ $this, 'sanitize_capture_scope' ],
+			'stepwise_capture_exclude'     => 'sanitize_text_field',
+			'stepwise_capture_retention'   => 'absint',
+			'stepwise_capture_min_changes' => 'absint',
 			// toast/ui
-			'alignpress_toast_enabled'       => 'rest_sanitize_boolean',
-			'alignpress_toast_autodismiss'   => 'absint',
-			'alignpress_launcher_enabled'    => 'rest_sanitize_boolean',
-			'alignpress_runner_position'     => [ $this, 'sanitize_runner_position' ],
+			'stepwise_toast_enabled'       => 'rest_sanitize_boolean',
+			'stepwise_toast_autodismiss'   => 'absint',
+			'stepwise_launcher_enabled'    => 'rest_sanitize_boolean',
+			'stepwise_runner_position'     => [ $this, 'sanitize_runner_position' ],
 			// defaults
-			'alignpress_default_status'      => [ $this, 'sanitize_default_status' ],
-			'alignpress_default_category'    => 'sanitize_text_field',
-			'alignpress_show_run_button'     => 'rest_sanitize_boolean',
+			'stepwise_default_status'      => [ $this, 'sanitize_default_status' ],
+			'stepwise_default_category'    => 'sanitize_text_field',
+			'stepwise_show_run_button'     => 'rest_sanitize_boolean',
 			// access
-			'alignpress_roles_view'          => [ $this, 'sanitize_roles' ],
-			'alignpress_roles_run'           => [ $this, 'sanitize_roles' ],
-			'alignpress_roles_edit'          => [ $this, 'sanitize_roles' ],
+			'stepwise_roles_view'          => [ $this, 'sanitize_roles' ],
+			'stepwise_roles_run'           => [ $this, 'sanitize_roles' ],
+			'stepwise_roles_edit'          => [ $this, 'sanitize_roles' ],
 			// notifications
-			'alignpress_notify_assigned'     => 'rest_sanitize_boolean',
-			'alignpress_notify_completed'    => 'rest_sanitize_boolean',
-			'alignpress_notify_skipped'      => 'rest_sanitize_boolean',
-			'alignpress_notify_email'        => 'sanitize_email',
+			'stepwise_notify_assigned'     => 'rest_sanitize_boolean',
+			'stepwise_notify_completed'    => 'rest_sanitize_boolean',
+			'stepwise_notify_skipped'      => 'rest_sanitize_boolean',
+			'stepwise_notify_email'        => 'sanitize_email',
 		];
 
 		foreach ( $map as $option => $sanitizer ) {
@@ -148,11 +139,12 @@ class AP_Settings {
 		global $wpdb;
 
 		$tables = [
-			$wpdb->prefix . 'alignpress_step_completions',
-			$wpdb->prefix . 'alignpress_executions',
-			$wpdb->prefix . 'alignpress_capture_buffer',
-			$wpdb->prefix . 'alignpress_steps',
-			$wpdb->prefix . 'alignpress_workflows',
+			$wpdb->prefix . 'stepwise_step_completions',
+			$wpdb->prefix . 'stepwise_step_notes',
+			$wpdb->prefix . 'stepwise_executions',
+			$wpdb->prefix . 'stepwise_capture_buffer',
+			$wpdb->prefix . 'stepwise_steps',
+			$wpdb->prefix . 'stepwise_workflows',
 		];
 
 		foreach ( $tables as $table ) {
@@ -160,15 +152,17 @@ class AP_Settings {
 		}
 
 		$options = [
-			'alignpress_capture_enabled', 'alignpress_capture_scope', 'alignpress_capture_exclude',
-			'alignpress_capture_retention', 'alignpress_capture_min_changes',
-			'alignpress_toast_enabled', 'alignpress_toast_autodismiss', 'alignpress_launcher_enabled',
-			'alignpress_runner_position', 'alignpress_default_status', 'alignpress_default_category',
-			'alignpress_show_run_button', 'alignpress_roles_view', 'alignpress_roles_run',
-			'alignpress_roles_edit', 'alignpress_notify_assigned', 'alignpress_notify_completed',
-			'alignpress_notify_skipped', 'alignpress_notify_email',
-			'alignpress_saas_url', 'alignpress_site_token', 'alignpress_site_nickname',
-			'alignpress_last_sync', 'alignpress_db_version',
+			'stepwise_capture_enabled', 'stepwise_capture_scope', 'stepwise_capture_exclude',
+			'stepwise_capture_retention', 'stepwise_capture_min_changes',
+			'stepwise_toast_enabled', 'stepwise_toast_autodismiss', 'stepwise_launcher_enabled',
+			'stepwise_runner_position', 'stepwise_default_status', 'stepwise_default_category',
+			'stepwise_show_run_button', 'stepwise_roles_view', 'stepwise_roles_run',
+			'stepwise_roles_edit', 'stepwise_notify_assigned', 'stepwise_notify_completed',
+			'stepwise_notify_skipped', 'stepwise_notify_email',
+			'stepwise_saas_url', 'stepwise_site_token', 'stepwise_site_nickname',
+			'stepwise_last_sync', 'stepwise_db_version',
+			'stepwise_site_api_key', 'stepwise_site_id', 'stepwise_license_key',
+			'stepwise_license_plan', 'stepwise_saas_team', 'stepwise_staging_mode',
 		];
 
 		foreach ( $options as $opt ) {
@@ -179,14 +173,14 @@ class AP_Settings {
 	}
 
 	/**
-	 * POST /alignpress/v1/settings/saas/connect
+	 * POST /stepwise/v1/settings/saas/connect
 	 */
 	public function rest_saas_connect( WP_REST_Request $request ): WP_REST_Response|WP_Error {
 		$license_key = $request->get_param( 'license_key' );
 		$result      = AP_SaaS_Auth::connect( $license_key );
 
 		if ( is_wp_error( $result ) ) {
-			return new WP_Error( 'alignpress_connect_failed', $result->get_error_message(), [ 'status' => 400 ] );
+			return new WP_Error( 'stepwise_connect_failed', $result->get_error_message(), [ 'status' => 400 ] );
 		}
 
 		return new WP_REST_Response( [
@@ -197,7 +191,7 @@ class AP_Settings {
 	}
 
 	/**
-	 * POST /alignpress/v1/settings/saas/disconnect
+	 * POST /stepwise/v1/settings/saas/disconnect
 	 */
 	public function rest_saas_disconnect(): WP_REST_Response {
 		AP_SaaS_Auth::disconnect();
@@ -206,7 +200,7 @@ class AP_Settings {
 
 	public function rest_saas_staging( WP_REST_Request $request ): WP_REST_Response {
 		$enabled = (bool) $request->get_param( 'enabled' );
-		update_option( 'alignpress_staging_mode', $enabled );
+		update_option( 'stepwise_staging_mode', $enabled );
 		return new WP_REST_Response( [ 'success' => true, 'staging_mode' => $enabled ], 200 );
 	}
 
@@ -248,25 +242,25 @@ class AP_Settings {
 		$string = [ 'type' => 'string',  'validate_callback' => '__return_true' ];
 		$array  = [ 'type' => 'array',   'validate_callback' => '__return_true' ];
 		return [
-			'alignpress_capture_enabled'     => $bool,
-			'alignpress_capture_scope'       => $string,
-			'alignpress_capture_exclude'     => $string,
-			'alignpress_capture_retention'   => $int,
-			'alignpress_capture_min_changes' => $int,
-			'alignpress_toast_enabled'       => $bool,
-			'alignpress_toast_autodismiss'   => $int,
-			'alignpress_launcher_enabled'    => $bool,
-			'alignpress_runner_position'     => $string,
-			'alignpress_default_status'      => $string,
-			'alignpress_default_category'    => $string,
-			'alignpress_show_run_button'     => $bool,
-			'alignpress_roles_view'          => $array,
-			'alignpress_roles_run'           => $array,
-			'alignpress_roles_edit'          => $array,
-			'alignpress_notify_assigned'     => $bool,
-			'alignpress_notify_completed'    => $bool,
-			'alignpress_notify_skipped'      => $bool,
-			'alignpress_notify_email'        => $string,
+			'stepwise_capture_enabled'     => $bool,
+			'stepwise_capture_scope'       => $string,
+			'stepwise_capture_exclude'     => $string,
+			'stepwise_capture_retention'   => $int,
+			'stepwise_capture_min_changes' => $int,
+			'stepwise_toast_enabled'       => $bool,
+			'stepwise_toast_autodismiss'   => $int,
+			'stepwise_launcher_enabled'    => $bool,
+			'stepwise_runner_position'     => $string,
+			'stepwise_default_status'      => $string,
+			'stepwise_default_category'    => $string,
+			'stepwise_show_run_button'     => $bool,
+			'stepwise_roles_view'          => $array,
+			'stepwise_roles_run'           => $array,
+			'stepwise_roles_edit'          => $array,
+			'stepwise_notify_assigned'     => $bool,
+			'stepwise_notify_completed'    => $bool,
+			'stepwise_notify_skipped'      => $bool,
+			'stepwise_notify_email'        => $string,
 		];
 	}
 }

@@ -19,54 +19,83 @@ const {
 	canEdit         = false,
 	canRun          = false,
 	saasConnected   = false,
-} = window.alignpressData ?? {};
+} = window.stepwiseData ?? {};
 
 const FREE_LOCAL_LIMIT = 3;
 
 // ── Connect Gate Modal ────────────────────────────────────────────────────────
 const ConnectGateModal = ( { onClose, onContinue } ) => {
-	const settingsUrl = adminUrl + 'admin.php?page=alignpress-settings#cloud';
+	const settingsUrl = adminUrl + 'admin.php?page=stepwise-settings#cloud';
 	return (
 		<Modal
-			title={ __( 'You\'re on a roll.', 'alignpress' ) }
+			title={ __( 'You\'re on a roll.', 'stepwise' ) }
 			onClose={ onClose }
 			size="sm"
 			footer={
 				<>
 					<Button variant="ghost" onClick={ onContinue }>
-						{ __( 'Maybe later', 'alignpress' ) }
+						{ __( 'Maybe later', 'stepwise' ) }
 					</Button>
-					<a href={ settingsUrl } className="alignpress-btn alignpress-btn--primary">
-						{ __( 'Connect free →', 'alignpress' ) }
+					<a href={ settingsUrl } className="stepwise-btn stepwise-btn--primary">
+						{ __( 'Connect free →', 'stepwise' ) }
 					</a>
 				</>
 			}
 		>
 			<div className="ap-gate-modal">
 				<p className="ap-gate-modal__lead">
-					{ __( 'Free local workflows are limited to 3. But here\'s the thing — connecting your free AlignPress account doesn\'t just remove that limit.', 'alignpress' ) }
+					{ __( 'Free local workflows are limited to 3. But here\'s the thing — connecting your free Stepwise account doesn\'t just remove that limit.', 'stepwise' ) }
 				</p>
 				<ul className="ap-gate-modal__perks">
 					<li>
 						<span className="ap-gate-modal__perk-icon">🌐</span>
-						<span>{ __( 'Push any workflow to up to 3 sites in one click', 'alignpress' ) }</span>
+						<span>{ __( 'Push any workflow to up to 3 sites in one click', 'stepwise' ) }</span>
 					</li>
 					<li>
 						<span className="ap-gate-modal__perk-icon">♾️</span>
-						<span>{ __( 'Unlimited workflows — build as many as you need', 'alignpress' ) }</span>
+						<span>{ __( 'Unlimited workflows — build as many as you need', 'stepwise' ) }</span>
 					</li>
 					<li>
 						<span className="ap-gate-modal__perk-icon">⚡</span>
-						<span>{ __( 'Sync updates to all connected sites instantly', 'alignpress' ) }</span>
+						<span>{ __( 'Sync updates to all connected sites instantly', 'stepwise' ) }</span>
 					</li>
 				</ul>
 				<p className="ap-gate-modal__sub">
-					{ __( 'Takes 30 seconds. No credit card.', 'alignpress' ) }
+					{ __( 'Takes 30 seconds. No credit card.', 'stepwise' ) }
 				</p>
 			</div>
 		</Modal>
 	);
 };
+
+// ── Switch Run Confirmation Modal ─────────────────────────────────────────────
+const SwitchRunModal = ( { currentTitle, nextTitle, onConfirm, onCancel } ) => (
+	<Modal
+		title={ __( 'Switch active workflow?', 'stepwise' ) }
+		onClose={ onCancel }
+		size="sm"
+		footer={
+			<>
+				<Button variant="ghost" onClick={ onCancel }>
+					{ __( 'Keep current run', 'stepwise' ) }
+				</Button>
+				<Button variant="primary" onClick={ onConfirm }>
+					{ __( 'Switch workflow', 'stepwise' ) }
+				</Button>
+			</>
+		}
+	>
+		<p style={ { marginBottom: 12 } }>
+			{ __( 'You have a run in progress:', 'stepwise' ) }{ ' ' }
+			<strong>{ currentTitle }</strong>
+		</p>
+		<p style={ { marginBottom: 0 } }>
+			{ __( 'Switching to', 'stepwise' ) }{ ' ' }
+			<strong>{ nextTitle }</strong>{ ' ' }
+			{ __( 'will pause your current run. Your progress is saved — click Run on it again to resume from where you left off.', 'stepwise' ) }
+		</p>
+	</Modal>
+);
 
 const WorkflowManager = () => {
 	const [ showCreate, setShowCreate ]           = useState( false );
@@ -74,12 +103,14 @@ const WorkflowManager = () => {
 	const [ showImportJson, setShowImportJson ]   = useState( false );
 	const [ showTemplates, setShowTemplates ]     = useState( false );
 	const [ showGate, setShowGate ]               = useState( false );
+	const [ pendingRun, setPendingRun ]           = useState( null ); // { workflowId, workflowTitle }
 
-	const { fetchWorkflows } = useDispatch( 'alignpress/workflows' );
-	const { startExecution, fetchActiveExecution } = useDispatch( 'alignpress/execution' );
+	const { fetchWorkflows } = useDispatch( 'stepwise/workflows' );
+	const { startExecution, fetchActiveExecution } = useDispatch( 'stepwise/execution' );
 
-	const workflows = useSelect( ( select ) => select( 'alignpress/workflows' ).getWorkflows() );
-	const isLoading = useSelect( ( select ) => select( 'alignpress/workflows' ).isLoading() );
+	const workflows      = useSelect( ( select ) => select( 'stepwise/workflows' ).getWorkflows() );
+	const isLoading      = useSelect( ( select ) => select( 'stepwise/workflows' ).isLoading() );
+	const activeExecution = useSelect( ( select ) => select( 'stepwise/execution' ).getActiveExecution() );
 
 	useEffect( () => {
 		fetchWorkflows();
@@ -94,15 +125,37 @@ const WorkflowManager = () => {
 		setShowCreate( true );
 	};
 
+	const handleStartRun = ( workflowId ) => {
+		const isAlreadyRunning = activeExecution?.status === 'in_progress' && activeExecution?.workflow_id === workflowId;
+		const conflictExists   = activeExecution?.status === 'in_progress' && activeExecution?.workflow_id !== workflowId;
+		// A paused run for a different workflow doesn't need a modal — starting will auto-resume theirs and pause this one.
+
+		if ( isAlreadyRunning ) return; // button is disabled in this case anyway
+
+		if ( conflictExists ) {
+			const wf = workflows.find( ( w ) => w.id === workflowId );
+			setPendingRun( { workflowId, workflowTitle: wf?.title ?? __( 'this workflow', 'stepwise' ) } );
+			return;
+		}
+
+		return startExecution( workflowId );
+	};
+
+	const confirmSwitch = () => {
+		if ( ! pendingRun ) return;
+		startExecution( pendingRun.workflowId );
+		setPendingRun( null );
+	};
+
 	return (
 		<div className="ap-workflow-manager">
 			<div className="ap-workflow-manager__header">
-				<h1 className="ap-page-title">{ __( 'Workflows', 'alignpress' ) }</h1>
+				<h1 className="ap-page-title">{ __( 'Workflows', 'stepwise' ) }</h1>
 				{ canEdit && (
 					<div className="ap-workflow-manager__actions">
 						<button
 							type="button"
-							className="alignpress-btn alignpress-btn--ghost alignpress-btn--sm"
+							className="stepwise-btn stepwise-btn--ghost stepwise-btn--sm"
 							onClick={ () => {
 								if ( ! saasConnected && workflows.length >= FREE_LOCAL_LIMIT ) {
 									setShowGate( true );
@@ -111,30 +164,30 @@ const WorkflowManager = () => {
 								setShowTemplates( true );
 							} }
 						>
-							{ __( 'Templates', 'alignpress' ) }
+							{ __( 'Templates', 'stepwise' ) }
 						</button>
 						{ isPro && saasConnected && (
 							<button
 								type="button"
-								className="alignpress-btn alignpress-btn--ghost alignpress-btn--sm"
+								className="stepwise-btn stepwise-btn--ghost stepwise-btn--sm"
 								onClick={ () => setShowImportUrl( true ) }
 							>
-								{ __( 'Import URL', 'alignpress' ) }
+								{ __( 'Import URL', 'stepwise' ) }
 							</button>
 						) }
 						<button
 							type="button"
-							className="alignpress-btn alignpress-btn--ghost alignpress-btn--sm"
+							className="stepwise-btn stepwise-btn--ghost stepwise-btn--sm"
 							onClick={ () => setShowImportJson( true ) }
 						>
-							{ __( 'Import JSON', 'alignpress' ) }
+							{ __( 'Import JSON', 'stepwise' ) }
 						</button>
 						<Button
 							variant="secondary"
 							onClick={ handleCreate }
 							disabled={ isLoading }
 						>
-							{ __( 'Add New Workflow', 'alignpress' ) }
+							{ __( 'Add New Workflow', 'stepwise' ) }
 						</Button>
 					</div>
 				) }
@@ -144,27 +197,36 @@ const WorkflowManager = () => {
 			{ isLoading && (
 				<div className="ap-loading">
 					<span className="spinner is-active" />
-					{ __( 'Loading workflows…', 'alignpress' ) }
+					{ __( 'Loading workflows…', 'stepwise' ) }
 				</div>
 			) }
 
 			{ ! isLoading && (
 				<WorkflowList
 					workflows={ workflows }
-					onStartRun={ ( workflowId ) => startExecution( workflowId ) }
+					onStartRun={ handleStartRun }
 				/>
 			) }
 
 			{ /* Capture status bar */ }
 			{ captureEnabled && (
 				<div className="ap-capture-bar">
-					<strong>{ __( 'Auto-capture is on.', 'alignpress' ) }</strong>
-					{ ' ' }{ __( 'AlignPress is watching for setting changes on this site.', 'alignpress' ) }
+					<strong>{ __( 'Auto-capture is on.', 'stepwise' ) }</strong>
+					{ ' ' }{ __( 'Stepwise is watching for setting changes on this site.', 'stepwise' ) }
 					{ ' ' }
-					<a href={ `${ adminUrl }admin.php?page=alignpress-capture` } className="ap-capture-bar__link">
-						{ __( 'View uncaptured steps →', 'alignpress' ) }
+					<a href={ `${ adminUrl }admin.php?page=stepwise-capture` } className="ap-capture-bar__link">
+						{ __( 'View uncaptured steps →', 'stepwise' ) }
 					</a>
 				</div>
+			) }
+
+			{ pendingRun && (
+				<SwitchRunModal
+					currentTitle={ activeExecution?.workflow_title ?? __( 'current workflow', 'stepwise' ) }
+					nextTitle={ pendingRun.workflowTitle }
+					onConfirm={ confirmSwitch }
+					onCancel={ () => setPendingRun( null ) }
+				/>
 			) }
 
 			{ showGate && (

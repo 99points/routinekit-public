@@ -7,7 +7,7 @@ defined( 'ABSPATH' ) || exit;
  * Separates hook registration from execution so every hook is declared
  * in one place and can be inspected or tested independently.
  */
-class AlignPress_Loader {
+class Stepwise_Loader {
 
 	/** @var array[] */
 	protected array $actions = [];

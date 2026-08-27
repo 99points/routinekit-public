@@ -2,8 +2,8 @@
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: AlignPress 1.0.0\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/alignpress\n"
+"Project-Id-Version: Stepwise 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/stepwise\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -12,33 +12,33 @@ msgstr ""
 "POT-Creation-Date: 2026-08-23T09:55:01+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
-"X-Domain: alignpress\n"
+"X-Domain: stepwise\n"
 
 #. Plugin Name of the plugin
-#: alignpress.php
+#: stepwise.php
 #: includes/admin/class-ap-admin.php:32
 #: includes/admin/class-ap-admin.php:33
-#: includes/class-alignpress.php:128
-msgid "AlignPress"
+#: includes/class-stepwise.php:128
+msgid "Stepwise"
 msgstr ""
 
 #. Plugin URI of the plugin
-#: alignpress.php
-msgid "https://alignpress.app"
+#: stepwise.php
+msgid "https://wpstepwise.com"
 msgstr ""
 
 #. Description of the plugin
-#: alignpress.php
+#: stepwise.php
 msgid "Reusable configuration workflows for WordPress agencies managing multiple client sites."
 msgstr ""
 
 #. Author of the plugin
-#: alignpress.php
+#: stepwise.php
 msgid "Zeeshan Rasool"
 msgstr ""
 
 #. Author URI of the plugin
-#: alignpress.php
+#: stepwise.php
 msgid "https://profiles.wordpress.org/codeleftover/"
 msgstr ""
 
@@ -211,20 +211,20 @@ msgstr ""
 msgid "URL did not return valid workflow JSON. title and steps are required."
 msgstr ""
 
-#: includes/class-alignpress.php:129
+#: includes/class-stepwise.php:129
 msgid "AlignPress captures wp_options changes during admin sessions to help build workflow steps (Auto-Capture). This data is stored only in your own database and is never sent to external servers on the free plan."
 msgstr ""
 
-#: includes/class-alignpress.php:130
+#: includes/class-stepwise.php:130
 msgid "Data stored locally: option name, old value, new value, admin page URL, and the user ID of the person who made the change. Retained for a configurable period (default 7 days) and deleted automatically."
 msgstr ""
 
-#: includes/class-alignpress.php:131
+#: includes/class-stepwise.php:131
 msgid "Execution audit trails store: which user ran a workflow, which steps were completed or skipped, timestamps, and any uploaded evidence files."
 msgstr ""
 
 #. translators: %s: URL to AlignPress privacy policy
-#: includes/class-alignpress.php:135
+#: includes/class-stepwise.php:135
 #, php-format
 msgid "If you connect to AlignPress Cloud (Pro), see the <a href=\"%s\">AlignPress Cloud Privacy Policy</a>."
 msgstr ""

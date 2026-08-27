@@ -7,7 +7,7 @@ const CapturePreview = ( { changes } ) => {
 	return (
 		<div className="ap-capture-preview">
 			<p className="ap-capture-preview__heading">
-				{ __( 'Detected changes:', 'alignpress' ) }
+				{ __( 'Detected changes:', 'stepwise' ) }
 			</p>
 			<ul className="ap-capture-preview__list">
 				{ changes.map( ( change, i ) => (

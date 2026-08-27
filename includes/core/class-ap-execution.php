@@ -30,6 +30,12 @@ class AP_Execution {
 	/** @var string|null */
 	public ?string $completed_at;
 
+	/** @var int|null */
+	public ?int $paused_by;
+
+	/** @var string|null */
+	public ?string $paused_at;
+
 	/** @var string */
 	public string $created_at;
 
@@ -43,7 +49,7 @@ class AP_Execution {
 		global $wpdb;
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}alignpress_executions WHERE id = %d LIMIT 1",
+				"SELECT * FROM {$wpdb->prefix}stepwise_executions WHERE id = %d LIMIT 1",
 				$id
 			)
 		);
@@ -60,7 +66,7 @@ class AP_Execution {
 		global $wpdb;
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}alignpress_executions
+				"SELECT * FROM {$wpdb->prefix}stepwise_executions
 				 WHERE workflow_id = %d
 				 ORDER BY created_at DESC",
 				$workflow_id
@@ -79,13 +85,20 @@ class AP_Execution {
 		global $wpdb;
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}alignpress_executions
+				"SELECT * FROM {$wpdb->prefix}stepwise_executions
 				 WHERE started_by = %d
 				   AND (
 				     status = 'in_progress'
+				     OR status = 'paused'
 				     OR ( status = 'abandoned' AND completed_at >= %s )
 				   )
-				 ORDER BY id DESC
+				 ORDER BY
+				   CASE status
+				     WHEN 'in_progress' THEN 0
+				     WHEN 'paused'      THEN 1
+				     WHEN 'abandoned'   THEN 2
+				   END ASC,
+				   id DESC
 				 LIMIT 1",
 				get_current_user_id(),
 				gmdate( 'Y-m-d H:i:s', time() - 300 )
@@ -105,53 +118,84 @@ class AP_Execution {
 
 		$workflow = AP_Workflow::get( $workflow_id );
 		if ( ! $workflow ) {
-			return new WP_Error( 'alignpress_not_found', __( 'Workflow not found.', 'alignpress' ) );
+			return new WP_Error( 'stepwise_not_found', __( 'Workflow not found.', 'stepwise' ) );
 		}
 
 		if ( 'active' !== $workflow->status ) {
 			return new WP_Error(
-				'alignpress_workflow_not_active',
-				__( 'This workflow is in draft and cannot be run.', 'alignpress' ),
+				'stepwise_workflow_not_active',
+				__( 'This workflow is in draft and cannot be run.', 'stepwise' ),
 				[ 'status' => 403 ]
 			);
 		}
 
-		// Abandon only the current user's stale in_progress execution before starting a new one.
-		// A global abandon would kill other users' active runs.
+		$user_id = get_current_user_id();
+		$now     = current_time( 'mysql' );
+
+		// Pause any currently in_progress execution for this user (different workflow).
+		// We do NOT touch completed_at — the run isn't finished, just paused.
 		$wpdb->query(
 			$wpdb->prepare(
-				"UPDATE {$wpdb->prefix}alignpress_executions
-				 SET status = 'abandoned', completed_at = %s
+				"UPDATE {$wpdb->prefix}stepwise_executions
+				 SET status = 'paused', paused_by = %d, paused_at = %s
 				 WHERE status = 'in_progress'
-				   AND started_by = %d",
-				current_time( 'mysql' ),
-				get_current_user_id()
+				   AND started_by = %d
+				   AND workflow_id != %d",
+				$user_id,
+				$now,
+				$user_id,
+				$workflow_id
 			)
 		);
 
-		$now    = current_time( 'mysql' );
+		// Resume a paused execution for the same workflow if one exists.
+		$paused = $wpdb->get_row(
+			$wpdb->prepare(
+				"SELECT * FROM {$wpdb->prefix}stepwise_executions
+				 WHERE workflow_id = %d
+				   AND started_by = %d
+				   AND status = 'paused'
+				 ORDER BY id DESC
+				 LIMIT 1",
+				$workflow_id,
+				$user_id
+			)
+		);
+
+		if ( $paused ) {
+			$wpdb->update(
+				$wpdb->prefix . 'stepwise_executions',
+				[ 'status' => 'in_progress', 'paused_by' => null, 'paused_at' => null ],
+				[ 'id' => (int) $paused->id ],
+				[ '%s', '%d', '%s' ],
+				[ '%d' ]
+			);
+			return static::get( (int) $paused->id );
+		}
+
+		// No paused run to resume — start fresh.
 		$result = $wpdb->insert(
-			$wpdb->prefix . 'alignpress_executions',
+			$wpdb->prefix . 'stepwise_executions',
 			[
 				'workflow_id' => $workflow_id,
 				'status'      => 'in_progress',
-				'started_by'  => get_current_user_id(),
+				'started_by'  => $user_id,
 				'started_at'  => $now,
 			],
 			[ '%d', '%s', '%d', '%s' ]
 		);
 
 		if ( false === $result ) {
-			return new WP_Error( 'alignpress_db_error', __( 'Could not start execution.', 'alignpress' ) );
+			return new WP_Error( 'stepwise_db_error', __( 'Could not start execution.', 'stepwise' ) );
 		}
 
 		$execution_id = (int) $wpdb->insert_id;
 
-		// Seed step_completions rows for every step in the workflow
+		// Seed step_completions rows for every step in the workflow.
 		$steps = AP_Step::for_workflow( $workflow_id );
 		foreach ( $steps as $step ) {
 			$wpdb->insert(
-				$wpdb->prefix . 'alignpress_step_completions',
+				$wpdb->prefix . 'stepwise_step_completions',
 				[
 					'execution_id' => $execution_id,
 					'step_id'      => $step->id,
@@ -161,11 +205,11 @@ class AP_Execution {
 			);
 		}
 
-		// Update workflow's last_run_at and increment run_count
+		// Update workflow's last_run_at and increment run_count.
 		AP_Workflow::update( $workflow_id, [ 'last_run_at' => $now ] );
 		$wpdb->query(
 			$wpdb->prepare(
-				"UPDATE {$wpdb->prefix}alignpress_workflows SET run_count = run_count + 1 WHERE id = %d",
+				"UPDATE {$wpdb->prefix}stepwise_workflows SET run_count = run_count + 1 WHERE id = %d",
 				$workflow_id
 			)
 		);
@@ -182,7 +226,7 @@ class AP_Execution {
 	public static function cancel( int $execution_id ): bool {
 		global $wpdb;
 		$result = $wpdb->update(
-			$wpdb->prefix . 'alignpress_executions',
+			$wpdb->prefix . 'stepwise_executions',
 			[ 'status' => 'abandoned', 'completed_at' => current_time( 'mysql' ) ],
 			[ 'id' => $execution_id ],
 			[ '%s', '%s' ],
@@ -237,7 +281,7 @@ class AP_Execution {
 		}
 
 		$result = $wpdb->update(
-			$wpdb->prefix . 'alignpress_step_completions',
+			$wpdb->prefix . 'stepwise_step_completions',
 			$update,
 			[ 'execution_id' => $execution_id, 'step_id' => $step_id ],
 			$formats,
@@ -252,7 +296,7 @@ class AP_Execution {
 			);
 			$insert_formats = array_merge( $formats, [ '%d', '%d' ] );
 			$result = $wpdb->insert(
-				$wpdb->prefix . 'alignpress_step_completions',
+				$wpdb->prefix . 'stepwise_step_completions',
 				$insert,
 				$insert_formats
 			);
@@ -274,8 +318,8 @@ class AP_Execution {
 
 		$pending = (int) $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT COUNT(*) FROM {$wpdb->prefix}alignpress_step_completions sc
-				 JOIN {$wpdb->prefix}alignpress_steps s ON sc.step_id = s.id
+				"SELECT COUNT(*) FROM {$wpdb->prefix}stepwise_step_completions sc
+				 JOIN {$wpdb->prefix}stepwise_steps s ON sc.step_id = s.id
 				 WHERE sc.execution_id = %d
 				   AND sc.status = 'pending'
 				   AND s.is_required = 1",
@@ -285,7 +329,7 @@ class AP_Execution {
 
 		if ( 0 === $pending ) {
 			$wpdb->update(
-				$wpdb->prefix . 'alignpress_executions',
+				$wpdb->prefix . 'stepwise_executions',
 				[
 					'status'       => 'completed',
 					'completed_at' => current_time( 'mysql' ),
@@ -297,7 +341,7 @@ class AP_Execution {
 
 			$execution = static::get( $execution_id );
 			if ( $execution ) {
-				do_action( 'alignpress_execution_completed', $execution );
+				do_action( 'stepwise_execution_completed', $execution );
 			}
 		}
 	}
@@ -315,13 +359,13 @@ class AP_Execution {
 		$saas_assignment_id = sanitize_text_field( $assignment['id'] ?? '' );
 
 		if ( ! $workflow_id || ! $saas_assignment_id ) {
-			return new WP_Error( 'alignpress_invalid', __( 'Invalid SaaS assignment payload.', 'alignpress' ) );
+			return new WP_Error( 'stepwise_invalid', __( 'Invalid SaaS assignment payload.', 'stepwise' ) );
 		}
 
 		// Don't duplicate if already received
 		$exists = $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT id FROM {$wpdb->prefix}alignpress_executions WHERE saas_assignment_id = %s LIMIT 1",
+				"SELECT id FROM {$wpdb->prefix}stepwise_executions WHERE saas_assignment_id = %s LIMIT 1",
 				$saas_assignment_id
 			)
 		);
@@ -330,7 +374,7 @@ class AP_Execution {
 		}
 
 		$result = $wpdb->insert(
-			$wpdb->prefix . 'alignpress_executions',
+			$wpdb->prefix . 'stepwise_executions',
 			[
 				'workflow_id'        => $workflow_id,
 				'saas_assignment_id' => $saas_assignment_id,
@@ -340,7 +384,7 @@ class AP_Execution {
 		);
 
 		if ( false === $result ) {
-			return new WP_Error( 'alignpress_db_error', __( 'Could not create execution from assignment.', 'alignpress' ) );
+			return new WP_Error( 'stepwise_db_error', __( 'Could not create execution from assignment.', 'stepwise' ) );
 		}
 
 		return static::get( (int) $wpdb->insert_id );
@@ -361,6 +405,8 @@ class AP_Execution {
 		$instance->started_by         = $row->started_by ? (int) $row->started_by : null;
 		$instance->started_at         = $row->started_at;
 		$instance->completed_at       = $row->completed_at;
+		$instance->paused_by          = isset( $row->paused_by ) && $row->paused_by ? (int) $row->paused_by : null;
+		$instance->paused_at          = $row->paused_at ?? null;
 		$instance->created_at         = $row->created_at;
 		return $instance;
 	}
@@ -379,6 +425,8 @@ class AP_Execution {
 			'started_by'         => $this->started_by,
 			'started_at'         => $this->started_at,
 			'completed_at'       => $this->completed_at,
+			'paused_by'          => $this->paused_by,
+			'paused_at'          => $this->paused_at,
 			'created_at'         => $this->created_at,
 		];
 	}

@@ -15,7 +15,7 @@ class AP_Templates {
 	 */
 	public static function get_available(): array {
 		$templates = [];
-		$dir       = ALIGNPRESS_TEMPLATES_DIR;
+		$dir       = STEPWISE_TEMPLATES_DIR;
 
 		if ( ! is_dir( $dir ) ) {
 			return $templates;
@@ -44,7 +44,7 @@ class AP_Templates {
 	 */
 	public static function get_available_with_steps(): array {
 		$templates = [];
-		$dir       = ALIGNPRESS_TEMPLATES_DIR;
+		$dir       = STEPWISE_TEMPLATES_DIR;
 
 		if ( ! is_dir( $dir ) ) {
 			return $templates;
@@ -75,15 +75,15 @@ class AP_Templates {
 	 * @return AP_Workflow|WP_Error
 	 */
 	public static function import( string $template_key ): AP_Workflow|WP_Error {
-		$file = ALIGNPRESS_TEMPLATES_DIR . sanitize_file_name( $template_key ) . '.json';
+		$file = STEPWISE_TEMPLATES_DIR . sanitize_file_name( $template_key ) . '.json';
 
 		if ( ! file_exists( $file ) ) {
-			return new WP_Error( 'alignpress_not_found', __( 'Template not found.', 'alignpress' ) );
+			return new WP_Error( 'stepwise_not_found', __( 'Template not found.', 'stepwise' ) );
 		}
 
 		$data = self::read_file( $file );
 		if ( ! $data ) {
-			return new WP_Error( 'alignpress_invalid', __( 'Template file is invalid JSON.', 'alignpress' ) );
+			return new WP_Error( 'stepwise_invalid', __( 'Template file is invalid JSON.', 'stepwise' ) );
 		}
 
 		$workflow = AP_Workflow::create( [

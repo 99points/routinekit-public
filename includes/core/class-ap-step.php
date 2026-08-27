@@ -5,7 +5,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Step CRUD model.
  *
- * Wraps all database operations for the alignpress_steps table.
+ * Wraps all database operations for the stepwise_steps table.
  */
 class AP_Step {
 
@@ -52,7 +52,7 @@ class AP_Step {
 		global $wpdb;
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}alignpress_steps WHERE id = %d LIMIT 1",
+				"SELECT * FROM {$wpdb->prefix}stepwise_steps WHERE id = %d LIMIT 1",
 				$id
 			)
 		);
@@ -69,7 +69,7 @@ class AP_Step {
 		global $wpdb;
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}alignpress_steps
+				"SELECT * FROM {$wpdb->prefix}stepwise_steps
 				 WHERE workflow_id = %d
 				 ORDER BY sort_order ASC, id ASC",
 				$workflow_id
@@ -94,7 +94,7 @@ class AP_Step {
 		$placeholders = implode( ',', array_fill( 0, count( $ids ), '%d' ) );
 		$rows         = $wpdb->get_results( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}alignpress_steps WHERE workflow_id IN ($placeholders) ORDER BY sort_order ASC, id ASC", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+				"SELECT * FROM {$wpdb->prefix}stepwise_steps WHERE workflow_id IN ($placeholders) ORDER BY sort_order ASC, id ASC", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 				...$ids
 			)
 		);
@@ -116,19 +116,19 @@ class AP_Step {
 
 		$workflow_id = absint( $data['workflow_id'] ?? 0 );
 		if ( ! $workflow_id ) {
-			return new WP_Error( 'alignpress_invalid', __( 'workflow_id is required.', 'alignpress' ) );
+			return new WP_Error( 'stepwise_invalid', __( 'workflow_id is required.', 'stepwise' ) );
 		}
 
 		$title = sanitize_text_field( $data['title'] ?? '' );
 		if ( empty( $title ) ) {
-			return new WP_Error( 'alignpress_invalid', __( 'Step title is required.', 'alignpress' ) );
+			return new WP_Error( 'stepwise_invalid', __( 'Step title is required.', 'stepwise' ) );
 		}
 
 		// Default sort_order to end of list
 		if ( ! isset( $data['sort_order'] ) ) {
 			$max = (int) $wpdb->get_var(
 				$wpdb->prepare(
-					"SELECT MAX(sort_order) FROM {$wpdb->prefix}alignpress_steps WHERE workflow_id = %d",
+					"SELECT MAX(sort_order) FROM {$wpdb->prefix}stepwise_steps WHERE workflow_id = %d",
 					$workflow_id
 				)
 			);
@@ -152,14 +152,14 @@ class AP_Step {
 		];
 
 		$result = $wpdb->insert(
-			$wpdb->prefix . 'alignpress_steps',
+			$wpdb->prefix . 'stepwise_steps',
 			$insert,
 			[ '%d', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%s' ]
 		);
 
 		if ( false === $result ) {
-			alignpress_log( 'Step insert failed: ' . $wpdb->last_error, 'step' );
-			return new WP_Error( 'alignpress_db_error', __( 'Could not create step.', 'alignpress' ) );
+			stepwise_log( 'Step insert failed: ' . $wpdb->last_error, 'step' );
+			return new WP_Error( 'stepwise_db_error', __( 'Could not create step.', 'stepwise' ) );
 		}
 
 		return static::get( (int) $wpdb->insert_id );
@@ -208,11 +208,11 @@ class AP_Step {
 		}
 
 		if ( empty( $update ) ) {
-			return static::get( $id ) ?? new WP_Error( 'alignpress_not_found', __( 'Step not found.', 'alignpress' ) );
+			return static::get( $id ) ?? new WP_Error( 'stepwise_not_found', __( 'Step not found.', 'stepwise' ) );
 		}
 
 		$result = $wpdb->update(
-			$wpdb->prefix . 'alignpress_steps',
+			$wpdb->prefix . 'stepwise_steps',
 			$update,
 			[ 'id' => $id ],
 			$formats,
@@ -220,7 +220,7 @@ class AP_Step {
 		);
 
 		if ( false === $result ) {
-			return new WP_Error( 'alignpress_db_error', __( 'Could not update step.', 'alignpress' ) );
+			return new WP_Error( 'stepwise_db_error', __( 'Could not update step.', 'stepwise' ) );
 		}
 
 		return static::get( $id );
@@ -237,7 +237,7 @@ class AP_Step {
 		global $wpdb;
 		foreach ( $order_map as $item ) {
 			$wpdb->update(
-				$wpdb->prefix . 'alignpress_steps',
+				$wpdb->prefix . 'stepwise_steps',
 				[ 'sort_order' => absint( $item['sort_order'] ) ],
 				[ 'id'         => absint( $item['id'] ) ],
 				[ '%d' ],
@@ -255,7 +255,7 @@ class AP_Step {
 	 */
 	public static function delete( int $id ): bool {
 		global $wpdb;
-		return (bool) $wpdb->delete( $wpdb->prefix . 'alignpress_steps', [ 'id' => $id ], [ '%d' ] );
+		return (bool) $wpdb->delete( $wpdb->prefix . 'stepwise_steps', [ 'id' => $id ], [ '%d' ] );
 	}
 
 	/**

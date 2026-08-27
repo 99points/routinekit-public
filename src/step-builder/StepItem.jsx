@@ -4,23 +4,22 @@ import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import Button from '../shared/Button';
 import DeepLinkInput from './DeepLinkInput';
+import RunnerNotes from '../runner/RunnerNotes';
 
 const StepItem = ( { step, workflowId, index, total, onMoveUp, onMoveDown, canEdit = false } ) => {
-	const [ editing, setEditing ]         = useState( false );
-	const [ titleDraft, setTitle ]        = useState( step.title );
-	const [ instructionsDraft, setInstr ] = useState( step.description ?? '' );
-	const [ deepLinkDraft, setDeepLink ]  = useState( step.deep_link ?? '' );
-	const [ required, setRequired ]       = useState( step.is_required ?? true );
-	const [ saving, setSaving ]           = useState( false );
-	const [ deleting, setDeleting ]       = useState( false );
+	const [ editing, setEditing ]        = useState( false );
+	const [ titleDraft, setTitle ]       = useState( step.title );
+	const [ deepLinkDraft, setDeepLink ] = useState( step.deep_link ?? '' );
+	const [ required, setRequired ]      = useState( step.is_required ?? true );
+	const [ saving, setSaving ]          = useState( false );
+	const [ deleting, setDeleting ]      = useState( false );
 
-	const { saveStep, deleteStep } = useDispatch( 'alignpress/steps' );
+	const { saveStep, deleteStep } = useDispatch( 'stepwise/steps' );
 
 	const handleSave = async () => {
 		setSaving( true );
 		await saveStep( workflowId, step.id, {
 			title:       titleDraft.trim(),
-			description: instructionsDraft,
 			deep_link:   deepLinkDraft,
 			is_required: required,
 		} );
@@ -30,14 +29,13 @@ const StepItem = ( { step, workflowId, index, total, onMoveUp, onMoveDown, canEd
 
 	const handleCancel = () => {
 		setTitle( step.title );
-		setInstr( step.description ?? '' );
 		setDeepLink( step.deep_link ?? '' );
 		setRequired( step.is_required ?? true );
 		setEditing( false );
 	};
 
 	const handleDelete = async () => {
-		if ( ! window.confirm( __( 'Delete this step? This cannot be undone.', 'alignpress' ) ) ) return;
+		if ( ! window.confirm( __( 'Delete this step? This cannot be undone.', 'stepwise' ) ) ) return;
 		setDeleting( true );
 		await deleteStep( workflowId, step.id );
 	};
@@ -54,10 +52,10 @@ const StepItem = ( { step, workflowId, index, total, onMoveUp, onMoveDown, canEd
 				{ editing ? (
 					<div className="ap-step-item__edit-form">
 						<div className="ap-field">
-							<label className="alignpress-label">{ __( 'Step Title', 'alignpress' ) }</label>
+							<label className="stepwise-label">{ __( 'Step Title', 'stepwise' ) }</label>
 							<input
 								type="text"
-								className="alignpress-input"
+								className="stepwise-input"
 								value={ titleDraft }
 								onChange={ ( e ) => setTitle( e.target.value ) }
 								autoFocus
@@ -65,47 +63,38 @@ const StepItem = ( { step, workflowId, index, total, onMoveUp, onMoveDown, canEd
 						</div>
 
 						<div className="ap-field">
-							<label className="alignpress-label">{ __( 'Instructions', 'alignpress' ) }</label>
-							<textarea
-								className="alignpress-input ap-textarea"
-								value={ instructionsDraft }
-								onChange={ ( e ) => setInstr( e.target.value ) }
-								placeholder={ __( 'Optional step instructions or notes…', 'alignpress' ) }
-								rows={ 3 }
-							/>
+							<label className="stepwise-label">{ __( 'Notes', 'stepwise' ) }</label>
+							<RunnerNotes stepId={ step.id } isSaas={ false } />
 						</div>
 
 						<div className="ap-field">
-							<label className="alignpress-label">{ __( 'Deep Link (where to perform this step)', 'alignpress' ) }</label>
+							<label className="stepwise-label">{ __( 'Deep Link (where to perform this step)', 'stepwise' ) }</label>
 							<DeepLinkInput value={ deepLinkDraft } onChange={ setDeepLink } />
 						</div>
 
 						<div className="ap-field ap-field--inline">
-							<label className="alignpress-label">
+							<label className="stepwise-label">
 								<input
 									type="checkbox"
 									checked={ required }
 									onChange={ ( e ) => setRequired( e.target.checked ) }
 								/>
-								{ ' ' }{ __( 'Required step', 'alignpress' ) }
+								{ ' ' }{ __( 'Required step', 'stepwise' ) }
 							</label>
 						</div>
 
 						<div className="ap-step-item__edit-actions">
 							<Button variant="primary" size="sm" onClick={ handleSave } disabled={ saving || ! titleDraft.trim() }>
-								{ saving ? __( 'Saving…', 'alignpress' ) : __( 'Save Step', 'alignpress' ) }
+								{ saving ? __( 'Saving…', 'stepwise' ) : __( 'Save Step', 'stepwise' ) }
 							</Button>
 							<Button variant="ghost" size="sm" onClick={ handleCancel }>
-								{ __( 'Cancel', 'alignpress' ) }
+								{ __( 'Cancel', 'stepwise' ) }
 							</Button>
 						</div>
 					</div>
 				) : (
 					<div className="ap-step-item__display">
 						<div className="ap-step-item__title">{ step.title }</div>
-						{ step.description && (
-							<p className="ap-step-item__instructions">{ step.description }</p>
-						) }
 						{ step.deep_link && (
 							<a
 								href={ step.deep_link }
@@ -118,7 +107,7 @@ const StepItem = ( { step, workflowId, index, total, onMoveUp, onMoveDown, canEd
 						) }
 						{ step.captured_options && (
 							<span className="ap-step-item__captured-badge">
-								{ __( 'Captured', 'alignpress' ) }
+								{ __( 'Captured', 'stepwise' ) }
 							</span>
 						) }
 					</div>
@@ -128,7 +117,7 @@ const StepItem = ( { step, workflowId, index, total, onMoveUp, onMoveDown, canEd
 			{ ! editing && canEdit && (
 				<div className="ap-step-item__actions">
 					<Button variant="ghost" size="sm" onClick={ () => setEditing( true ) }>
-						{ __( 'Edit', 'alignpress' ) }
+						{ __( 'Edit', 'stepwise' ) }
 					</Button>
 					<Button variant="ghost" size="sm" onClick={ onMoveUp } disabled={ index === 0 }>
 						↑
@@ -137,7 +126,7 @@ const StepItem = ( { step, workflowId, index, total, onMoveUp, onMoveDown, canEd
 						↓
 					</Button>
 					<Button variant="danger" size="sm" onClick={ handleDelete } disabled={ deleting }>
-						{ deleting ? '…' : __( 'Delete', 'alignpress' ) }
+						{ deleting ? '…' : __( 'Delete', 'stepwise' ) }
 					</Button>
 				</div>
 			) }

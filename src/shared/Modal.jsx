@@ -16,32 +16,32 @@ const Modal = ( { title, children, onClose, footer, size = 'md' } ) => {
 
 	// Trap focus inside modal
 	useEffect( () => {
-		overlayRef.current?.querySelector( '.alignpress-modal' )?.focus();
+		overlayRef.current?.querySelector( '.stepwise-modal' )?.focus();
 	}, [] );
 
 	return (
 		<div
 			ref={ overlayRef }
-			className="alignpress-modal-overlay"
+			className="stepwise-modal-overlay"
 			role="dialog"
 			aria-modal="true"
 			aria-label={ title }
 			onClick={ ( e ) => { if ( e.target === overlayRef.current ) onClose(); } }
 		>
-			<div className={ `alignpress-modal alignpress-modal--${ size }` } tabIndex="-1">
-				<div className="alignpress-modal__header">
-					<h2 className="alignpress-modal__title">{ title }</h2>
-					<button className="alignpress-modal__close" onClick={ onClose } aria-label="Close modal">
+			<div className={ `stepwise-modal stepwise-modal--${ size }` } tabIndex="-1">
+				<div className="stepwise-modal__header">
+					<h2 className="stepwise-modal__title">{ title }</h2>
+					<button className="stepwise-modal__close" onClick={ onClose } aria-label="Close modal">
 						&times;
 					</button>
 				</div>
 
-				<div className="alignpress-modal__body">
+				<div className="stepwise-modal__body">
 					{ children }
 				</div>
 
 				{ footer && (
-					<div className="alignpress-modal__footer">
+					<div className="stepwise-modal__footer">
 						{ footer }
 					</div>
 				) }

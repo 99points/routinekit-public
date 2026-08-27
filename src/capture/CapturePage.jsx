@@ -3,7 +3,7 @@ import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
 import AddToWorkflowModal from './AddToWorkflowModal';
 
-const { adminUrl = '' } = window.alignpressData ?? {};
+const { adminUrl = '' } = window.stepwiseData ?? {};
 
 const CapturePage = () => {
 	const [ changes, setChanges ]         = useState( [] );
@@ -15,7 +15,7 @@ const CapturePage = () => {
 
 	const load = useCallback( () => {
 		setLoading( true );
-		apiFetch( { path: '/alignpress/v1/capture/all' } )
+		apiFetch( { path: '/stepwise/v1/capture/all' } )
 			.then( ( data ) => setChanges( data?.changes ?? [] ) )
 			.catch( () => setChanges( [] ) )
 			.finally( () => setLoading( false ) );
@@ -44,7 +44,7 @@ const CapturePage = () => {
 	const handleDismissSelected = () => {
 		if ( ! selected.size ) return;
 		apiFetch( {
-			path: '/alignpress/v1/capture/dismiss',
+			path: '/stepwise/v1/capture/dismiss',
 			method: 'DELETE',
 			data: { capture_ids: [ ...selected ] },
 		} ).then( () => {
@@ -54,13 +54,13 @@ const CapturePage = () => {
 	};
 
 	const handleClearAll = () => {
-		if ( ! window.confirm( __( 'Clear all captured changes? This cannot be undone.', 'alignpress' ) ) ) return;
+		if ( ! window.confirm( __( 'Clear all captured changes? This cannot be undone.', 'stepwise' ) ) ) return;
 		setClearing( true );
-		apiFetch( { path: '/alignpress/v1/capture/all', method: 'DELETE' } )
+		apiFetch( { path: '/stepwise/v1/capture/all', method: 'DELETE' } )
 			.then( () => {
 				setChanges( [] );
 				setSelected( new Set() );
-				setSuccessMsg( __( 'All captured changes cleared.', 'alignpress' ) );
+				setSuccessMsg( __( 'All captured changes cleared.', 'stepwise' ) );
 				setTimeout( () => setSuccessMsg( '' ), 3000 );
 			} )
 			.catch( () => {} )
@@ -80,13 +80,13 @@ const CapturePage = () => {
 		<div className="ap-capture-page">
 			<div className="ap-capture-page__header">
 				<div className="ap-capture-page__title-row">
-					<h1 className="ap-page-title">{ __( 'Captured Steps', 'alignpress' ) }</h1>
-					<a href={ `${ adminUrl }admin.php?page=alignpress` } className="ap-capture-page__back">
-						← { __( 'Back to Workflows', 'alignpress' ) }
+					<h1 className="ap-page-title">{ __( 'Captured Steps', 'stepwise' ) }</h1>
+					<a href={ `${ adminUrl }admin.php?page=stepwise` } className="ap-capture-page__back">
+						← { __( 'Back to Workflows', 'stepwise' ) }
 					</a>
 				</div>
 				<p className="ap-capture-page__desc">
-					{ __( 'AlignPress detected these setting changes. Select one or more to add as a workflow step, or dismiss them.', 'alignpress' ) }
+					{ __( 'Stepwise detected these setting changes. Select one or more to add as a workflow step, or dismiss them.', 'stepwise' ) }
 				</p>
 			</div>
 
@@ -99,15 +99,15 @@ const CapturePage = () => {
 			{ loading && (
 				<div className="ap-loading">
 					<span className="spinner is-active" />
-					{ __( 'Loading…', 'alignpress' ) }
+					{ __( 'Loading…', 'stepwise' ) }
 				</div>
 			) }
 
 			{ ! loading && changes.length === 0 && (
 				<div className="ap-capture-page__empty">
-					<p>{ __( 'No pending captured changes.', 'alignpress' ) }</p>
+					<p>{ __( 'No pending captured changes.', 'stepwise' ) }</p>
 					<p className="ap-capture-page__empty-sub">
-						{ __( 'AlignPress will detect setting changes as you navigate WP admin.', 'alignpress' ) }
+						{ __( 'Stepwise will detect setting changes as you navigate WP admin.', 'stepwise' ) }
 					</p>
 				</div>
 			) }
@@ -122,8 +122,8 @@ const CapturePage = () => {
 								onChange={ toggleAll }
 							/>
 							{ selected.size > 0
-								? `${ selected.size } ${ __( 'selected', 'alignpress' ) }`
-								: __( 'Select all', 'alignpress' ) }
+								? `${ selected.size } ${ __( 'selected', 'stepwise' ) }`
+								: __( 'Select all', 'stepwise' ) }
 						</label>
 
 						<div className="ap-capture-page__toolbar-actions">
@@ -131,28 +131,28 @@ const CapturePage = () => {
 								<>
 									<button
 										type="button"
-										className="alignpress-btn alignpress-btn--primary alignpress-btn--sm"
+										className="stepwise-btn stepwise-btn--primary stepwise-btn--sm"
 										onClick={ () => setShowModal( true ) }
 									>
-										{ __( 'Add to Workflow', 'alignpress' ) }
+										{ __( 'Add to Workflow', 'stepwise' ) }
 										{ ' ' }({ selected.size })
 									</button>
 									<button
 										type="button"
-										className="alignpress-btn alignpress-btn--ghost alignpress-btn--sm"
+										className="stepwise-btn stepwise-btn--ghost stepwise-btn--sm"
 										onClick={ handleDismissSelected }
 									>
-										{ __( 'Dismiss', 'alignpress' ) }
+										{ __( 'Dismiss', 'stepwise' ) }
 									</button>
 								</>
 							) }
 							<button
 								type="button"
-								className="alignpress-btn alignpress-btn--danger alignpress-btn--sm"
+								className="stepwise-btn stepwise-btn--danger stepwise-btn--sm"
 								onClick={ handleClearAll }
 								disabled={ clearing }
 							>
-								{ clearing ? __( 'Clearing…', 'alignpress' ) : __( 'Clear All', 'alignpress' ) }
+								{ clearing ? __( 'Clearing…', 'stepwise' ) : __( 'Clear All', 'stepwise' ) }
 							</button>
 						</div>
 					</div>
@@ -161,11 +161,11 @@ const CapturePage = () => {
 						<thead>
 							<tr>
 								<th className="ap-capture-page__col-check"></th>
-								<th>{ __( 'Page', 'alignpress' ) }</th>
-								<th>{ __( 'Setting', 'alignpress' ) }</th>
-								<th>{ __( 'Old Value', 'alignpress' ) }</th>
-								<th>{ __( 'New Value', 'alignpress' ) }</th>
-								<th>{ __( 'Captured', 'alignpress' ) }</th>
+								<th>{ __( 'Page', 'stepwise' ) }</th>
+								<th>{ __( 'Setting', 'stepwise' ) }</th>
+								<th>{ __( 'Old Value', 'stepwise' ) }</th>
+								<th>{ __( 'New Value', 'stepwise' ) }</th>
+								<th>{ __( 'Captured', 'stepwise' ) }</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -199,12 +199,12 @@ const CapturePage = () => {
 									</td>
 									<td className="ap-capture-page__val">
 										<span title={ c.old_value }>
-											{ String( c.old_value ?? '' ).slice( 0, 60 ) || <em>{ __( '(empty)', 'alignpress' ) }</em> }
+											{ String( c.old_value ?? '' ).slice( 0, 60 ) || <em>{ __( '(empty)', 'stepwise' ) }</em> }
 										</span>
 									</td>
 									<td className="ap-capture-page__val">
 										<span title={ c.new_value }>
-											{ String( c.new_value ?? '' ).slice( 0, 60 ) || <em>{ __( '(empty)', 'alignpress' ) }</em> }
+											{ String( c.new_value ?? '' ).slice( 0, 60 ) || <em>{ __( '(empty)', 'stepwise' ) }</em> }
 										</span>
 									</td>
 									<td className="ap-capture-page__date">

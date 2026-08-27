@@ -5,7 +5,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Workflow CRUD model.
  *
- * Wraps all database operations for the alignpress_workflows table.
+ * Wraps all database operations for the stepwise_workflows table.
  */
 class AP_Workflow {
 
@@ -65,7 +65,7 @@ class AP_Workflow {
 		global $wpdb;
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}alignpress_workflows WHERE id = %d LIMIT 1",
+				"SELECT * FROM {$wpdb->prefix}stepwise_workflows WHERE id = %d LIMIT 1",
 				$id
 			)
 		);
@@ -89,7 +89,7 @@ class AP_Workflow {
 		if ( $status ) {
 			$rows = $wpdb->get_results(
 				$wpdb->prepare(
-					"SELECT * FROM {$wpdb->prefix}alignpress_workflows
+					"SELECT * FROM {$wpdb->prefix}stepwise_workflows
 					 WHERE status = %s
 					 ORDER BY updated_at DESC
 					 LIMIT %d OFFSET %d",
@@ -101,7 +101,7 @@ class AP_Workflow {
 		} else {
 			$rows = $wpdb->get_results(
 				$wpdb->prepare(
-					"SELECT * FROM {$wpdb->prefix}alignpress_workflows
+					"SELECT * FROM {$wpdb->prefix}stepwise_workflows
 					 ORDER BY updated_at DESC
 					 LIMIT %d OFFSET %d",
 					$limit,
@@ -138,18 +138,18 @@ class AP_Workflow {
 		];
 
 		if ( empty( $insert['title'] ) ) {
-			return new WP_Error( 'alignpress_invalid', __( 'Workflow title is required.', 'alignpress' ) );
+			return new WP_Error( 'stepwise_invalid', __( 'Workflow title is required.', 'stepwise' ) );
 		}
 
 		$result = $wpdb->insert(
-			$wpdb->prefix . 'alignpress_workflows',
+			$wpdb->prefix . 'stepwise_workflows',
 			$insert,
 			[ '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d' ]
 		);
 
 		if ( false === $result ) {
-			alignpress_log( 'Workflow insert failed: ' . $wpdb->last_error, 'workflow' );
-			return new WP_Error( 'alignpress_db_error', __( 'Could not create workflow.', 'alignpress' ) );
+			stepwise_log( 'Workflow insert failed: ' . $wpdb->last_error, 'workflow' );
+			return new WP_Error( 'stepwise_db_error', __( 'Could not create workflow.', 'stepwise' ) );
 		}
 
 		return static::get( (int) $wpdb->insert_id );
@@ -199,11 +199,11 @@ class AP_Workflow {
 		}
 
 		if ( empty( $update ) ) {
-			return static::get( $id ) ?? new WP_Error( 'alignpress_not_found', __( 'Workflow not found.', 'alignpress' ) );
+			return static::get( $id ) ?? new WP_Error( 'stepwise_not_found', __( 'Workflow not found.', 'stepwise' ) );
 		}
 
 		$result = $wpdb->update(
-			$wpdb->prefix . 'alignpress_workflows',
+			$wpdb->prefix . 'stepwise_workflows',
 			$update,
 			[ 'id' => $id ],
 			$formats,
@@ -211,10 +211,10 @@ class AP_Workflow {
 		);
 
 		if ( false === $result ) {
-			return new WP_Error( 'alignpress_db_error', __( 'Could not update workflow.', 'alignpress' ) );
+			return new WP_Error( 'stepwise_db_error', __( 'Could not update workflow.', 'stepwise' ) );
 		}
 
-		do_action( 'alignpress_workflow_saved', $id );
+		do_action( 'stepwise_workflow_saved', $id );
 
 		return static::get( $id );
 	}
@@ -229,18 +229,19 @@ class AP_Workflow {
 		global $wpdb;
 
 		$execution_ids = $wpdb->get_col( $wpdb->prepare(
-			"SELECT id FROM {$wpdb->prefix}alignpress_executions WHERE workflow_id = %d",
+			"SELECT id FROM {$wpdb->prefix}stepwise_executions WHERE workflow_id = %d",
 			$id
 		) );
 
 		if ( $execution_ids ) {
 			$placeholders = implode( ',', array_fill( 0, count( $execution_ids ), '%d' ) );
-			$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->prefix}alignpress_step_completions WHERE execution_id IN ($placeholders)", $execution_ids ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+			$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->prefix}stepwise_step_completions WHERE execution_id IN ($placeholders)", $execution_ids ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 		}
 
-		$wpdb->delete( $wpdb->prefix . 'alignpress_executions', [ 'workflow_id' => $id ], [ '%d' ] );
-		$wpdb->delete( $wpdb->prefix . 'alignpress_steps',      [ 'workflow_id' => $id ], [ '%d' ] );
-		$deleted = $wpdb->delete( $wpdb->prefix . 'alignpress_workflows', [ 'id' => $id ], [ '%d' ] );
+		$wpdb->delete( $wpdb->prefix . 'stepwise_executions',  [ 'workflow_id' => $id ], [ '%d' ] );
+		$wpdb->delete( $wpdb->prefix . 'stepwise_step_notes', [ 'workflow_id' => $id ], [ '%d' ] );
+		$wpdb->delete( $wpdb->prefix . 'stepwise_steps',      [ 'workflow_id' => $id ], [ '%d' ] );
+		$deleted = $wpdb->delete( $wpdb->prefix . 'stepwise_workflows', [ 'id' => $id ], [ '%d' ] );
 
 		return (bool) $deleted;
 	}
@@ -256,12 +257,12 @@ class AP_Workflow {
 		if ( $status ) {
 			return (int) $wpdb->get_var(
 				$wpdb->prepare(
-					"SELECT COUNT(*) FROM {$wpdb->prefix}alignpress_workflows WHERE status = %s",
+					"SELECT COUNT(*) FROM {$wpdb->prefix}stepwise_workflows WHERE status = %s",
 					$status
 				)
 			);
 		}
-		return (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}alignpress_workflows" );
+		return (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}stepwise_workflows" );
 	}
 
 	/**

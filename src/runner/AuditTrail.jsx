@@ -10,18 +10,18 @@ const AuditTrail = ( { executionId } ) => {
 	const [ expanded, setExpanded ] = useState( {} );
 
 	useEffect( () => {
-		apiFetch( { path: `/alignpress/v1/executions/${ executionId }/audit` } )
+		apiFetch( { path: `/stepwise/v1/executions/${ executionId }/audit` } )
 			.then( ( data ) => { setAudit( data ); setLoading( false ); } )
 			.catch( ( err ) => { setError( err.message ); setLoading( false ); } );
 	}, [ executionId ] );
 
-	if ( loading ) return <p className="ap-audit__loading">{ __( 'Loading audit trail…', 'alignpress' ) }</p>;
+	if ( loading ) return <p className="ap-audit__loading">{ __( 'Loading audit trail…', 'stepwise' ) }</p>;
 	if ( error )   return <p className="ap-audit__error">{ error }</p>;
 	if ( ! audit ) return null;
 
 	const formatDate = ( str ) => str
 		? new Date( str ).toLocaleString()
-		: __( '—', 'alignpress' );
+		: __( '—', 'stepwise' );
 
 	const toggleExpand = ( id ) =>
 		setExpanded( ( prev ) => ( { ...prev, [ id ]: ! prev[ id ] } ) );
@@ -29,14 +29,14 @@ const AuditTrail = ( { executionId } ) => {
 	return (
 		<div className="ap-audit">
 			<div className="ap-audit__meta">
-				<span>{ __( 'Started:', 'alignpress' ) } { formatDate( audit.started_at ) }</span>
+				<span>{ __( 'Started:', 'stepwise' ) } { formatDate( audit.started_at ) }</span>
 				{ audit.completed_at && (
-					<span>{ __( 'Completed:', 'alignpress' ) } { formatDate( audit.completed_at ) }</span>
+					<span>{ __( 'Completed:', 'stepwise' ) } { formatDate( audit.completed_at ) }</span>
 				) }
 			</div>
 
 			{ audit.log.length === 0 ? (
-				<p className="ap-audit__empty">{ __( 'No steps completed yet.', 'alignpress' ) }</p>
+				<p className="ap-audit__empty">{ __( 'No steps completed yet.', 'stepwise' ) }</p>
 			) : (
 				<ol className="ap-audit__log">
 					{ audit.log.map( ( entry, i ) => (
@@ -59,7 +59,7 @@ const AuditTrail = ( { executionId } ) => {
 
 							{ entry.skipped_reason && (
 								<p className="ap-audit__entry-skip">
-									{ __( 'Skipped:', 'alignpress' ) } { entry.skipped_reason }
+									{ __( 'Skipped:', 'stepwise' ) } { entry.skipped_reason }
 								</p>
 							) }
 
@@ -70,7 +70,7 @@ const AuditTrail = ( { executionId } ) => {
 									rel="noopener noreferrer"
 									className="ap-audit__entry-evidence"
 								>
-									{ __( 'View evidence', 'alignpress' ) }
+									{ __( 'View evidence', 'stepwise' ) }
 								</a>
 							) }
 
@@ -82,16 +82,16 @@ const AuditTrail = ( { executionId } ) => {
 										onClick={ () => toggleExpand( i ) }
 									>
 										{ expanded[ i ]
-											? __( '▲ Hide changes', 'alignpress' )
-											: __( '▼ View option changes', 'alignpress' ) }
+											? __( '▲ Hide changes', 'stepwise' )
+											: __( '▼ View option changes', 'stepwise' ) }
 									</button>
 
 									{ expanded[ i ] && (
 										<table className="ap-audit__snapshot-table">
 											<thead>
 												<tr>
-													<th>{ __( 'Option', 'alignpress' ) }</th>
-													<th>{ __( 'After', 'alignpress' ) }</th>
+													<th>{ __( 'Option', 'stepwise' ) }</th>
+													<th>{ __( 'After', 'stepwise' ) }</th>
 												</tr>
 											</thead>
 											<tbody>

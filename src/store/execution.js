@@ -17,7 +17,7 @@ const actions = {
 	fetchActiveExecution: () => async ( { dispatch } ) => {
 		dispatch( actions.setLoading( true ) );
 		try {
-			const result = await apiFetch( { path: '/alignpress/v1/executions/active' } );
+			const result = await apiFetch( { path: '/stepwise/v1/executions/active' } );
 			// API returns { active: false } when no execution is running.
 			let execution = ( result && result.active !== false ) ? result : null;
 			// Ignore abandoned executions the user has already dismissed — the server
@@ -41,7 +41,7 @@ const actions = {
 		dispatch( actions.setError( null ) );
 		try {
 			const execution = await apiFetch( {
-				path: '/alignpress/v1/executions',
+				path: '/stepwise/v1/executions',
 				method: 'POST',
 				data: { workflow_id: workflowId },
 			} );
@@ -58,7 +58,7 @@ const actions = {
 	completeStep: ( executionId, stepId, data = {} ) => async ( { dispatch } ) => {
 		try {
 			const execution = await apiFetch( {
-				path: `/alignpress/v1/executions/${ executionId }/steps/${ stepId }`,
+				path: `/stepwise/v1/executions/${ executionId }/steps/${ stepId }`,
 				method: 'PATCH',
 				data: { status: 'completed', ...data },
 			} );
@@ -66,7 +66,7 @@ const actions = {
 			return execution;
 		} catch ( error ) {
 			// eslint-disable-next-line no-console
-			console.error( '[AlignPress] completeStep failed:', error );
+			console.error( '[Stepwise] completeStep failed:', error );
 			dispatch( actions.setError( error.message ) );
 			return null;
 		}
@@ -75,7 +75,7 @@ const actions = {
 	skipStep: ( executionId, stepId, reason = '' ) => async ( { dispatch } ) => {
 		try {
 			const execution = await apiFetch( {
-				path: `/alignpress/v1/executions/${ executionId }/steps/${ stepId }`,
+				path: `/stepwise/v1/executions/${ executionId }/steps/${ stepId }`,
 				method: 'PATCH',
 				data: { status: 'skipped', skipped_reason: reason },
 			} );
@@ -90,7 +90,7 @@ const actions = {
 	uncompleteStep: ( executionId, stepId ) => async ( { dispatch } ) => {
 		try {
 			const execution = await apiFetch( {
-				path:   `/alignpress/v1/executions/${ executionId }/steps/${ stepId }`,
+				path:   `/stepwise/v1/executions/${ executionId }/steps/${ stepId }`,
 				method: 'DELETE',
 			} );
 			dispatch( actions.setActiveExecution( execution ) );
@@ -106,7 +106,7 @@ const actions = {
 	cancelExecution: ( executionId ) => async ( { dispatch } ) => {
 		try {
 			await apiFetch( {
-				path: `/alignpress/v1/executions/${ executionId }`,
+				path: `/stepwise/v1/executions/${ executionId }`,
 				method: 'DELETE',
 			} );
 		} catch {
@@ -138,7 +138,7 @@ const selectors = {
 	getError:           ( state ) => state.error,
 };
 
-const store = createReduxStore( 'alignpress/execution', { reducer, actions, selectors } );
+const store = createReduxStore( 'stepwise/execution', { reducer, actions, selectors } );
 register( store );
 
 export default store;

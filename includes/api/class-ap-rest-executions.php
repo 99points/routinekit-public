@@ -3,11 +3,11 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * REST controller for alignpress/v1/executions
+ * REST controller for stepwise/v1/executions
  */
 class AP_REST_Executions extends WP_REST_Controller {
 
-	protected $namespace = ALIGNPRESS_REST_NAMESPACE;
+	protected $namespace = STEPWISE_REST_NAMESPACE;
 	protected $rest_base = 'executions';
 
 	/**
@@ -141,14 +141,17 @@ class AP_REST_Executions extends WP_REST_Controller {
 		$executions  = AP_Execution::for_workflow( $workflow_id );
 
 		$items = array_map( function ( AP_Execution $e ) {
-			$user = $e->started_by ? get_userdata( $e->started_by ) : null;
+			$user        = $e->started_by ? get_userdata( $e->started_by ) : null;
+			$paused_user = $e->paused_by  ? get_userdata( $e->paused_by )  : null;
 			return [
 				'id'           => $e->id,
 				'workflow_id'  => $e->workflow_id,
 				'status'       => $e->status,
-				'started_by'   => $user ? $user->display_name : __( 'Unknown', 'alignpress' ),
+				'started_by'   => $user        ? $user->display_name        : __( 'Unknown', 'stepwise' ),
+				'paused_by'    => $paused_user ? $paused_user->display_name : null,
 				'started_at'   => $e->started_at,
 				'completed_at' => $e->completed_at,
+				'paused_at'    => $e->paused_at,
 				'created_at'   => $e->created_at,
 			];
 		}, $executions );
@@ -183,7 +186,7 @@ class AP_REST_Executions extends WP_REST_Controller {
 	public function get_item( $request ): WP_REST_Response|WP_Error {
 		$execution = AP_Execution::get( (int) $request['id'] );
 		if ( ! $execution ) {
-			return new WP_Error( 'alignpress_not_found', __( 'Execution not found.', 'alignpress' ), [ 'status' => 404 ] );
+			return new WP_Error( 'stepwise_not_found', __( 'Execution not found.', 'stepwise' ), [ 'status' => 404 ] );
 		}
 		return rest_ensure_response( $this->prepare_execution( $execution ) );
 	}
@@ -198,10 +201,10 @@ class AP_REST_Executions extends WP_REST_Controller {
 		$id        = (int) $request['id'];
 		$execution = AP_Execution::get( $id );
 		if ( ! $execution ) {
-			return new WP_Error( 'alignpress_not_found', __( 'Execution not found.', 'alignpress' ), [ 'status' => 404 ] );
+			return new WP_Error( 'stepwise_not_found', __( 'Execution not found.', 'stepwise' ), [ 'status' => 404 ] );
 		}
 		if ( (int) $execution->started_by !== get_current_user_id() ) {
-			return new WP_Error( 'alignpress_forbidden', __( 'You do not have permission to cancel this execution.', 'alignpress' ), [ 'status' => 403 ] );
+			return new WP_Error( 'stepwise_forbidden', __( 'You do not have permission to cancel this execution.', 'stepwise' ), [ 'status' => 403 ] );
 		}
 		AP_Execution::cancel( $id );
 		return rest_ensure_response( [ 'cancelled' => true, 'id' => $id ] );
@@ -220,7 +223,13 @@ class AP_REST_Executions extends WP_REST_Controller {
 
 		$execution = AP_Execution::get( $execution_id );
 		if ( ! $execution ) {
-			return new WP_Error( 'alignpress_not_found', __( 'Execution not found.', 'alignpress' ), [ 'status' => 404 ] );
+			return new WP_Error( 'stepwise_not_found', __( 'Execution not found.', 'stepwise' ), [ 'status' => 404 ] );
+		}
+
+		// Verify step belongs to this execution's workflow.
+		$step = AP_Step::get( $step_id );
+		if ( ! $step || (int) $step->workflow_id !== (int) $execution->workflow_id ) {
+			return new WP_Error( 'stepwise_forbidden', __( 'Step does not belong to this workflow.', 'stepwise' ), [ 'status' => 403 ] );
 		}
 
 		$extra = array_filter( [
@@ -230,7 +239,6 @@ class AP_REST_Executions extends WP_REST_Controller {
 		], fn( $v ) => null !== $v );
 
 		// Auto-snapshot current wp_options values for captured steps
-		$step = AP_Step::get( $step_id );
 		if ( $step && ! empty( $step->captured_options ) && 'completed' === $status ) {
 			$option_names = array_keys( (array) json_decode( $step->captured_options, true ) );
 			$snapshot     = [];
@@ -260,16 +268,16 @@ class AP_REST_Executions extends WP_REST_Controller {
 
 		$execution = AP_Execution::get( $execution_id );
 		if ( ! $execution ) {
-			return new WP_Error( 'alignpress_not_found', __( 'Execution not found.', 'alignpress' ), [ 'status' => 404 ] );
+			return new WP_Error( 'stepwise_not_found', __( 'Execution not found.', 'stepwise' ), [ 'status' => 404 ] );
 		}
 		if ( 'completed' === $execution->status ) {
-			return new WP_Error( 'alignpress_locked', __( 'Cannot reopen a step on a completed execution.', 'alignpress' ), [ 'status' => 409 ] );
+			return new WP_Error( 'stepwise_locked', __( 'Cannot reopen a step on a completed execution.', 'stepwise' ), [ 'status' => 409 ] );
 		}
 
 		// Reset to pending rather than deleting — complete_step uses UPDATE so the row must exist.
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$wpdb->update(
-			$wpdb->prefix . 'alignpress_step_completions',
+			$wpdb->prefix . 'stepwise_step_completions',
 			[
 				'status'         => 'pending',
 				'completed_by'   => null,
@@ -299,7 +307,7 @@ class AP_REST_Executions extends WP_REST_Controller {
 
 		$execution = AP_Execution::get( (int) $request['id'] );
 		if ( ! $execution ) {
-			return new WP_Error( 'alignpress_not_found', __( 'Execution not found.', 'alignpress' ), [ 'status' => 404 ] );
+			return new WP_Error( 'stepwise_not_found', __( 'Execution not found.', 'stepwise' ), [ 'status' => 404 ] );
 		}
 
 		$workflow  = AP_Workflow::get( $execution->workflow_id );
@@ -312,7 +320,7 @@ class AP_REST_Executions extends WP_REST_Controller {
 		$completions = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT sc.*, u.display_name AS user_name
-				 FROM {$wpdb->prefix}alignpress_step_completions sc
+				 FROM {$wpdb->prefix}stepwise_step_completions sc
 				 LEFT JOIN {$wpdb->users} u ON sc.completed_by = u.ID
 				 WHERE sc.execution_id = %d
 				 ORDER BY sc.completed_at ASC",
@@ -328,7 +336,7 @@ class AP_REST_Executions extends WP_REST_Controller {
 				'step_id'        => (int) $c['step_id'],
 				'step_title'     => $step ? $step->title : '',
 				'status'         => $c['status'],
-				'completed_by'   => $c['user_name'] ?? __( 'Unknown', 'alignpress' ),
+				'completed_by'   => $c['user_name'] ?? __( 'Unknown', 'stepwise' ),
 				'completed_at'   => $c['completed_at'],
 				'notes'          => $c['notes'],
 				'evidence_url'   => $c['evidence_url'],
@@ -353,15 +361,15 @@ class AP_REST_Executions extends WP_REST_Controller {
 
 	/**
 	 * Permission check for run-level operations (start, complete steps, cancel).
-	 * Allows any role listed in alignpress_roles_run.
+	 * Allows any role listed in stepwise_roles_run.
 	 *
 	 * @return bool|WP_Error
 	 */
 	public function run_permissions_check(): bool|WP_Error {
-		if ( alignpress_current_user_can_run() ) {
+		if ( stepwise_current_user_can_run() ) {
 			return true;
 		}
-		return new WP_Error( 'alignpress_forbidden', __( 'You do not have permission to run workflows.', 'alignpress' ), [ 'status' => 403 ] );
+		return new WP_Error( 'stepwise_forbidden', __( 'You do not have permission to run workflows.', 'stepwise' ), [ 'status' => 403 ] );
 	}
 
 	/**
@@ -373,7 +381,7 @@ class AP_REST_Executions extends WP_REST_Controller {
 		if ( current_user_can( 'manage_options' ) ) {
 			return true;
 		}
-		return new WP_Error( 'alignpress_forbidden', __( 'You do not have permission to access this resource.', 'alignpress' ), [ 'status' => 403 ] );
+		return new WP_Error( 'stepwise_forbidden', __( 'You do not have permission to access this resource.', 'stepwise' ), [ 'status' => 403 ] );
 	}
 
 	/**
@@ -393,7 +401,7 @@ class AP_REST_Executions extends WP_REST_Controller {
 		// Fetch step completion rows
 		$completions = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}alignpress_step_completions WHERE execution_id = %d",
+				"SELECT * FROM {$wpdb->prefix}stepwise_step_completions WHERE execution_id = %d",
 				$execution->id
 			),
 			ARRAY_A

@@ -8,14 +8,21 @@ import RunnerNotes from './RunnerNotes';
 
 const isSafeUrl = ( url ) => /^https?:\/\//i.test( url );
 
-const RunnerStep = ( { step, executionId, completion, isCurrent, isExpanded, isPushed, isSaas, onToggle, onCompleted } ) => {
+const RunnerStep = ( { step, executionId, completion, isCurrent, isExpanded, isPushed, isSaas, onToggle, onCompleted, onDelete } ) => {
 	const [ skipReason, setSkipReason ]   = useState( '' );
 	const [ showSkip, setShowSkip ]       = useState( false );
 	const [ completing, setCompleting ]   = useState( false );
 	const [ skipping, setSkipping ]       = useState( false );
 	const [ reopening, setReopening ]     = useState( false );
+	const [ deleting, setDeleting ]       = useState( false );
 
-	const { completeStep, skipStep, uncompleteStep } = useDispatch( 'alignpress/execution' );
+	const { completeStep, skipStep, uncompleteStep } = useDispatch( 'stepwise/execution' );
+
+	const handleDelete = async () => {
+		if ( ! window.confirm( __( 'Delete this step? This cannot be undone.', 'stepwise' ) ) ) return;
+		setDeleting( true );
+		await onDelete();
+	};
 
 	const {
 		attributes,
@@ -65,14 +72,15 @@ const RunnerStep = ( { step, executionId, completion, isCurrent, isExpanded, isP
 			style={ style }
 			className={ `ap-runner-step ${ isDone ? 'ap-runner-step--done' : '' } ${ isCurrent ? 'ap-runner-step--current' : '' } ${ isExpanded ? 'ap-runner-step--expanded' : '' }` }
 		>
-			{ /* Row header — always visible */ }
-			<div className="ap-runner-step__row">
+			{ /* Row header — always visible; entire row toggles expand */ }
+			<div className="ap-runner-step__row" onClick={ onToggle }>
 				{ ! isPushed && ! isSaas && (
 					<span
 						className="ap-runner-step__drag"
 						{ ...attributes }
 						{ ...listeners }
-						title={ __( 'Drag to reorder', 'alignpress' ) }
+						title={ __( 'Drag to reorder', 'stepwise' ) }
+						onClick={ ( e ) => e.stopPropagation() }
 					>
 						⋮⋮
 					</span>
@@ -83,10 +91,10 @@ const RunnerStep = ( { step, executionId, completion, isCurrent, isExpanded, isP
 					<button
 						type="button"
 						className={ `ap-runner-step__check${ isCompleted ? ' is-done' : '' }${ completing ? ' is-completing' : '' }` }
-						onClick={ isCompleted ? handleReopen : handleComplete }
+						onClick={ ( e ) => { e.stopPropagation(); isCompleted ? handleReopen() : handleComplete(); } }
 						disabled={ completing || reopening }
-						title={ isCompleted ? __( 'Reopen step', 'alignpress' ) : __( 'Mark complete', 'alignpress' ) }
-						aria-label={ isCompleted ? __( 'Reopen step', 'alignpress' ) : __( 'Mark complete', 'alignpress' ) }
+						title={ isCompleted ? __( 'Reopen step', 'stepwise' ) : __( 'Mark complete', 'stepwise' ) }
+						aria-label={ isCompleted ? __( 'Reopen step', 'stepwise' ) : __( 'Mark complete', 'stepwise' ) }
 					>
 						<svg width="10" height="10" viewBox="0 0 10 10" fill="none">
 							<path d="M2 5l2.5 2.5L8 3" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"/>
@@ -94,16 +102,16 @@ const RunnerStep = ( { step, executionId, completion, isCurrent, isExpanded, isP
 					</button>
 				) }
 				{ isSkipped && (
-					<span className="ap-runner-step__check is-skipped" aria-label={ __( 'Skipped', 'alignpress' ) }>–</span>
+					<span className="ap-runner-step__check is-skipped" aria-label={ __( 'Skipped', 'stepwise' ) }>–</span>
 				) }
 
-				<span className="ap-runner-step__title" onClick={ onToggle }>{ step.title }</span>
+				<span className="ap-runner-step__title">{ step.title }</span>
 
 				{ isCurrent && ! isDone && (
 					<span className="ap-runner-step__badge ap-runner-step__badge--active" aria-hidden="true">●</span>
 				) }
 
-				<span className="ap-runner-step__chevron" aria-hidden="true" onClick={ onToggle }>
+				<span className="ap-runner-step__chevron" aria-hidden="true">
 					<svg width="14" height="14" viewBox="0 0 14 14" fill="none">
 						<path d="M3.5 5.5L7 9l3.5-3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
 					</svg>
@@ -113,21 +121,28 @@ const RunnerStep = ( { step, executionId, completion, isCurrent, isExpanded, isP
 			{ /* Expanded body */ }
 			{ isExpanded && (
 				<div className="ap-runner-step__body">
-					{ step.description && (
-						<p className="ap-runner-step__instructions">{ step.description }</p>
-					) }
-
 					{ step.deep_link && isSafeUrl( step.deep_link ) && ! isDone && (
 						<a href={ step.deep_link } className="ap-runner-step__deeplink" target="_blank" rel="noopener noreferrer">
-							{ __( 'Go to settings →', 'alignpress' ) }
+							{ __( 'Go to settings →', 'stepwise' ) }
 						</a>
 					) }
 
 					<RunnerNotes stepId={ step.id } isSaas={ isSaas } />
 
+					{ ! isPushed && ! isSaas && (
+						<button
+							type="button"
+							className="ap-runner-step__delete-btn"
+							onClick={ handleDelete }
+							disabled={ deleting }
+						>
+							{ deleting ? __( 'Deleting…', 'stepwise' ) : __( 'Delete step', 'stepwise' ) }
+						</button>
+					) }
+
 					{ isSkipped && completion?.skipped_reason && (
 						<p className="ap-runner-step__skipped-reason">
-							{ __( 'Skipped:', 'alignpress' ) } { completion.skipped_reason }
+							{ __( 'Skipped:', 'stepwise' ) } { completion.skipped_reason }
 						</p>
 					) }
 
@@ -137,7 +152,7 @@ const RunnerStep = ( { step, executionId, completion, isCurrent, isExpanded, isP
 								! step.is_required && (
 									<div className="ap-runner-step__actions">
 										<button type="button" className="ap-runner-step__skip-btn" onClick={ () => setShowSkip( true ) }>
-											{ __( 'Skip', 'alignpress' ) }
+											{ __( 'Skip', 'stepwise' ) }
 										</button>
 									</div>
 								)
@@ -148,15 +163,15 @@ const RunnerStep = ( { step, executionId, completion, isCurrent, isExpanded, isP
 										className="ap-runner-step__skip-input"
 										value={ skipReason }
 										onChange={ ( e ) => setSkipReason( e.target.value ) }
-										placeholder={ __( 'Reason for skipping (optional)…', 'alignpress' ) }
+										placeholder={ __( 'Reason for skipping (optional)…', 'stepwise' ) }
 										autoFocus
 									/>
 									<div className="ap-runner-step__skip-actions">
 										<button type="button" className="ap-runner-step__skip-confirm" onClick={ handleSkip } disabled={ skipping }>
-											{ skipping ? __( 'Skipping…', 'alignpress' ) : __( 'Confirm skip', 'alignpress' ) }
+											{ skipping ? __( 'Skipping…', 'stepwise' ) : __( 'Confirm skip', 'stepwise' ) }
 										</button>
 										<button type="button" className="ap-runner-step__skip-cancel" onClick={ () => setShowSkip( false ) }>
-											{ __( 'Cancel', 'alignpress' ) }
+											{ __( 'Cancel', 'stepwise' ) }
 										</button>
 									</div>
 								</div>
@@ -179,6 +194,7 @@ RunnerStep.propTypes = {
 	isSaas:      PropTypes.bool,
 	onToggle:    PropTypes.func.isRequired,
 	onCompleted: PropTypes.func,
+	onDelete:    PropTypes.func,
 };
 
 RunnerStep.defaultProps = {
@@ -188,6 +204,7 @@ RunnerStep.defaultProps = {
 	isPushed:    false,
 	isSaas:      false,
 	onCompleted: null,
+	onDelete:    null,
 };
 
 export default RunnerStep;

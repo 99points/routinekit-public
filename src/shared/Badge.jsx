@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 
 const Badge = ( { children, variant = 'default' } ) => (
-	<span className={ `alignpress-badge alignpress-badge--${ variant }` }>{ children }</span>
+	<span className={ `stepwise-badge stepwise-badge--${ variant }` }>{ children }</span>
 );
 
 Badge.propTypes = {

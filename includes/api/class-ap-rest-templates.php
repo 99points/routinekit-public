@@ -4,13 +4,13 @@ defined( 'ABSPATH' ) || exit;
 /**
  * REST endpoints for bundled local starter templates.
  *
- * GET  /alignpress/v1/templates           — list available templates
- * POST /alignpress/v1/templates/:key/import — import a template as a workflow
+ * GET  /stepwise/v1/templates           — list available templates
+ * POST /stepwise/v1/templates/:key/import — import a template as a workflow
  */
 class AP_REST_Templates {
 
 	/** @var string */
-	protected string $namespace = ALIGNPRESS_REST_NAMESPACE;
+	protected string $namespace = STEPWISE_REST_NAMESPACE;
 
 	/**
 	 * Register REST routes.
@@ -56,13 +56,13 @@ class AP_REST_Templates {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function import_item( WP_REST_Request $request ): WP_REST_Response|WP_Error {
-		if ( ! alignpress_is_pro() && alignpress_at_workflow_limit() ) {
+		if ( ! stepwise_is_pro() && stepwise_at_workflow_limit() ) {
 			return new WP_Error(
-				'alignpress_limit_reached',
+				'stepwise_limit_reached',
 				sprintf(
 					/* translators: %d: workflow limit */
-					__( 'Free plan is limited to %d active workflows. Upgrade to Pro for unlimited workflows.', 'alignpress' ),
-					ALIGNPRESS_FREE_WORKFLOW_LIMIT
+					__( 'Free plan is limited to %d active workflows. Upgrade to Pro for unlimited workflows.', 'stepwise' ),
+					STEPWISE_FREE_WORKFLOW_LIMIT
 				),
 				[ 'status' => 403 ]
 			);
@@ -90,8 +90,8 @@ class AP_REST_Templates {
 			return true;
 		}
 		return new WP_Error(
-			'alignpress_forbidden',
-			__( 'You do not have permission to access this resource.', 'alignpress' ),
+			'stepwise_forbidden',
+			__( 'You do not have permission to access this resource.', 'stepwise' ),
 			[ 'status' => 403 ]
 		);
 	}

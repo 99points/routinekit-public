@@ -15,7 +15,7 @@ const actions = {
 
 	fetchPendingCaptures: () => async ( { dispatch } ) => {
 		try {
-			const data = await apiFetch( { path: '/alignpress/v1/capture/all' } );
+			const data = await apiFetch( { path: '/stepwise/v1/capture/all' } );
 			if ( data?.changes?.length > 0 ) {
 				dispatch( actions.setPendingChanges( data.changes ) );
 				dispatch( actions.setVisible( true ) );
@@ -29,7 +29,7 @@ const actions = {
 		dispatch( actions.setAdding( true ) );
 		try {
 			const result = await apiFetch( {
-				path: '/alignpress/v1/capture/add-to-workflow',
+				path: '/stepwise/v1/capture/add-to-workflow',
 				method: 'POST',
 				data: {
 					workflow_id: workflowId,
@@ -39,7 +39,7 @@ const actions = {
 			} );
 			// Remove only the captures that were just added, not the entire list.
 			const addedSet  = new Set( captureIds.map( Number ) );
-			const current   = select( 'alignpress/capture' ).getPendingChanges();
+			const current   = select( 'stepwise/capture' ).getPendingChanges();
 			const remaining = current.filter( ( c ) => ! addedSet.has( Number( c.id ) ) );
 			dispatch( actions.setPendingChanges( remaining ) );
 			if ( remaining.length === 0 ) {
@@ -56,7 +56,7 @@ const actions = {
 	dismiss: ( captureIds ) => async ( { dispatch } ) => {
 		try {
 			await apiFetch( {
-				path: '/alignpress/v1/capture/dismiss',
+				path: '/stepwise/v1/capture/dismiss',
 				method: 'DELETE',
 				data: { capture_ids: captureIds },
 			} );
@@ -87,7 +87,7 @@ const selectors = {
 	isAdding:          ( state ) => state.isAdding,
 };
 
-const store = createReduxStore( 'alignpress/capture', { reducer, actions, selectors } );
+const store = createReduxStore( 'stepwise/capture', { reducer, actions, selectors } );
 register( store );
 
 export default store;

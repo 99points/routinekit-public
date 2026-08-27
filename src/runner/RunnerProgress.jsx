@@ -18,7 +18,7 @@ const RunnerProgress = ( { current, total, completed } ) => {
 			</div>
 			<div className="ap-runner-progress__label">
 				<span>
-					{ __( 'Step', 'alignpress' ) }{ ' ' }{ current }{ ' ' }{ __( 'of', 'alignpress' ) }{ ' ' }{ total }
+					{ __( 'Step', 'stepwise' ) }{ ' ' }{ current }{ ' ' }{ __( 'of', 'stepwise' ) }{ ' ' }{ total }
 				</span>
 				<span>{ pct }%</span>
 			</div>

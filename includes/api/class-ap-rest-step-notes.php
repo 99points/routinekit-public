@@ -5,16 +5,16 @@ defined( 'ABSPATH' ) || exit;
 /**
  * REST endpoints for threaded step notes.
  *
- * GET    /alignpress/v1/steps/:step_id/notes
- * POST   /alignpress/v1/steps/:step_id/notes
- * DELETE /alignpress/v1/steps/:step_id/notes/:note_id
- * POST   /alignpress/v1/steps/:step_id/notes/:note_id/screenshot
- * DELETE /alignpress/v1/steps/:step_id/notes/:note_id/screenshot
- * POST   /alignpress/v1/sync/notes   — SaaS calls this to push shared notes in
+ * GET    /stepwise/v1/steps/:step_id/notes
+ * POST   /stepwise/v1/steps/:step_id/notes
+ * DELETE /stepwise/v1/steps/:step_id/notes/:note_id
+ * POST   /stepwise/v1/steps/:step_id/notes/:note_id/screenshot
+ * DELETE /stepwise/v1/steps/:step_id/notes/:note_id/screenshot
+ * POST   /stepwise/v1/sync/notes   — SaaS calls this to push shared notes in
  */
 class AP_REST_Step_Notes {
 
-	protected string $namespace = ALIGNPRESS_REST_NAMESPACE;
+	protected string $namespace = STEPWISE_REST_NAMESPACE;
 
 	public function register_routes(): void {
 
@@ -110,7 +110,7 @@ class AP_REST_Step_Notes {
 		$step_id = (int) $request['step_id'];
 		$rows    = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}alignpress_step_notes
+				"SELECT * FROM {$wpdb->prefix}stepwise_step_notes
 				 WHERE step_id = %d
 				 ORDER BY created_at ASC",
 				$step_id
@@ -134,19 +134,19 @@ class AP_REST_Step_Notes {
 		// Gate sharing at Pro+
 		if ( $shared && ! $this->user_can_share() ) {
 			return new WP_Error(
-				'alignpress_plan_required',
-				__( 'Sharing notes to other sites requires a Pro plan.', 'alignpress' ),
+				'stepwise_plan_required',
+				__( 'Sharing notes to other sites requires a Pro plan.', 'stepwise' ),
 				[ 'status' => 403 ]
 			);
 		}
 
 		$step = AP_Step::get( $step_id );
 		if ( ! $step ) {
-			return new WP_Error( 'alignpress_not_found', __( 'Step not found.', 'alignpress' ), [ 'status' => 404 ] );
+			return new WP_Error( 'stepwise_not_found', __( 'Step not found.', 'stepwise' ), [ 'status' => 404 ] );
 		}
 
 		$wpdb->insert(
-			$wpdb->prefix . 'alignpress_step_notes',
+			$wpdb->prefix . 'stepwise_step_notes',
 			[
 				'workflow_id'       => $step->workflow_id,
 				'step_id'           => $step_id,
@@ -163,7 +163,7 @@ class AP_REST_Step_Notes {
 
 		$note_id = (int) $wpdb->insert_id;
 		$note    = $wpdb->get_row(
-			$wpdb->prepare( "SELECT * FROM {$wpdb->prefix}alignpress_step_notes WHERE id = %d", $note_id ),
+			$wpdb->prepare( "SELECT * FROM {$wpdb->prefix}stepwise_step_notes WHERE id = %d", $note_id ),
 			ARRAY_A
 		);
 
@@ -184,20 +184,20 @@ class AP_REST_Step_Notes {
 
 		$note_id = (int) $request['note_id'];
 		$note    = $wpdb->get_row(
-			$wpdb->prepare( "SELECT * FROM {$wpdb->prefix}alignpress_step_notes WHERE id = %d", $note_id ),
+			$wpdb->prepare( "SELECT * FROM {$wpdb->prefix}stepwise_step_notes WHERE id = %d", $note_id ),
 			ARRAY_A
 		);
 
 		if ( ! $note ) {
-			return new WP_Error( 'alignpress_not_found', __( 'Note not found.', 'alignpress' ), [ 'status' => 404 ] );
+			return new WP_Error( 'stepwise_not_found', __( 'Note not found.', 'stepwise' ), [ 'status' => 404 ] );
 		}
 
 		// Only the author (or admin) can delete; sideloaded notes are read-only
 		if ( (int) $note['user_id'] !== get_current_user_id() && ! current_user_can( 'manage_options' ) ) {
-			return new WP_Error( 'alignpress_forbidden', __( 'You cannot delete this note.', 'alignpress' ), [ 'status' => 403 ] );
+			return new WP_Error( 'stepwise_forbidden', __( 'You cannot delete this note.', 'stepwise' ), [ 'status' => 403 ] );
 		}
 		if ( (int) $note['is_sideloaded'] ) {
-			return new WP_Error( 'alignpress_forbidden', __( 'Sideloaded notes can only be deleted by the originating site.', 'alignpress' ), [ 'status' => 403 ] );
+			return new WP_Error( 'stepwise_forbidden', __( 'Sideloaded notes can only be deleted by the originating site.', 'stepwise' ), [ 'status' => 403 ] );
 		}
 
 		// Delete screenshot attachment from media library
@@ -210,7 +210,7 @@ class AP_REST_Step_Notes {
 			( new AP_SaaS_Client() )->delete_shared_note( $note['saas_note_id'] );
 		}
 
-		$wpdb->delete( $wpdb->prefix . 'alignpress_step_notes', [ 'id' => $note_id ], [ '%d' ] );
+		$wpdb->delete( $wpdb->prefix . 'stepwise_step_notes', [ 'id' => $note_id ], [ '%d' ] );
 
 		return rest_ensure_response( [ 'deleted' => true ] );
 	}
@@ -222,23 +222,23 @@ class AP_REST_Step_Notes {
 
 		$note_id = (int) $request['note_id'];
 		$note    = $wpdb->get_row(
-			$wpdb->prepare( "SELECT * FROM {$wpdb->prefix}alignpress_step_notes WHERE id = %d", $note_id ),
+			$wpdb->prepare( "SELECT * FROM {$wpdb->prefix}stepwise_step_notes WHERE id = %d", $note_id ),
 			ARRAY_A
 		);
 
 		if ( ! $note ) {
-			return new WP_Error( 'alignpress_not_found', __( 'Note not found.', 'alignpress' ), [ 'status' => 404 ] );
+			return new WP_Error( 'stepwise_not_found', __( 'Note not found.', 'stepwise' ), [ 'status' => 404 ] );
 		}
 		if ( (int) $note['user_id'] !== get_current_user_id() && ! current_user_can( 'manage_options' ) ) {
-			return new WP_Error( 'alignpress_forbidden', __( 'You cannot modify this note.', 'alignpress' ), [ 'status' => 403 ] );
+			return new WP_Error( 'stepwise_forbidden', __( 'You cannot modify this note.', 'stepwise' ), [ 'status' => 403 ] );
 		}
 		if ( (int) $note['is_sideloaded'] ) {
-			return new WP_Error( 'alignpress_forbidden', __( 'Cannot upload to a sideloaded note.', 'alignpress' ), [ 'status' => 403 ] );
+			return new WP_Error( 'stepwise_forbidden', __( 'Cannot upload to a sideloaded note.', 'stepwise' ), [ 'status' => 403 ] );
 		}
 
 		$files = $request->get_file_params();
 		if ( empty( $files['screenshot'] ) ) {
-			return new WP_Error( 'alignpress_missing_file', __( 'Send file as multipart with key "screenshot".', 'alignpress' ), [ 'status' => 400 ] );
+			return new WP_Error( 'stepwise_missing_file', __( 'Send file as multipart with key "screenshot".', 'stepwise' ), [ 'status' => 400 ] );
 		}
 
 		if ( ! function_exists( 'media_handle_upload' ) ) {
@@ -250,10 +250,10 @@ class AP_REST_Step_Notes {
 		$allowed = [ 'image/jpeg', 'image/png', 'image/gif', 'image/webp' ];
 		$check   = wp_check_filetype_and_ext( $files['screenshot']['tmp_name'], $files['screenshot']['name'] );
 		if ( ! $check['type'] || ! in_array( $check['type'], $allowed, true ) ) {
-			return new WP_Error( 'alignpress_invalid_file', __( 'Screenshots must be JPEG, PNG, GIF, or WebP.', 'alignpress' ), [ 'status' => 415 ] );
+			return new WP_Error( 'stepwise_invalid_file', __( 'Screenshots must be JPEG, PNG, GIF, or WebP.', 'stepwise' ), [ 'status' => 415 ] );
 		}
 		if ( $files['screenshot']['size'] > 10 * MB_IN_BYTES ) {
-			return new WP_Error( 'alignpress_file_too_large', __( 'Screenshot must be 10 MB or smaller.', 'alignpress' ), [ 'status' => 413 ] );
+			return new WP_Error( 'stepwise_file_too_large', __( 'Screenshot must be 10 MB or smaller.', 'stepwise' ), [ 'status' => 413 ] );
 		}
 
 		// Delete previous screenshot if one exists (1 per note limit)
@@ -264,13 +264,13 @@ class AP_REST_Step_Notes {
 		$_FILES['screenshot'] = $files['screenshot'];
 		$attachment_id        = media_handle_upload( 'screenshot', 0 );
 		if ( is_wp_error( $attachment_id ) ) {
-			return new WP_Error( 'alignpress_upload_failed', $attachment_id->get_error_message(), [ 'status' => 500 ] );
+			return new WP_Error( 'stepwise_upload_failed', $attachment_id->get_error_message(), [ 'status' => 500 ] );
 		}
 
 		$screenshot_url = wp_get_attachment_url( $attachment_id );
 
 		$wpdb->update(
-			$wpdb->prefix . 'alignpress_step_notes',
+			$wpdb->prefix . 'stepwise_step_notes',
 			[
 				'screenshot_url'          => $screenshot_url,
 				'screenshot_attachment_id' => $attachment_id,
@@ -298,15 +298,15 @@ class AP_REST_Step_Notes {
 
 		$note_id = (int) $request['note_id'];
 		$note    = $wpdb->get_row(
-			$wpdb->prepare( "SELECT * FROM {$wpdb->prefix}alignpress_step_notes WHERE id = %d", $note_id ),
+			$wpdb->prepare( "SELECT * FROM {$wpdb->prefix}stepwise_step_notes WHERE id = %d", $note_id ),
 			ARRAY_A
 		);
 
 		if ( ! $note ) {
-			return new WP_Error( 'alignpress_not_found', __( 'Note not found.', 'alignpress' ), [ 'status' => 404 ] );
+			return new WP_Error( 'stepwise_not_found', __( 'Note not found.', 'stepwise' ), [ 'status' => 404 ] );
 		}
 		if ( (int) $note['user_id'] !== get_current_user_id() && ! current_user_can( 'manage_options' ) ) {
-			return new WP_Error( 'alignpress_forbidden', __( 'You cannot modify this note.', 'alignpress' ), [ 'status' => 403 ] );
+			return new WP_Error( 'stepwise_forbidden', __( 'You cannot modify this note.', 'stepwise' ), [ 'status' => 403 ] );
 		}
 
 		if ( ! empty( $note['screenshot_attachment_id'] ) ) {
@@ -314,7 +314,7 @@ class AP_REST_Step_Notes {
 		}
 
 		$wpdb->update(
-			$wpdb->prefix . 'alignpress_step_notes',
+			$wpdb->prefix . 'stepwise_step_notes',
 			[ 'screenshot_url' => null, 'screenshot_attachment_id' => null ],
 			[ 'id' => $note_id ],
 			[ '%s', '%s' ],
@@ -346,7 +346,7 @@ class AP_REST_Step_Notes {
 
 		// A note must have at minimum a body OR a screenshot
 		if ( ! $saas_note_id || ! $step_id || ( '' === $body && ! $screenshot_url ) ) {
-			return new WP_Error( 'alignpress_invalid', __( 'Missing required fields.', 'alignpress' ), [ 'status' => 400 ] );
+			return new WP_Error( 'stepwise_invalid', __( 'Missing required fields.', 'stepwise' ), [ 'status' => 400 ] );
 		}
 
 		// Reject private/loopback screenshot URLs to prevent SSRF via sideload_image().
@@ -357,7 +357,7 @@ class AP_REST_Step_Notes {
 		// Dedup: update if already exists, insert if new
 		$existing = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}alignpress_step_notes WHERE saas_note_id = %s",
+				"SELECT * FROM {$wpdb->prefix}stepwise_step_notes WHERE saas_note_id = %s",
 				$saas_note_id
 			),
 			ARRAY_A
@@ -388,7 +388,7 @@ class AP_REST_Step_Notes {
 			}
 
 			$wpdb->update(
-				$wpdb->prefix . 'alignpress_step_notes',
+				$wpdb->prefix . 'stepwise_step_notes',
 				$update_data,
 				[ 'id' => (int) $existing['id'] ],
 				$update_format,
@@ -406,14 +406,12 @@ class AP_REST_Step_Notes {
 			if ( $attachment_id && ! is_wp_error( $attachment_id ) ) {
 				$local_screenshot_url = wp_get_attachment_url( $attachment_id );
 				$local_attachment_id  = $attachment_id;
-			} else {
-				// Sideload failed — fall back to original URL so note still shows image
-				$local_screenshot_url = $screenshot_url;
 			}
+			// Sideload failed — leave $local_screenshot_url as null rather than storing the external URL.
 		}
 
 		$wpdb->insert(
-			$wpdb->prefix . 'alignpress_step_notes',
+			$wpdb->prefix . 'stepwise_step_notes',
 			[
 				'saas_note_id'            => $saas_note_id,
 				'workflow_id'             => $workflow_id,
@@ -442,7 +440,7 @@ class AP_REST_Step_Notes {
 		$saas_note_id = sanitize_text_field( $request['saas_note_id'] );
 		$note         = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}alignpress_step_notes WHERE saas_note_id = %s AND is_sideloaded = 1",
+				"SELECT * FROM {$wpdb->prefix}stepwise_step_notes WHERE saas_note_id = %s AND is_sideloaded = 1",
 				$saas_note_id
 			),
 			ARRAY_A
@@ -456,7 +454,7 @@ class AP_REST_Step_Notes {
 			wp_delete_attachment( (int) $note['screenshot_attachment_id'], true );
 		}
 
-		$wpdb->delete( $wpdb->prefix . 'alignpress_step_notes', [ 'id' => (int) $note['id'] ], [ '%d' ] );
+		$wpdb->delete( $wpdb->prefix . 'stepwise_step_notes', [ 'id' => (int) $note['id'] ], [ '%d' ] );
 
 		return rest_ensure_response( [ 'deleted' => true ] );
 	}
@@ -475,7 +473,7 @@ class AP_REST_Step_Notes {
 
 		$note = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}alignpress_step_notes WHERE screenshot_attachment_id = %d LIMIT 1",
+				"SELECT * FROM {$wpdb->prefix}stepwise_step_notes WHERE screenshot_attachment_id = %d LIMIT 1",
 				$attachment_id
 			),
 			ARRAY_A
@@ -486,7 +484,7 @@ class AP_REST_Step_Notes {
 		}
 
 		$wpdb->update(
-			$wpdb->prefix . 'alignpress_step_notes',
+			$wpdb->prefix . 'stepwise_step_notes',
 			[ 'screenshot_url' => null, 'screenshot_attachment_id' => null ],
 			[ 'id' => (int) $note['id'] ],
 			[ '%s', '%s' ],
@@ -502,20 +500,20 @@ class AP_REST_Step_Notes {
 	// ── Permission callbacks ──────────────────────────────────────────────────
 
 	public function run_permission(): bool|WP_Error {
-		if ( alignpress_current_user_can_run() ) {
+		if ( stepwise_current_user_can_run() ) {
 			return true;
 		}
-		return new WP_Error( 'alignpress_forbidden', __( 'You do not have permission.', 'alignpress' ), [ 'status' => 403 ] );
+		return new WP_Error( 'stepwise_forbidden', __( 'You do not have permission.', 'stepwise' ), [ 'status' => 403 ] );
 	}
 
 	public function sync_permission(): bool|WP_Error {
 		// SaaS calls this with the site's API key in the header
-		$api_key = get_option( 'alignpress_site_api_key', '' );
-		$header  = isset( $_SERVER['HTTP_X_ALIGNPRESS_KEY'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_ALIGNPRESS_KEY'] ) ) : '';
+		$api_key = get_option( 'stepwise_site_api_key', '' );
+		$header  = isset( $_SERVER['HTTP_X_STEPWISE_KEY'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_STEPWISE_KEY'] ) ) : '';
 		if ( $api_key && hash_equals( $api_key, $header ) ) {
 			return true;
 		}
-		return new WP_Error( 'alignpress_forbidden', __( 'Invalid sync key.', 'alignpress' ), [ 'status' => 403 ] );
+		return new WP_Error( 'stepwise_forbidden', __( 'Invalid sync key.', 'stepwise' ), [ 'status' => 403 ] );
 	}
 
 	// ── Helpers ───────────────────────────────────────────────────────────────
@@ -568,7 +566,7 @@ class AP_REST_Step_Notes {
 	}
 
 	private function user_can_share(): bool {
-		return alignpress_is_pro();
+		return stepwise_is_pro();
 	}
 
 	/**

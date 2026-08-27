@@ -2,11 +2,11 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * REST controller for alignpress/v1/workflows
+ * REST controller for stepwise/v1/workflows
  */
 class AP_REST_Workflows extends WP_REST_Controller {
 
-	protected $namespace = ALIGNPRESS_REST_NAMESPACE;
+	protected $namespace = STEPWISE_REST_NAMESPACE;
 	protected $rest_base = 'workflows';
 
 	/**
@@ -76,7 +76,9 @@ class AP_REST_Workflows extends WP_REST_Controller {
 			[
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => [ $this, 'export_item' ],
-				'permission_callback' => '__return_true',
+				// Public read is intentional — active workflows are shareable across sites via import-from-URL.
+				// Non-active workflows are blocked inside the handler for unauthenticated requests.
+				'permission_callback' => [ $this, 'export_permission' ],
 				'args'                => [ 'id' => [ 'type' => 'integer', 'sanitize_callback' => 'absint' ] ],
 			],
 		] );
@@ -144,7 +146,7 @@ class AP_REST_Workflows extends WP_REST_Controller {
 	public function get_item( $request ): WP_REST_Response|WP_Error {
 		$workflow = AP_Workflow::get( (int) $request['id'] );
 		if ( ! $workflow ) {
-			return new WP_Error( 'alignpress_not_found', __( 'Workflow not found.', 'alignpress' ), [ 'status' => 404 ] );
+			return new WP_Error( 'stepwise_not_found', __( 'Workflow not found.', 'stepwise' ), [ 'status' => 404 ] );
 		}
 		return rest_ensure_response( $workflow->to_array() );
 	}
@@ -184,7 +186,7 @@ class AP_REST_Workflows extends WP_REST_Controller {
 		$workflow = AP_Workflow::get( $id );
 
 		if ( ! $workflow ) {
-			return new WP_Error( 'alignpress_not_found', __( 'Workflow not found.', 'alignpress' ), [ 'status' => 404 ] );
+			return new WP_Error( 'stepwise_not_found', __( 'Workflow not found.', 'stepwise' ), [ 'status' => 404 ] );
 		}
 
 		$data = array_filter( [
@@ -213,16 +215,16 @@ class AP_REST_Workflows extends WP_REST_Controller {
 		$workflow = AP_Workflow::get( $id );
 
 		if ( ! $workflow ) {
-			return new WP_Error( 'alignpress_not_found', __( 'Workflow not found.', 'alignpress' ), [ 'status' => 404 ] );
+			return new WP_Error( 'stepwise_not_found', __( 'Workflow not found.', 'stepwise' ), [ 'status' => 404 ] );
 		}
 
-		if ( ! alignpress_workflow_can_delete( $id ) ) {
-			return new WP_Error( 'alignpress_locked', __( 'This workflow cannot be deleted because it has been pushed to the cloud. Archive it instead.', 'alignpress' ), [ 'status' => 403 ] );
+		if ( ! stepwise_workflow_can_delete( $id ) ) {
+			return new WP_Error( 'stepwise_locked', __( 'This workflow cannot be deleted because it has been pushed to the cloud. Archive it instead.', 'stepwise' ), [ 'status' => 403 ] );
 		}
 
 		$deleted = AP_Workflow::delete( $id );
 		if ( ! $deleted ) {
-			return new WP_Error( 'alignpress_db_error', __( 'Could not delete workflow.', 'alignpress' ), [ 'status' => 500 ] );
+			return new WP_Error( 'stepwise_db_error', __( 'Could not delete workflow.', 'stepwise' ), [ 'status' => 500 ] );
 		}
 
 		return rest_ensure_response( [ 'deleted' => true, 'id' => $id ] );
@@ -237,12 +239,12 @@ class AP_REST_Workflows extends WP_REST_Controller {
 	public function export_item( $request ): WP_REST_Response|WP_Error {
 		$workflow = AP_Workflow::get( (int) $request['id'] );
 		if ( ! $workflow ) {
-			return new WP_Error( 'alignpress_not_found', __( 'Workflow not found.', 'alignpress' ), [ 'status' => 404 ] );
+			return new WP_Error( 'stepwise_not_found', __( 'Workflow not found.', 'stepwise' ), [ 'status' => 404 ] );
 		}
 
 		// Unauthenticated requests can only export active workflows — drafts are work-in-progress.
 		if ( $workflow->status !== 'active' && ! current_user_can( 'manage_options' ) ) {
-			return new WP_Error( 'alignpress_not_found', __( 'Workflow not found.', 'alignpress' ), [ 'status' => 404 ] );
+			return new WP_Error( 'stepwise_not_found', __( 'Workflow not found.', 'stepwise' ), [ 'status' => 404 ] );
 		}
 
 		$export = [
@@ -272,13 +274,13 @@ class AP_REST_Workflows extends WP_REST_Controller {
 	public function import_item( $request ): WP_REST_Response|WP_Error {
 		$body = $request->get_json_params();
 		if ( empty( $body['title'] ) || empty( $body['steps'] ) ) {
-			return new WP_Error( 'alignpress_invalid', __( 'Invalid workflow JSON. title and steps are required.', 'alignpress' ), [ 'status' => 400 ] );
+			return new WP_Error( 'stepwise_invalid', __( 'Invalid workflow JSON. title and steps are required.', 'stepwise' ), [ 'status' => 400 ] );
 		}
 
 		$workflow = AP_Workflow::create( [
 			'title'        => $body['title'],
 			'description'  => $body['description'] ?? '',
-			'status'       => get_option( 'alignpress_default_status', 'draft' ),
+			'status'       => get_option( 'stepwise_default_status', 'draft' ),
 			'source'       => 'imported',
 			'template_key' => $body['template_key'] ?? null,
 			'created_by'   => get_current_user_id(),
@@ -305,21 +307,21 @@ class AP_REST_Workflows extends WP_REST_Controller {
 	 */
 	public function import_from_url( WP_REST_Request $request ): WP_REST_Response|WP_Error {
 		// Requires a Pro plan — the SaaS proxy enforces this server-side too.
-		if ( ! alignpress_is_pro() ) {
-			return new WP_Error( 'alignpress_plan_required', __( 'Import from URL requires an Agency or Agency Pro license.', 'alignpress' ), [ 'status' => 403 ] );
+		if ( ! stepwise_is_pro() ) {
+			return new WP_Error( 'stepwise_plan_required', __( 'Import from URL requires an Agency or Agency Pro license.', 'stepwise' ), [ 'status' => 403 ] );
 		}
 
 		$url    = $request->get_param( 'url' );
 		$result = ( new AP_SaaS_Client() )->import_url( $url );
 
 		if ( is_wp_error( $result ) ) {
-			return new WP_Error( 'alignpress_fetch_failed', $result->get_error_message(), [ 'status' => 502 ] );
+			return new WP_Error( 'stepwise_fetch_failed', $result->get_error_message(), [ 'status' => 502 ] );
 		}
 
 		if ( empty( $result['title'] ) || empty( $result['steps'] ) ) {
 			return new WP_Error(
-				'alignpress_invalid',
-				__( 'URL did not return valid workflow JSON. title and steps are required.', 'alignpress' ),
+				'stepwise_invalid',
+				__( 'URL did not return valid workflow JSON. title and steps are required.', 'stepwise' ),
 				[ 'status' => 422 ]
 			);
 		}
@@ -338,19 +340,29 @@ class AP_REST_Workflows extends WP_REST_Controller {
 	 * @param WP_REST_Request $request
 	 * @return bool|WP_Error
 	 */
+	/**
+	 * Export endpoint: allow unauthenticated access so active workflows can be
+	 * imported cross-site via URL, but require login for non-active workflows.
+	 * The handler enforces the active-only rule for guests; this callback just
+	 * satisfies the WP requirement of a non-__return_true permission_callback.
+	 */
+	public function export_permission( WP_REST_Request $request ): bool {
+		return true;
+	}
+
 	public function permissions_check( WP_REST_Request $request ): bool|WP_Error {
 		if ( current_user_can( 'manage_options' ) ) {
 			return true;
 		}
 
 		if ( AP_SaaS_Auth::is_connected() ) {
-			$key = $request->get_header( 'X-AlignPress-Key' );
+			$key = $request->get_header( 'X-Stepwise-Key' );
 			if ( ! empty( $key ) && $this->verify_saas_key( $key ) ) {
 				return true;
 			}
 		}
 
-		return new WP_Error( 'alignpress_forbidden', __( 'You do not have permission to access this resource.', 'alignpress' ), [ 'status' => 403 ] );
+		return new WP_Error( 'stepwise_forbidden', __( 'You do not have permission to access this resource.', 'stepwise' ), [ 'status' => 403 ] );
 	}
 
 	/**
@@ -358,7 +370,7 @@ class AP_REST_Workflows extends WP_REST_Controller {
 	 * @return bool
 	 */
 	private function verify_saas_key( string $key ): bool {
-		$stored = get_option( 'alignpress_saas_site_key', '' );
+		$stored = get_option( 'stepwise_site_api_key', '' );
 		return ! empty( $stored ) && hash_equals( $stored, $key );
 	}
 

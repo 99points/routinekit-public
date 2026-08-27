@@ -41,10 +41,10 @@ const WorkflowList = ( { workflows, onStartRun } ) => {
 	};
 
 	const tabs = [
-		{ key: 'all',      label: __( 'All', 'alignpress' ) },
-		{ key: 'active',   label: __( 'Active', 'alignpress' ) },
-		{ key: 'draft',    label: __( 'Draft', 'alignpress' ) },
-		{ key: 'archived', label: __( 'Archived', 'alignpress' ) },
+		{ key: 'all',      label: __( 'All', 'stepwise' ) },
+		{ key: 'active',   label: __( 'Active', 'stepwise' ) },
+		{ key: 'draft',    label: __( 'Draft', 'stepwise' ) },
+		{ key: 'archived', label: __( 'Archived', 'stepwise' ) },
 	].filter( ( t ) => t.key === 'all' || counts[ t.key ] > 0 );
 
 	if ( ! workflows.length ) {
@@ -72,23 +72,23 @@ const WorkflowList = ( { workflows, onStartRun } ) => {
 			{ /* Toolbar */ }
 			<div className="ap-workflow-toolbar">
 				<span className="ap-workflow-toolbar__count">
-					{ filtered.length } { filtered.length === 1 ? __( 'item', 'alignpress' ) : __( 'items', 'alignpress' ) }
+					{ filtered.length } { filtered.length === 1 ? __( 'item', 'stepwise' ) : __( 'items', 'stepwise' ) }
 				</span>
 				{ /* Search — temporarily hidden */ }
 			</div>
 
 			{ /* Table */ }
-			<table className="alignpress-table widefat">
+			<table className="stepwise-table widefat">
 				<thead>
 					<tr>
 						<th className="ap-col-check">
 							<input type="checkbox" checked={ allChecked } onChange={ toggleAll } />
 						</th>
-						<th className="ap-col-name">{ __( 'Workflow Name', 'alignpress' ) }</th>
-						<th className="ap-col-steps">{ __( 'Steps', 'alignpress' ) }</th>
-						<th className="ap-col-lastrun">{ __( 'Last Run', 'alignpress' ) }</th>
-						<th className="ap-col-progress">{ __( 'Progress', 'alignpress' ) }</th>
-						<th className="ap-col-status">{ __( 'Status', 'alignpress' ) }</th>
+						<th className="ap-col-name">{ __( 'Workflow Name', 'stepwise' ) }</th>
+						<th className="ap-col-steps">{ __( 'Steps', 'stepwise' ) }</th>
+						<th className="ap-col-lastrun">{ __( 'Last Run', 'stepwise' ) }</th>
+						<th className="ap-col-progress">{ __( 'Progress', 'stepwise' ) }</th>
+						<th className="ap-col-status">{ __( 'Status', 'stepwise' ) }</th>
 						<th className="ap-col-action"></th>
 					</tr>
 				</thead>
@@ -96,7 +96,7 @@ const WorkflowList = ( { workflows, onStartRun } ) => {
 					{ filtered.length === 0 ? (
 						<tr>
 							<td colSpan={ 7 } style={ { textAlign: 'center', padding: '24px', color: 'var(--ap-gray-400)' } }>
-								{ __( 'No workflows match your filter.', 'alignpress' ) }
+								{ __( 'No workflows match your filter.', 'stepwise' ) }
 							</td>
 						</tr>
 					) : (

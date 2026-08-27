@@ -11,9 +11,9 @@ const ImportUrlModal = ( { onClose } ) => {
 	const [ saving, setSaving ] = useState( false );
 	const [ error, setError ]   = useState( null );
 
-	const { fetchWorkflows } = useDispatch( 'alignpress/workflows' );
+	const { fetchWorkflows } = useDispatch( 'stepwise/workflows' );
 
-	const { saasConnected = false } = window.alignpressData ?? {};
+	const { saasConnected = false } = window.stepwiseData ?? {};
 
 	const handleSubmit = async ( e ) => {
 		e.preventDefault();
@@ -25,19 +25,19 @@ const ImportUrlModal = ( { onClose } ) => {
 			if ( saasConnected ) {
 				// Proxy through SaaS — server-enforced Pro gate, fetch happens on our server
 				const parsed = await apiFetch( {
-					path:   '/alignpress/v1/saas/import-url',
+					path:   '/stepwise/v1/saas/import-url',
 					method: 'POST',
 					data:   { url: url.trim() },
 				} );
 				// parsed contains {title, description, category, steps} — import locally
 				workflow = await apiFetch( {
-					path:   '/alignpress/v1/workflows/import',
+					path:   '/stepwise/v1/workflows/import',
 					method: 'POST',
 					data:   parsed,
 				} );
 			} else {
 				workflow = await apiFetch( {
-					path:   '/alignpress/v1/workflows/import-url',
+					path:   '/stepwise/v1/workflows/import-url',
 					method: 'POST',
 					data:   { url: url.trim() },
 				} );
@@ -45,23 +45,23 @@ const ImportUrlModal = ( { onClose } ) => {
 			await fetchWorkflows();
 			onClose();
 			if ( workflow?.id ) {
-				const editUrl = `${ window.alignpressData?.adminUrl ?? '' }admin.php?page=alignpress&workflow_id=${ workflow.id }`;
+				const editUrl = `${ window.stepwiseData?.adminUrl ?? '' }admin.php?page=stepwise&workflow_id=${ workflow.id }`;
 				window.location.href = editUrl;
 			}
 		} catch ( err ) {
-			setError( err.message ?? __( 'Failed to import from URL.', 'alignpress' ) );
+			setError( err.message ?? __( 'Failed to import from URL.', 'stepwise' ) );
 			setSaving( false );
 		}
 	};
 
 	return (
 		<Modal
-			title={ __( 'Import Workflow from URL', 'alignpress' ) }
+			title={ __( 'Import Workflow from URL', 'stepwise' ) }
 			onClose={ onClose }
 			footer={
 				<>
 					<Button variant="ghost" onClick={ onClose } disabled={ saving }>
-						{ __( 'Cancel', 'alignpress' ) }
+						{ __( 'Cancel', 'stepwise' ) }
 					</Button>
 					<Button
 						variant="primary"
@@ -69,7 +69,7 @@ const ImportUrlModal = ( { onClose } ) => {
 						form="ap-import-url-form"
 						disabled={ ! url.trim() || saving }
 					>
-						{ saving ? __( 'Importing…', 'alignpress' ) : __( 'Import', 'alignpress' ) }
+						{ saving ? __( 'Importing…', 'stepwise' ) : __( 'Import', 'stepwise' ) }
 					</Button>
 				</>
 			}
@@ -77,14 +77,14 @@ const ImportUrlModal = ( { onClose } ) => {
 			<form id="ap-import-url-form" onSubmit={ handleSubmit }>
 				{ error && <p className="ap-error">{ error }</p> }
 				<div className="ap-field">
-					<label className="alignpress-label" htmlFor="ap-import-url">
-						{ __( 'Workflow JSON URL', 'alignpress' ) }
+					<label className="stepwise-label" htmlFor="ap-import-url">
+						{ __( 'Workflow JSON URL', 'stepwise' ) }
 						<span className="ap-required" aria-hidden="true"> *</span>
 					</label>
 					<input
 						id="ap-import-url"
 						type="url"
-						className="alignpress-input"
+						className="stepwise-input"
 						value={ url }
 						onChange={ ( e ) => setUrl( e.target.value ) }
 						placeholder="https://example.com/workflow-export.json"
@@ -92,7 +92,7 @@ const ImportUrlModal = ( { onClose } ) => {
 						autoFocus
 					/>
 					<p className="ap-help">
-						{ __( 'Paste the URL of a workflow JSON exported from another AlignPress installation.', 'alignpress' ) }
+						{ __( 'Paste the URL of a workflow JSON exported from another Stepwise installation.', 'stepwise' ) }
 					</p>
 				</div>
 			</form>

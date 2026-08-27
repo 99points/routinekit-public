@@ -1,12 +1,9 @@
-/* AlignPress — ⊕ Capture Step floating button (vanilla JS, no jQuery/React) */
+/* Stepwise — ⊕ Capture Step floating button (vanilla JS, no jQuery/React) */
 ( function () {
 	'use strict';
 
-	var cfg = window.alignpressCapture || {};
+	var cfg = window.stepwiseCapture || {};
 	if ( ! cfg.restUrl || ! cfg.nonce ) return;
-
-	// Suppress button on AlignPress own pages, but NOT completely — runner/toast still render via React roots.
-	var isApPage = window.location.search.indexOf( 'page=alignpress' ) !== -1;
 
 	/* ─── Snapshot ─────────────────────────────────────────────────── */
 
@@ -75,7 +72,7 @@
 
 	function getActiveWorkflowId() {
 		try {
-			var exec = window.wp && window.wp.data && window.wp.data.select( 'alignpress/execution' ) && window.wp.data.select( 'alignpress/execution' ).getActiveExecution();
+			var exec = window.wp && window.wp.data && window.wp.data.select( 'stepwise/execution' ) && window.wp.data.select( 'stepwise/execution' ).getActiveExecution();
 			if ( exec && exec.status === 'in_progress' && exec.workflow_id ) return String( exec.workflow_id );
 		} catch ( e ) {}
 		return '';
@@ -114,13 +111,7 @@
 	/* ─── Styles ────────────────────────────────────────────────────── */
 
 	var STYLES = [
-		'#ap-capture-btn{position:fixed;bottom:80px;right:20px;z-index:99999;',
-		'background:#1e1e1e;color:#fff;border:none;border-radius:999px;',
-		'padding:10px 18px;font-size:14px;font-weight:600;cursor:pointer;',
-		'display:flex;align-items:center;gap:6px;box-shadow:0 2px 12px rgba(0,0,0,.35);',
-		'transition:transform .15s,box-shadow .15s;}',
-		'#ap-capture-btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.45);}',
-
+		'@keyframes ap-spin{to{transform:rotate(360deg)}}',
 		'#ap-capture-panel{position:fixed;bottom:140px;right:20px;z-index:100000;',
 		'width:360px;background:#fff;border-radius:10px;',
 		'box-shadow:0 8px 32px rgba(0,0,0,.22);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;',
@@ -186,7 +177,7 @@
 
 	/* ─── DOM builders ──────────────────────────────────────────────── */
 
-	var btn, panel, panelTitle, instrTextarea, instrFileInput, deepLinkInput, wfSelect, errorEl;
+	var panel, panelTitle, instrTextarea, instrFileInput, deepLinkInput, wfSelect, errorEl, submitBtn;
 	var attachments = []; // { dataUrl, file }
 	var attachsContainer;
 
@@ -194,16 +185,6 @@
 		var s = document.createElement( 'style' );
 		s.textContent = STYLES;
 		document.head.appendChild( s );
-	}
-
-	function createButton() {
-		btn = document.createElement( 'button' );
-		btn.id          = 'ap-capture-btn';
-		btn.type        = 'button';
-		btn.innerHTML   = '&#8853; Capture Step';
-		if ( isApPage ) btn.style.display = 'none';
-		btn.addEventListener( 'click', togglePanel );
-		document.body.appendChild( btn );
 	}
 
 	function buildWfOptions( selectEl, activeId ) {
@@ -319,30 +300,28 @@
 		scrBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.5 5.5V3.5A1 1 0 0 1 2.5 2.5h2" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"/><path d="M14.5 5.5V3.5A1 1 0 0 0 13.5 2.5h-2" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"/><path d="M1.5 10.5v2a1 1 0 0 0 1 1h2" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"/><path d="M14.5 10.5v2a1 1 0 0 1-1 1h-2" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"/><circle cx="8" cy="8" r="2.5" stroke="currentColor" stroke-width="1.25"/></svg>';
 		var scrBtnSvg = scrBtn.innerHTML;
 		scrBtn.addEventListener( 'click', function () {
-			scrBtn.innerHTML    = '…';
-			scrBtn.disabled     = true;
-			panel.style.display = 'none';
+			scrBtn.innerHTML = '…';
+			scrBtn.disabled  = true;
 
 			setTimeout( function () {
 				if ( ! window.html2canvas ) {
-					panel.style.display = 'flex';
-					scrBtn.innerHTML    = scrBtnSvg;
-					scrBtn.disabled     = false;
+					scrBtn.innerHTML = scrBtnSvg;
+					scrBtn.disabled  = false;
 					return;
 				}
+				panel.style.display = 'none';
 
-				// Temporarily remove stylesheet rules with broken SVG data URIs
-				// that crash html2canvas's CSS parser.
+				// Temporarily remove stylesheet rules with SVG data URIs that crash html2canvas.
 				var disabledRules = [];
 				try {
 					for ( var si = 0; si < document.styleSheets.length; si++ ) {
 						try {
 							var rules = document.styleSheets[ si ].cssRules || [];
 							for ( var ri = rules.length - 1; ri >= 0; ri-- ) {
-								var text = rules[ ri ].cssText || '';
-								if ( text.indexOf( 'data:image/svg' ) !== -1 && text.indexOf( 'transition-property' ) !== -1 ) {
-									disabledRules.push( { sheet: document.styleSheets[ si ], index: ri, text: text } );
-									document.styleSheets[ si ].deleteRule( ri );
+								var ruleText = rules[ ri ] && rules[ ri ].cssText || '';
+								if ( ruleText.indexOf( 'data:image/svg' ) !== -1 ) {
+									disabledRules.push( { sheet: document.styleSheets[ si ], index: ri, text: ruleText } );
+									try { document.styleSheets[ si ].deleteRule( ri ); } catch ( e ) {}
 								}
 							}
 						} catch ( e ) { /* cross-origin sheet */ }
@@ -458,7 +437,7 @@
 		cancelBtn.className   = 'ap-cp-btn ap-cp-btn--ghost';
 		cancelBtn.textContent = 'Cancel';
 		cancelBtn.addEventListener( 'click', closePanel );
-		var submitBtn  = document.createElement( 'button' );
+		submitBtn  = document.createElement( 'button' );
 		submitBtn.type        = 'button';
 		submitBtn.className   = 'ap-cp-btn ap-cp-btn--primary';
 		submitBtn.textContent = 'Save Step';
@@ -478,7 +457,7 @@
 		/* Close on outside click */
 		document.addEventListener( 'mousedown', function ( e ) {
 			if ( panel.style.display === 'none' ) return;
-			if ( ! panel.contains( e.target ) && e.target !== btn ) closePanel();
+			if ( ! panel.contains( e.target ) ) closePanel();
 		} );
 	}
 
@@ -507,17 +486,18 @@
 
 	function closePanel() {
 		panel.style.display = 'none';
+		setSubmitLoading( false );
 	}
 
-	function togglePanel() {
-		if ( panel.style.display === 'none' || ! panel.style.display ) {
-			openPanel();
-		} else {
-			closePanel();
-		}
-	}
 
 	/* ─── Submit ────────────────────────────────────────────────────── */
+
+	function setSubmitLoading( loading ) {
+		submitBtn.disabled = loading;
+		submitBtn.innerHTML = loading
+			? '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="vertical-align:middle;animation:ap-spin 0.7s linear infinite"><circle cx="8" cy="8" r="6" stroke="rgba(255,255,255,0.3)" stroke-width="2"/><path d="M8 2a6 6 0 0 1 6 6" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg> Saving…'
+			: 'Save Step';
+	}
 
 	function handleSubmit() {
 		var title = panelTitle.value.trim();
@@ -538,24 +518,20 @@
 			return;
 		}
 
-		var instrText = instrTextarea.value.trim();
-		var instrParts = instrText ? [ instrText ] : [];
-		attachments.forEach( function ( a ) {
-			instrParts.push( '[image:' + a.dataUrl.substring( 0, 60 ) + '…]' );
-		} );
-		var instructions = instrParts.join( '\n' );
+		setSubmitLoading( true );
 
-		var change = findFirstChange();
+		var noteText        = instrTextarea.value.trim();
+		var noteAttachments = attachments.slice(); // snapshot before clearing
+		var change          = findFirstChange();
 
 		var body = {
-			label:        title,
-			field_key:    change ? change.key : '_manual_',
-			old_value:    change ? change.oldValue : '',
-			new_value:    change ? change.newValue : '',
-			page_url:     cfg.pageUrl || window.location.href,
-			page_title:   cfg.pageTitle || document.title,
-			instructions: instructions,
-			workflow_id:  parseInt( wfId, 10 ),
+			label:       title,
+			field_key:   change ? change.key : '_manual_',
+			old_value:   change ? change.oldValue : '',
+			new_value:   change ? change.newValue : '',
+			page_url:    cfg.pageUrl || window.location.href,
+			page_title:  cfg.pageTitle || document.title,
+			workflow_id: parseInt( wfId, 10 ),
 		};
 
 		fetch( cfg.restUrl + 'capture/manual', {
@@ -565,22 +541,55 @@
 		} )
 			.then( function ( r ) { return r.json(); } )
 			.then( function ( data ) {
-				if ( data && data.success ) {
-					if ( change ) snapshot[ change.key ] = change.newValue;
-					panelTitle.value    = '';
-					instrTextarea.value = '';
-					deepLinkInput.value = '';
-					attachments         = [];
-					attachsContainer.innerHTML = '';
-					closePanel();
-					btn.innerHTML = '&#10003; Step saved!';
-					setTimeout( function () { btn.innerHTML = '&#8853; Capture Step'; }, 2000 );
-				} else {
+				if ( ! ( data && data.success ) ) {
+					setSubmitLoading( false );
 					errorEl.textContent   = 'Failed to save. Please try again.';
 					errorEl.style.display = 'block';
+					return;
 				}
+
+				if ( change ) snapshot[ change.key ] = change.newValue;
+				panelTitle.value    = '';
+				instrTextarea.value = '';
+				deepLinkInput.value = '';
+				attachments         = [];
+				attachsContainer.innerHTML = '';
+				closePanel();
+				window.dispatchEvent( new CustomEvent( 'ap:capture:saved', { detail: data } ) );
+
+				// If the step was created and there are notes/screenshots, post them as a note.
+				var stepId = data.step && data.step.id;
+				if ( ! stepId || ( ! noteText && ! noteAttachments.length ) ) return;
+
+				var restBase = cfg.restUrl + 'steps/' + stepId + '/notes';
+				fetch( restBase, {
+					method:  'POST',
+					headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': cfg.nonce },
+					body:    JSON.stringify( { body: noteText, shared: true } ),
+				} )
+					.then( function ( r ) { return r.json(); } )
+					.then( function ( note ) {
+						if ( ! note || ! note.id || ! noteAttachments.length ) return;
+						// Upload the first screenshot to the note.
+						var attachment = noteAttachments[ 0 ];
+						// Convert dataUrl to Blob then post as multipart.
+						var byteStr = atob( attachment.dataUrl.split( ',' )[ 1 ] );
+						var ab = new ArrayBuffer( byteStr.length );
+						var ia = new Uint8Array( ab );
+						for ( var i = 0; i < byteStr.length; i++ ) ia[ i ] = byteStr.charCodeAt( i );
+						var blob = new Blob( [ ab ], { type: 'image/png' } );
+						var fd   = new FormData();
+						fd.append( 'screenshot', blob, 'screenshot.png' );
+						fetch( restBase + '/' + note.id + '/screenshot', {
+							method:  'POST',
+							headers: { 'X-WP-Nonce': cfg.nonce },
+							body:    fd,
+						} ).catch( function () {} );
+					} )
+					.catch( function () {} );
 			} )
 			.catch( function () {
+				setSubmitLoading( false );
 				errorEl.textContent   = 'Network error. Please try again.';
 				errorEl.style.display = 'block';
 			} );
@@ -639,11 +648,14 @@
 		injectStyles();
 		takeSnapshot();
 		setTimeout( takeSnapshot, 800 );
-		createButton();
 		createPanel();
 		initClickDetector();
 		initBeforeInputDetector();
 		setTimeout( initWpDataDetector, 500 );
+
+		window.addEventListener( 'ap:capture:open', function () {
+			openPanel();
+		} );
 	}
 
 	if ( document.readyState === 'loading' ) {

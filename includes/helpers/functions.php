@@ -2,12 +2,12 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Check if the current site has an active AlignPress Pro license.
+ * Check if the current site has an active Stepwise Pro license.
  *
  * @return bool
  */
-function alignpress_is_pro(): bool {
-	return in_array( get_option( 'alignpress_license_plan' ), ALIGNPRESS_PRO_PLANS, true );
+function stepwise_is_pro(): bool {
+	return in_array( get_option( 'stepwise_license_plan' ), STEPWISE_PRO_PLANS, true );
 }
 
 /**
@@ -23,7 +23,7 @@ function alignpress_is_pro(): bool {
  *
  * @return bool
  */
-function alignpress_is_staging_env(): bool {
+function stepwise_is_staging_env(): bool {
 	$env_type = function_exists( 'wp_get_environment_type' ) ? wp_get_environment_type() : 'production';
 	if ( in_array( $env_type, [ 'staging', 'local' ], true ) ) {
 		return true;
@@ -59,8 +59,8 @@ function alignpress_is_staging_env(): bool {
  *
  * @return bool
  */
-function alignpress_staging_mode_active(): bool {
-	return (bool) get_option( 'alignpress_staging_mode', false );
+function stepwise_staging_mode_active(): bool {
+	return (bool) get_option( 'stepwise_staging_mode', false );
 }
 
 /**
@@ -69,10 +69,10 @@ function alignpress_staging_mode_active(): bool {
  *
  * @return int
  */
-function alignpress_get_active_workflow_count(): int {
+function stepwise_get_active_workflow_count(): int {
 	global $wpdb;
 	return (int) $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- custom table, count changes frequently
-		"SELECT COUNT(*) FROM {$wpdb->prefix}alignpress_workflows WHERE status != 'archived'"
+		"SELECT COUNT(*) FROM {$wpdb->prefix}stepwise_workflows WHERE status != 'archived'"
 	);
 }
 
@@ -82,7 +82,7 @@ function alignpress_get_active_workflow_count(): int {
  *
  * @return bool
  */
-function alignpress_at_workflow_limit(): bool {
+function stepwise_at_workflow_limit(): bool {
 	return false;
 }
 
@@ -91,7 +91,7 @@ function alignpress_at_workflow_limit(): bool {
  *
  * @return AP_SaaS_Client|null
  */
-function alignpress_saas(): ?AP_SaaS_Client {
+function stepwise_saas(): ?AP_SaaS_Client {
 	if ( ! AP_SaaS_Auth::is_connected() ) {
 		return null;
 	}
@@ -103,13 +103,13 @@ function alignpress_saas(): ?AP_SaaS_Client {
 }
 
 /**
- * Check if the current user has permission to edit AlignPress workflows.
- * Reads the saved alignpress_roles_edit option and compares against user roles.
+ * Check if the current user has permission to edit Stepwise workflows.
+ * Reads the saved stepwise_roles_edit option and compares against user roles.
  *
  * @return bool
  */
-function alignpress_current_user_can_edit(): bool {
-	$allowed_roles = get_option( 'alignpress_roles_edit', [ 'administrator' ] );
+function stepwise_current_user_can_edit(): bool {
+	$allowed_roles = get_option( 'stepwise_roles_edit', [ 'administrator' ] );
 	$user          = wp_get_current_user();
 	if ( ! $user || ! $user->ID ) {
 		return false;
@@ -118,13 +118,13 @@ function alignpress_current_user_can_edit(): bool {
 }
 
 /**
- * Check if the current user has permission to run AlignPress workflows.
- * Reads the saved alignpress_roles_run option and compares against user roles.
+ * Check if the current user has permission to run Stepwise workflows.
+ * Reads the saved stepwise_roles_run option and compares against user roles.
  *
  * @return bool
  */
-function alignpress_current_user_can_run(): bool {
-	$allowed_roles = get_option( 'alignpress_roles_run', [ 'administrator' ] );
+function stepwise_current_user_can_run(): bool {
+	$allowed_roles = get_option( 'stepwise_roles_run', [ 'administrator' ] );
 	$user          = wp_get_current_user();
 	if ( ! $user || ! $user->ID ) {
 		return false;
@@ -139,7 +139,7 @@ function alignpress_current_user_can_run(): bool {
  * @param int $workflow_id
  * @return bool
  */
-function alignpress_workflow_steps_locked( int $workflow_id ): bool {
+function stepwise_workflow_steps_locked( int $workflow_id ): bool {
 	$workflow = AP_Workflow::get( $workflow_id );
 	if ( ! $workflow ) {
 		return false;
@@ -156,16 +156,16 @@ function alignpress_workflow_steps_locked( int $workflow_id ): bool {
  * @param int $workflow_id
  * @return bool
  */
-function alignpress_workflow_can_delete( int $workflow_id ): bool {
-	return ! alignpress_workflow_steps_locked( $workflow_id );
+function stepwise_workflow_can_delete( int $workflow_id ): bool {
+	return ! stepwise_workflow_steps_locked( $workflow_id );
 }
 
 /**
  * Flush all page caches after a license change.
- * Hooked onto 'alignpress_cache_flush'. Covers every major cache plugin
+ * Hooked onto 'stepwise_cache_flush'. Covers every major cache plugin
  * via their own canonical purge APIs — no need to enumerate them at call sites.
  */
-function alignpress_flush_all_caches(): void {
+function stepwise_flush_all_caches(): void {
 	// WP object cache
 	wp_cache_flush();
 
@@ -191,7 +191,7 @@ function alignpress_flush_all_caches(): void {
 		autoptimizeCache::clearall();
 	}
 }
-add_action( 'alignpress_cache_flush', 'alignpress_flush_all_caches' );
+add_action( 'stepwise_cache_flush', 'stepwise_flush_all_caches' );
 
 /**
  * Log debug messages when WP_DEBUG is enabled.
@@ -199,7 +199,7 @@ add_action( 'alignpress_cache_flush', 'alignpress_flush_all_caches' );
  * @param mixed  $message
  * @param string $context
  */
-function alignpress_log( $message, string $context = 'general' ): void {
+function stepwise_log( $message, string $context = 'general' ): void {
 	if ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) {
 		return;
 	}
@@ -208,5 +208,5 @@ function alignpress_log( $message, string $context = 'general' ): void {
 		$message = print_r( $message, true );
 	}
 	// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- debug only, guarded by WP_DEBUG check above
-	error_log( "[AlignPress:{$context}] {$message}" );
+	error_log( "[Stepwise:{$context}] {$message}" );
 }

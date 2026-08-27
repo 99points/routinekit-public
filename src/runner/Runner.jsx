@@ -22,9 +22,10 @@ import RunnerLauncher from './RunnerLauncher';
 import AuditTrail from './AuditTrail';
 import '../store';
 
-const { runnerPosition = 'right' } = window.alignpressData ?? {};
+const { runnerPosition = 'right' } = window.stepwiseData ?? {};
 const RUNNER_CLOSED_KEY     = 'ap_runner_closed_id';
 const RUNNER_DISMISSED_KEY  = 'ap_runner_dismissed_ids';
+const RUNNER_PINNED_KEY     = 'ap_runner_pinned';
 
 /**
  * Returns { panelStyle, onPointerDown } for a freely-draggable fixed panel.
@@ -92,6 +93,7 @@ const useDragPanel = () => {
 
 const Runner = () => {
 	const [ isOpen, setIsOpen ]             = useState( true );
+	const [ isPinned, setIsPinned ]         = useState( () => localStorage.getItem( RUNNER_PINNED_KEY ) === '1' );
 	const [ expandedIds, setExpandedIds ]   = useState( new Set() );
 	const [ addingStep, setAddingStep ]     = useState( false );
 	const [ newStepTitle, setNewStepTitle ] = useState( '' );
@@ -99,11 +101,11 @@ const Runner = () => {
 	const [ stepError, setStepError ]       = useState( null );
 	const [ localSteps, setLocalSteps ]     = useState( null ); // optimistic order during drag
 
-	const { fetchActiveExecution, clearExecution, cancelExecution } = useDispatch( 'alignpress/execution' );
-	const { reorderSteps } = useDispatch( 'alignpress/steps' );
+	const { fetchActiveExecution, clearExecution, cancelExecution } = useDispatch( 'stepwise/execution' );
+	const { reorderSteps, deleteStep } = useDispatch( 'stepwise/steps' );
 
-	const activeExecution = useSelect( ( select ) => select( 'alignpress/execution' ).getActiveExecution() );
-	const isLoading       = useSelect( ( select ) => select( 'alignpress/execution' ).isLoading() );
+	const activeExecution = useSelect( ( select ) => select( 'stepwise/execution' ).getActiveExecution() );
+	const isLoading       = useSelect( ( select ) => select( 'stepwise/execution' ).isLoading() );
 
 	const sensors = useSensors( useSensor( PointerSensor, { activationConstraint: { distance: 6 } } ) );
 	const { panelStyle, onPointerDown: onHeaderPointerDown } = useDragPanel();
@@ -113,9 +115,11 @@ const Runner = () => {
 	// Restore closed state when execution first loads or a new run starts.
 	useEffect( () => {
 		if ( ! activeExecution ) return;
-		if ( activeExecution.status === 'abandoned' ) { setIsOpen( true ); return; }
+		if ( activeExecution.status === 'abandoned' || activeExecution.status === 'paused' ) { setIsOpen( true ); return; }
+		// If pinned, always open regardless of the closed-id record.
+		const pinned   = localStorage.getItem( RUNNER_PINNED_KEY ) === '1';
 		const closedId = localStorage.getItem( RUNNER_CLOSED_KEY );
-		setIsOpen( closedId !== String( activeExecution.id ) );
+		setIsOpen( pinned || closedId !== String( activeExecution.id ) );
 		setExpandedIds( new Set() );
 		setLocalSteps( null );
 	// Only re-run when the execution ID changes (new run) — NOT on step completions.
@@ -126,6 +130,12 @@ const Runner = () => {
 		const onVisible = () => { if ( document.visibilityState === 'visible' ) fetchActiveExecution(); };
 		document.addEventListener( 'visibilitychange', onVisible );
 		return () => document.removeEventListener( 'visibilitychange', onVisible );
+	}, [] );
+
+	useEffect( () => {
+		const onCaptureSaved = () => fetchActiveExecution();
+		window.addEventListener( 'ap:capture:saved', onCaptureSaved );
+		return () => window.removeEventListener( 'ap:capture:saved', onCaptureSaved );
 	}, [] );
 
 	const toggleExpand = ( stepId ) => {
@@ -142,7 +152,7 @@ const Runner = () => {
 		setStepError( null );
 		try {
 			await apiFetch( {
-				path:   `/alignpress/v1/workflows/${ activeExecution.workflow_id }/steps`,
+				path:   `/stepwise/v1/workflows/${ activeExecution.workflow_id }/steps`,
 				method: 'POST',
 				data:   { title: newStepTitle.trim(), is_required: true },
 			} );
@@ -150,7 +160,7 @@ const Runner = () => {
 			setAddingStep( false );
 			await fetchActiveExecution();
 		} catch ( err ) {
-			setStepError( err.message ?? __( 'Could not add step.', 'alignpress' ) );
+			setStepError( err.message ?? __( 'Could not add step.', 'stepwise' ) );
 		} finally {
 			setSavingStep( false );
 		}
@@ -178,7 +188,7 @@ const Runner = () => {
 	if ( isLoading && ! activeExecution ) return null;
 
 	if ( ! activeExecution ) {
-		return <RunnerLauncher hasActive={ false } onClick={ () => {} } />;
+		return <RunnerLauncher hasActive={ false } onClick={ () => {} } currentStep={ 0 } totalSteps={ 0 } />;
 	}
 
 	const {
@@ -198,15 +208,31 @@ const Runner = () => {
 	const isSaas      = activeExecution.workflow_source === 'saas';
 	const isCompleted = activeExecution.status === 'completed';
 	const isAbandoned = activeExecution.status === 'abandoned';
+	const isPaused    = activeExecution.status === 'paused';
 	const posClass    = runnerPosition === 'left' ? 'ap-runner--left' : 'ap-runner--right';
 	const progress    = `${ current_step_index + 1 }/${ total_steps }`;
 
 	const handleClose = () => {
+		// Minimising intentionally clears the pin — user chose to close.
+		localStorage.removeItem( RUNNER_PINNED_KEY );
+		setIsPinned( false );
 		localStorage.setItem( RUNNER_CLOSED_KEY, String( id ) );
 		setIsOpen( false );
 	};
+
+	const handlePin = () => {
+		const next = ! isPinned;
+		setIsPinned( next );
+		if ( next ) {
+			localStorage.setItem( RUNNER_PINNED_KEY, '1' );
+			// Clear the closed record so the panel opens on this and future pages.
+			localStorage.removeItem( RUNNER_CLOSED_KEY );
+		} else {
+			localStorage.removeItem( RUNNER_PINNED_KEY );
+		}
+	};
 	const handleAbort = () => {
-		if ( window.confirm( __( 'Abandon this workflow run? Progress will be lost.', 'alignpress' ) ) ) {
+		if ( window.confirm( __( 'Abandon this workflow run? Progress will be lost.', 'stepwise' ) ) ) {
 			localStorage.removeItem( RUNNER_CLOSED_KEY );
 			cancelExecution( id );
 		}
@@ -228,7 +254,7 @@ const Runner = () => {
 	return (
 		<>
 			{ isOpen && (
-				<div className={ `ap-runner ${ posClass }` } style={ panelStyle } role="complementary" aria-label={ __( 'Workflow Runner', 'alignpress' ) }>
+				<div className={ `ap-runner ${ posClass }` } style={ panelStyle } role="complementary" aria-label={ __( 'Workflow Runner', 'stepwise' ) }>
 
 					<div className="ap-runner__header" onPointerDown={ onHeaderPointerDown }>
 						<div className="ap-runner__header-left">
@@ -239,16 +265,27 @@ const Runner = () => {
 									<rect x="5" y="31.5" width="19" height="6.5" rx="2" fill="rgba(255,255,255,0.45)"/>
 									<path d="M26 27 32 33 43 13" stroke="rgba(255,255,255,0.9)" strokeWidth="6.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
 								</svg>
-								<span className="ap-runner__eyebrow">ALIGNPRESS RUN</span>
+								<span className="ap-runner__eyebrow">STEPWISE RUN</span>
 							</div>
 							<span className="ap-runner__title" title={ workflow_title }>{ workflow_title }</span>
 						</div>
 						<button
 							type="button"
+							className={ `ap-runner__pin${ isPinned ? ' is-pinned' : '' }` }
+							onClick={ handlePin }
+							aria-label={ isPinned ? __( 'Unpin — panel will close on navigation', 'stepwise' ) : __( 'Pin open — keep panel open on all pages', 'stepwise' ) }
+							title={ isPinned ? __( 'Pinned open (click to unpin)', 'stepwise' ) : __( 'Pin open across pages', 'stepwise' ) }
+						>
+							<svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+								<path d="M9 1L5 5l-3 1 2 2-3 4 4-3 2 2 1-3 4-4-3-3z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" fill={ isPinned ? 'currentColor' : 'none' }/>
+							</svg>
+						</button>
+						<button
+							type="button"
 							className="ap-runner__close"
 							onClick={ handleClose }
-							aria-label={ __( 'Minimise runner', 'alignpress' ) }
-							title={ __( 'Minimise', 'alignpress' ) }
+							aria-label={ __( 'Minimise runner', 'stepwise' ) }
+							title={ __( 'Minimise', 'stepwise' ) }
 						>
 							<svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
 								<rect x="1" y="9" width="12" height="2" rx="1" fill="currentColor"/>
@@ -256,7 +293,7 @@ const Runner = () => {
 						</button>
 					</div>
 
-					{ ! isAbandoned && (
+					{ ! isAbandoned && ! isPaused && (
 						<RunnerProgress current={ current_step_index + 1 } total={ total_steps } completed={ completed_steps } />
 					) }
 
@@ -264,20 +301,31 @@ const Runner = () => {
 						<div className="ap-runner__abandoned">
 							<span className="ap-runner__abandoned-icon">⚠</span>
 							<p className="ap-runner__abandoned-msg">
-								{ __( 'Your run was stopped — either you started a new run or an admin reset the workflow.', 'alignpress' ) }
+								{ __( 'Your run was stopped — either you started a new run or an admin reset the workflow.', 'stepwise' ) }
 							</p>
 							<button type="button" className="ap-runner__dismiss-btn" onClick={ handleDismiss }>
-								{ __( 'Dismiss', 'alignpress' ) }
+								{ __( 'Dismiss', 'stepwise' ) }
+							</button>
+						</div>
+
+					) : isPaused ? (
+						<div className="ap-runner__paused">
+							<span className="ap-runner__paused-icon">⏸</span>
+							<p className="ap-runner__paused-msg">
+								{ __( 'This run is paused. Go to Workflows and click Run to resume from where you left off.', 'stepwise' ) }
+							</p>
+							<button type="button" className="ap-runner__dismiss-btn" onClick={ handleDismiss }>
+								{ __( 'Dismiss', 'stepwise' ) }
 							</button>
 						</div>
 
 					) : isCompleted ? (
 						<div className="ap-runner__complete">
 							<span className="ap-runner__complete-icon">✓</span>
-							<p className="ap-runner__complete-msg">{ __( 'Workflow complete!', 'alignpress' ) }</p>
+							<p className="ap-runner__complete-msg">{ __( 'Workflow complete!', 'stepwise' ) }</p>
 							<AuditTrail executionId={ id } />
 							<button type="button" className="ap-runner__dismiss-btn" onClick={ handleDismiss }>
-								{ __( 'Dismiss', 'alignpress' ) }
+								{ __( 'Dismiss', 'stepwise' ) }
 							</button>
 						</div>
 
@@ -306,6 +354,10 @@ const Runner = () => {
 													isSaas={ isSaas }
 													onToggle={ () => toggleExpand( step.id ) }
 													onCompleted={ undefined }
+													onDelete={ async () => {
+														await deleteStep( workflow_id, step.id );
+														fetchActiveExecution();
+													} }
 												/>
 											);
 										} ) }
@@ -317,7 +369,7 @@ const Runner = () => {
 								{ ! isPushed && ! isSaas && (
 									! addingStep ? (
 										<button type="button" className="ap-runner__add-step-btn" onClick={ () => setAddingStep( true ) }>
-											+ { __( 'Add step', 'alignpress' ) }
+											+ { __( 'Add step', 'stepwise' ) }
 										</button>
 									) : (
 										<div className="ap-runner__add-step-form">
@@ -326,7 +378,7 @@ const Runner = () => {
 												className="ap-runner__add-step-input"
 												value={ newStepTitle }
 												onChange={ ( e ) => setNewStepTitle( e.target.value ) }
-												placeholder={ __( 'Step title…', 'alignpress' ) }
+												placeholder={ __( 'Step title…', 'stepwise' ) }
 												autoFocus
 												onKeyDown={ ( e ) => {
 													if ( e.key === 'Enter' ) handleAddStep();
@@ -336,10 +388,10 @@ const Runner = () => {
 											{ stepError && <p className="ap-runner__add-step-error">{ stepError }</p> }
 											<div className="ap-runner__add-step-actions">
 												<button type="button" className="ap-runner__add-step-save" onClick={ handleAddStep } disabled={ savingStep || ! newStepTitle.trim() }>
-													{ savingStep ? __( 'Adding…', 'alignpress' ) : __( 'Add', 'alignpress' ) }
+													{ savingStep ? __( 'Adding…', 'stepwise' ) : __( 'Add', 'stepwise' ) }
 												</button>
 												<button type="button" className="ap-runner__add-step-cancel" onClick={ () => { setAddingStep( false ); setNewStepTitle( '' ); setStepError( null ); } }>
-													{ __( 'Cancel', 'alignpress' ) }
+													{ __( 'Cancel', 'stepwise' ) }
 												</button>
 											</div>
 										</div>
@@ -347,7 +399,7 @@ const Runner = () => {
 								) }
 
 								<button type="button" className="ap-runner__abort" onClick={ handleAbort }>
-									{ __( 'Abandon run', 'alignpress' ) }
+									{ __( 'Abandon run', 'stepwise' ) }
 								</button>
 							</div>
 						</div>
@@ -356,10 +408,13 @@ const Runner = () => {
 			) }
 
 			<RunnerLauncher
-				hasActive={ ! isAbandoned && ! isCompleted }
+				hasActive={ ! isAbandoned && ! isPaused && ! isCompleted }
 				isOpen={ isOpen }
 				onClick={ () => setIsOpen( ( o ) => ! o ) }
-				progress={ ( ! isAbandoned && ! isCompleted ) ? progress : null }
+				progress={ ( ! isAbandoned && ! isPaused && ! isCompleted ) ? progress : null }
+				workflowTitle={ workflow_title }
+				currentStep={ current_step_index + 1 }
+				totalSteps={ total_steps }
 			/>
 		</>
 	);

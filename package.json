@@ -1,7 +1,7 @@
 {
-  "name": "alignpress",
+  "name": "stepwise",
   "version": "1.0.0",
-  "description": "AlignPress WordPress plugin React build",
+  "description": "Stepwise WordPress plugin React build",
   "private": true,
   "scripts": {
     "build": "wp-scripts build",

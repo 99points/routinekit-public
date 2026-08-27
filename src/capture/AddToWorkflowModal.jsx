@@ -14,7 +14,7 @@ const AddToWorkflowModal = ( { changes, onClose } ) => {
 	const [ error, setError ]           = useState( null );
 
 	useEffect( () => {
-		apiFetch( { path: '/alignpress/v1/workflows?status=active' } )
+		apiFetch( { path: '/stepwise/v1/workflows?status=active' } )
 			.then( ( data ) => setWorkflows( data ) )
 			.catch( () => setWorkflows( [] ) );
 	}, [] );
@@ -27,7 +27,7 @@ const AddToWorkflowModal = ( { changes, onClose } ) => {
 		try {
 			const captureIds = changes.map( ( c ) => c.id );
 			await apiFetch( {
-				path: '/alignpress/v1/capture/add-to-workflow',
+				path: '/stepwise/v1/capture/add-to-workflow',
 				method: 'POST',
 				data: {
 					workflow_id: parseInt( workflowId, 10 ),
@@ -37,24 +37,24 @@ const AddToWorkflowModal = ( { changes, onClose } ) => {
 			} );
 			onClose();
 		} catch ( err ) {
-			setError( err.message ?? __( 'Something went wrong.', 'alignpress' ) );
+			setError( err.message ?? __( 'Something went wrong.', 'stepwise' ) );
 			setSaving( false );
 		}
 	};
 
 	const autoTitle = changes[ 0 ]?.page_title
-		? `${ __( 'Configure', 'alignpress' ) } ${ changes[ 0 ].page_title }`
+		? `${ __( 'Configure', 'stepwise' ) } ${ changes[ 0 ].page_title }`
 		: '';
 
 	return (
 		<Modal
-			title={ __( 'Add to Workflow', 'alignpress' ) }
+			title={ __( 'Add to Workflow', 'stepwise' ) }
 			onClose={ onClose }
 			size="md"
 			footer={
 				<>
 					<Button variant="ghost" onClick={ onClose } disabled={ saving }>
-						{ __( 'Cancel', 'alignpress' ) }
+						{ __( 'Cancel', 'stepwise' ) }
 					</Button>
 					<Button
 						variant="primary"
@@ -62,7 +62,7 @@ const AddToWorkflowModal = ( { changes, onClose } ) => {
 						form="ap-add-to-workflow-form"
 						disabled={ ! workflowId || saving }
 					>
-						{ saving ? __( 'Adding…', 'alignpress' ) : __( 'Add Step', 'alignpress' ) }
+						{ saving ? __( 'Adding…', 'stepwise' ) : __( 'Add Step', 'stepwise' ) }
 					</Button>
 				</>
 			}
@@ -73,23 +73,23 @@ const AddToWorkflowModal = ( { changes, onClose } ) => {
 				<CapturePreview changes={ changes } />
 
 				<div className="ap-field">
-					<label className="alignpress-label" htmlFor="ap-atw-workflow">
-						{ __( 'Workflow', 'alignpress' ) }
+					<label className="stepwise-label" htmlFor="ap-atw-workflow">
+						{ __( 'Workflow', 'stepwise' ) }
 						<span className="ap-required" aria-hidden="true"> *</span>
 					</label>
 					{ workflows.length === 0 ? (
 						<p className="ap-help">
-							{ __( 'No active workflows found. Create a workflow first.', 'alignpress' ) }
+							{ __( 'No active workflows found. Create a workflow first.', 'stepwise' ) }
 						</p>
 					) : (
 						<select
 							id="ap-atw-workflow"
-							className="alignpress-select"
+							className="stepwise-select"
 							value={ workflowId }
 							onChange={ ( e ) => setWorkflowId( e.target.value ) }
 							required
 						>
-							<option value="">{ __( '— Select a workflow —', 'alignpress' ) }</option>
+							<option value="">{ __( '— Select a workflow —', 'stepwise' ) }</option>
 							{ workflows.map( ( wf ) => (
 								<option key={ wf.id } value={ wf.id }>{ wf.title }</option>
 							) ) }
@@ -98,16 +98,16 @@ const AddToWorkflowModal = ( { changes, onClose } ) => {
 				</div>
 
 				<div className="ap-field">
-					<label className="alignpress-label" htmlFor="ap-atw-title">
-						{ __( 'Step Title', 'alignpress' ) }
+					<label className="stepwise-label" htmlFor="ap-atw-title">
+						{ __( 'Step Title', 'stepwise' ) }
 					</label>
 					<input
 						id="ap-atw-title"
 						type="text"
-						className="alignpress-input"
+						className="stepwise-input"
 						value={ stepTitle }
 						onChange={ ( e ) => setStepTitle( e.target.value ) }
-						placeholder={ autoTitle || __( 'Auto-generated from page name', 'alignpress' ) }
+						placeholder={ autoTitle || __( 'Auto-generated from page name', 'stepwise' ) }
 					/>
 				</div>
 			</form>

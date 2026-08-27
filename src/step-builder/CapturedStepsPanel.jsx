@@ -4,12 +4,12 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 
 const CapturedStepsPanel = ( { workflowId } ) => {
-	const [ open, setOpen ]   = useState( true );
+	const [ open, setOpen ]     = useState( true );
 	const [ adding, setAdding ] = useState( null );
 
-	const { fetchPendingCaptures, addToWorkflow } = useDispatch( 'alignpress/capture' );
-	const { addStep }                             = useDispatch( 'alignpress/steps' );
-	const pendingChanges = useSelect( ( select ) => select( 'alignpress/capture' ).getPendingChanges() );
+	const { fetchPendingCaptures, addToWorkflow } = useDispatch( 'stepwise/capture' );
+	const { addStep, fetchSteps }                 = useDispatch( 'stepwise/steps' );
+	const pendingChanges = useSelect( ( select ) => select( 'stepwise/capture' ).getPendingChanges() );
 
 	useEffect( () => {
 		fetchPendingCaptures();
@@ -20,17 +20,17 @@ const CapturedStepsPanel = ( { workflowId } ) => {
 
 	const handleAdd = async ( change ) => {
 		setAdding( change.id );
-		// Use the correct field names returned by GET /capture/all
 		const stepTitle = change.option_label || change.option_name;
 		const result    = await addToWorkflow( workflowId, [ change.id ], stepTitle );
-		// Push the new step into the steps store so StepList updates without a refresh
 		if ( result?.step ) {
 			addStep( workflowId, result.step );
+			// Re-fetch to ensure the step list is fully in sync.
+			fetchSteps( workflowId );
 		}
 		setAdding( null );
 	};
 
-	const captureUrl = `${ window.alignpressData?.adminUrl ?? '' }admin.php?page=alignpress-capture`;
+	const captureUrl = `${ window.stepwiseData?.adminUrl ?? '' }admin.php?page=stepwise-capture`;
 
 	return (
 		<div className="ap-sidebar-panel">
@@ -41,7 +41,7 @@ const CapturedStepsPanel = ( { workflowId } ) => {
 			>
 				<span className="ap-sidebar-panel__title">
 					<span className={ `ap-capture-dot ${ pendingChanges.length > 0 ? 'ap-capture-dot--active' : '' }` } />
-					{ __( 'Auto-Captured Steps', 'alignpress' ) }
+					{ __( 'WordPress Changes', 'stepwise' ) }
 				</span>
 				<span className="ap-sidebar-panel__chevron">{ open ? '∧' : '∨' }</span>
 			</button>
@@ -49,13 +49,18 @@ const CapturedStepsPanel = ( { workflowId } ) => {
 			{ open && (
 				<div className="ap-sidebar-panel__body">
 					{ pendingChanges.length === 0 ? (
-						<p className="ap-sidebar-panel__empty">
-							{ __( 'No recently detected option changes on this site.', 'alignpress' ) }
-						</p>
+						<>
+							<p className="ap-sidebar-panel__empty">
+								{ __( 'No pending WordPress option changes detected.', 'stepwise' ) }
+							</p>
+							<p className="ap-sidebar-panel__help" style={ { marginTop: 4 } }>
+								{ __( 'To add steps manually, use the ⊕ Capture Step button on any admin page.', 'stepwise' ) }
+							</p>
+						</>
 					) : (
 						<>
 							<p className="ap-sidebar-panel__help">
-								{ __( 'Recently detected option changes on this site:', 'alignpress' ) }
+								{ __( 'WordPress detected these setting changes — add them as steps:', 'stepwise' ) }
 							</p>
 							<ul className="ap-captured-list">
 								{ preview.map( ( change ) => {
@@ -74,11 +79,11 @@ const CapturedStepsPanel = ( { workflowId } ) => {
 												) }
 											</div>
 											<button
-												className="alignpress-btn alignpress-btn--primary alignpress-btn--sm"
+												className="stepwise-btn stepwise-btn--primary stepwise-btn--sm"
 												onClick={ () => handleAdd( change ) }
 												disabled={ adding === change.id }
 											>
-												{ adding === change.id ? '…' : __( '+ Add', 'alignpress' ) }
+												{ adding === change.id ? '…' : __( '+ Add', 'stepwise' ) }
 											</button>
 										</li>
 									);
@@ -87,7 +92,7 @@ const CapturedStepsPanel = ( { workflowId } ) => {
 
 							{ remaining > 0 && (
 								<a href={ captureUrl } className="ap-captured-viewall">
-									{ __( `View all ${ pendingChanges.length } captured changes →`, 'alignpress' ) }
+									{ __( `View all ${ pendingChanges.length } captured changes →`, 'stepwise' ) }
 								</a>
 							) }
 						</>

@@ -4,13 +4,13 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Core plugin class. Wires together all components via the loader.
  */
-class AlignPress {
+class Stepwise {
 
-	/** @var AlignPress_Loader */
-	protected AlignPress_Loader $loader;
+	/** @var Stepwise_Loader */
+	protected Stepwise_Loader $loader;
 
 	public function __construct() {
-		$this->loader = new AlignPress_Loader();
+		$this->loader = new Stepwise_Loader();
 	}
 
 	/**
@@ -29,9 +29,9 @@ class AlignPress {
 	 * dependency graph explicit and easy to audit.
 	 */
 	private function load_dependencies(): void {
-		$includes = ALIGNPRESS_PLUGIN_DIR . 'includes/';
+		$includes = STEPWISE_PLUGIN_DIR . 'includes/';
 
-		require_once $includes . 'class-alignpress-loader.php';
+		require_once $includes . 'class-stepwise-loader.php';
 
 		// Core models
 		require_once $includes . 'core/class-ap-workflow.php';
@@ -69,8 +69,8 @@ class AlignPress {
 	private function define_admin_hooks(): void {
 		$admin = new AP_Admin();
 
-		$this->loader->add_filter( 'user_has_cap',          $admin, 'grant_alignpress_caps', 10, 3 );
-		$this->loader->add_filter( 'plugin_action_links_' . plugin_basename( ALIGNPRESS_PLUGIN_FILE ), $admin, 'plugin_action_links' );
+		$this->loader->add_filter( 'user_has_cap',          $admin, 'grant_stepwise_caps', 10, 3 );
+		$this->loader->add_filter( 'plugin_action_links_' . plugin_basename( STEPWISE_PLUGIN_FILE ), $admin, 'plugin_action_links' );
 		$this->loader->add_action( 'admin_menu',            $admin, 'register_menus' );
 		$this->loader->add_action( 'admin_head',            $admin, 'hide_capture_submenu' );
 		$this->loader->add_action( 'admin_head',            $admin, 'suppress_third_party_notices', 99 );
@@ -90,8 +90,8 @@ class AlignPress {
 		$this->loader->add_action( 'rest_api_init', $settings, 'register_rest_routes' );
 
 		$saas_admin = new AP_SaaS_Admin();
-		$this->loader->add_action( 'admin_post_alignpress_saas_activate',   $saas_admin, 'handle_activate' );
-		$this->loader->add_action( 'admin_post_alignpress_saas_deactivate', $saas_admin, 'handle_deactivate' );
+		$this->loader->add_action( 'admin_post_stepwise_saas_activate',   $saas_admin, 'handle_activate' );
+		$this->loader->add_action( 'admin_post_stepwise_saas_deactivate', $saas_admin, 'handle_deactivate' );
 
 		if ( AP_SaaS_Auth::is_connected() ) {
 			$saas_sync = new AP_SaaS_Sync();
@@ -132,8 +132,8 @@ class AlignPress {
 		$capture = new AP_Capture();
 		// Priority 1 — must register before options.php calls update_option()
 		// which fires on the same 'init' hook at default priority 10.
-		$this->loader->add_action( 'init',                              $capture, 'init',           1 );
-		$this->loader->add_action( 'alignpress_cleanup_capture_buffer', $capture, 'cleanup_buffer'    );
+		$this->loader->add_action( 'init',                             $capture, 'init',           1 );
+		$this->loader->add_action( 'stepwise_cleanup_capture_buffer',  $capture, 'cleanup_buffer'    );
 	}
 
 	/**
@@ -142,26 +142,17 @@ class AlignPress {
 	public function maybe_run_migrations(): void {
 		global $wpdb;
 
-		// Replace stale alignpress.app SaaS URL with the current default.
-		if ( ! get_transient( 'alignpress_migration_saas_url_done' ) ) {
-			$saved = get_option( 'alignpress_saas_url', '' );
-			if ( $saved && str_contains( $saved, 'alignpress.app' ) ) {
-				update_option( 'alignpress_saas_url', ALIGNPRESS_SAAS_DEFAULT_URL );
-			}
-			set_transient( 'alignpress_migration_saas_url_done', true, WEEK_IN_SECONDS );
-		}
-
 		// Add pushed_at column if missing (introduced in 1.1.0).
-		if ( get_transient( 'alignpress_migration_pushed_at_done' ) ) {
+		if ( get_transient( 'stepwise_migration_pushed_at_done' ) ) {
 			return;
 		}
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange -- migration on custom table
-		$cols = $wpdb->get_col( "DESC {$wpdb->prefix}alignpress_workflows", 0 );
+		$cols = $wpdb->get_col( "DESC {$wpdb->prefix}stepwise_workflows", 0 );
 		if ( ! in_array( 'pushed_at', $cols, true ) ) {
-			$wpdb->query( "ALTER TABLE {$wpdb->prefix}alignpress_workflows ADD COLUMN pushed_at DATETIME DEFAULT NULL" );
+			$wpdb->query( "ALTER TABLE {$wpdb->prefix}stepwise_workflows ADD COLUMN pushed_at DATETIME DEFAULT NULL" );
 		}
 		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange
-		set_transient( 'alignpress_migration_pushed_at_done', true, WEEK_IN_SECONDS );
+		set_transient( 'stepwise_migration_pushed_at_done', true, WEEK_IN_SECONDS );
 	}
 
 	public function register_privacy_policy_content(): void {
@@ -169,19 +160,19 @@ class AlignPress {
 			return;
 		}
 
-		$content = '<h2>' . esc_html__( 'AlignPress', 'alignpress' ) . '</h2>'
-			. '<p>' . esc_html__( 'AlignPress captures wp_options changes during admin sessions to help build workflow steps (Auto-Capture). This data is stored only in your own database and is never sent to external servers on the free plan.', 'alignpress' ) . '</p>'
-			. '<p>' . esc_html__( 'Data stored locally: option name, old value, new value, admin page URL, and the user ID of the person who made the change. Retained for a configurable period (default 7 days) and deleted automatically.', 'alignpress' ) . '</p>'
-			. '<p>' . esc_html__( 'Execution audit trails store: which user ran a workflow, which steps were completed or skipped, timestamps, and any uploaded evidence files.', 'alignpress' ) . '</p>'
+		$content = '<h2>' . esc_html__( 'Stepwise', 'stepwise' ) . '</h2>'
+			. '<p>' . esc_html__( 'Stepwise captures wp_options changes during admin sessions to help build workflow steps (Auto-Capture). This data is stored only in your own database and is never sent to external servers on the free plan.', 'stepwise' ) . '</p>'
+			. '<p>' . esc_html__( 'Data stored locally: option name, old value, new value, admin page URL, and the user ID of the person who made the change. Retained for a configurable period (default 7 days) and deleted automatically.', 'stepwise' ) . '</p>'
+			. '<p>' . esc_html__( 'Execution audit trails store: which user ran a workflow, which steps were completed or skipped, timestamps, and any uploaded evidence files.', 'stepwise' ) . '</p>'
 			. '<p>' . wp_kses(
 				sprintf(
-					/* translators: %s: URL to AlignPress privacy policy */
-					__( 'If you connect to AlignPress Cloud (Pro), see the <a href="%s">AlignPress Cloud Privacy Policy</a>.', 'alignpress' ),
-					'https://alignpress.optinable.com/privacy'
+					/* translators: %s: URL to Stepwise privacy policy */
+					__( 'If you connect to Stepwise Cloud (Pro), see the <a href="%s">Stepwise Cloud Privacy Policy</a>.', 'stepwise' ),
+					'https://wpstepwise.com/privacy'
 				),
 				[ 'a' => [ 'href' => [] ] ]
 			) . '</p>';
 
-		wp_add_privacy_policy_content( 'AlignPress', $content );
+		wp_add_privacy_policy_content( 'Stepwise', $content );
 	}
 }

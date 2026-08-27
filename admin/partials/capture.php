@@ -2,7 +2,7 @@
 defined( 'ABSPATH' ) || exit;
 ?>
 <div class="wrap">
-	<div id="alignpress-root" data-page="capture"></div>
+	<div id="stepwise-root" data-page="capture"></div>
 </div>
-<div id="alignpress-runner-root"></div>
-<div id="alignpress-capture-root"></div>
+<div id="stepwise-runner-root"></div>
+<div id="stepwise-capture-root"></div>

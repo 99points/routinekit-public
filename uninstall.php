@@ -1,6 +1,6 @@
 <?php
 /**
- * AlignPress uninstall handler.
+ * Stepwise uninstall handler.
  *
  * Removes all plugin data from the database on uninstall.
  * Only runs when the user clicks "Delete" on the Plugins screen.
@@ -11,17 +11,17 @@ defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
 global $wpdb;
 
 // Clear all scheduled cron events before removing data
-wp_clear_scheduled_hook( 'alignpress_cleanup_capture_buffer' );
-wp_clear_scheduled_hook( 'alignpress_saas_heartbeat' );
+wp_clear_scheduled_hook( 'stepwise_cleanup_capture_buffer' );
+wp_clear_scheduled_hook( 'stepwise_saas_heartbeat' );
 
 // Drop all custom tables
 // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- uninstall.php local variables
 $tables = [
-	'alignpress_workflows',
-	'alignpress_steps',
-	'alignpress_executions',
-	'alignpress_step_completions',
-	'alignpress_capture_buffer',
+	'stepwise_workflows',
+	'stepwise_steps',
+	'stepwise_executions',
+	'stepwise_step_completions',
+	'stepwise_capture_buffer',
 ];
 
 foreach ( $tables as $table ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
@@ -32,44 +32,44 @@ foreach ( $tables as $table ) { // phpcs:ignore WordPress.NamingConventions.Pref
 // Remove all plugin options
 // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- uninstall.php local variables
 $options = [
-	'alignpress_version',
-	'alignpress_db_version',
+	'stepwise_version',
+	'stepwise_db_version',
 	// Capture
-	'alignpress_capture_enabled',
-	'alignpress_capture_scope',
-	'alignpress_capture_exclude',
-	'alignpress_capture_retention',
-	'alignpress_capture_min_changes',
+	'stepwise_capture_enabled',
+	'stepwise_capture_scope',
+	'stepwise_capture_exclude',
+	'stepwise_capture_retention',
+	'stepwise_capture_min_changes',
 	// UI / Runner
-	'alignpress_runner_position',
-	'alignpress_launcher_enabled',
-	'alignpress_toast_enabled',
-	'alignpress_toast_autodismiss',
+	'stepwise_runner_position',
+	'stepwise_launcher_enabled',
+	'stepwise_toast_enabled',
+	'stepwise_toast_autodismiss',
 	// Playbook defaults
-	'alignpress_default_status',
-	'alignpress_default_category',
-	'alignpress_show_run_button',
+	'stepwise_default_status',
+	'stepwise_default_category',
+	'stepwise_show_run_button',
 	// Access / roles
-	'alignpress_roles_view',
-	'alignpress_roles_run',
-	'alignpress_roles_edit',
+	'stepwise_roles_view',
+	'stepwise_roles_run',
+	'stepwise_roles_edit',
 	// Email notifications
-	'alignpress_notify_assigned',
-	'alignpress_notify_completed',
-	'alignpress_notify_skipped',
-	'alignpress_notify_email',
+	'stepwise_notify_assigned',
+	'stepwise_notify_completed',
+	'stepwise_notify_skipped',
+	'stepwise_notify_email',
 	// SaaS / Cloud
-	'alignpress_saas_url',
-	'alignpress_site_token',
-	'alignpress_site_nickname',
-	'alignpress_site_id',
-	'alignpress_site_api_key',
-	'alignpress_saas_team',
-	'alignpress_license_key',
-	'alignpress_license_plan',
-	'alignpress_last_sync',
-	'alignpress_sync_queue',
-	'alignpress_saas_site_key',
+	'stepwise_saas_url',
+	'stepwise_site_token',
+	'stepwise_site_nickname',
+	'stepwise_site_id',
+	'stepwise_site_api_key',
+	'stepwise_saas_team',
+	'stepwise_license_key',
+	'stepwise_license_plan',
+	'stepwise_last_sync',
+	'stepwise_sync_queue',
+	'stepwise_saas_site_key',
 ];
 
 foreach ( $options as $option ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
@@ -78,8 +78,8 @@ foreach ( $options as $option ) { // phpcs:ignore WordPress.NamingConventions.Pr
 
 // Remove dynamic per-workflow SaaS assignment options
 // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- static query, no user input
-$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE 'alignpress_saas_assignment_%'" );
+$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE 'stepwise_saas_assignment_%'" );
 
 // Remove transients
 // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- static query, no user input
-$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_alignpress_%' OR option_name LIKE '_transient_timeout_alignpress_%'" );
+$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_stepwise_%' OR option_name LIKE '_transient_timeout_stepwise_%'" );

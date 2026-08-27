@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 import StepItem from './StepItem';
 
 const StepList = ( { workflowId, steps, canEdit = false } ) => {
-	const { reorderSteps } = useDispatch( 'alignpress/steps' );
+	const { reorderSteps } = useDispatch( 'stepwise/steps' );
 
 	const handleMove = ( fromIndex, toIndex ) => {
 		if ( toIndex < 0 || toIndex >= steps.length ) return;
@@ -23,7 +23,7 @@ const StepList = ( { workflowId, steps, canEdit = false } ) => {
 	if ( ! steps.length ) {
 		return (
 			<p className="ap-step-list__empty">
-				{ __( 'No steps yet. Add your first step below.', 'alignpress' ) }
+				{ __( 'No steps yet. Add your first step below.', 'stepwise' ) }
 			</p>
 		);
 	}

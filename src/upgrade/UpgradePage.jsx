@@ -3,27 +3,27 @@ import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
 import Button from '../shared/Button';
 
-const { saasUrl = 'http://alignpress-saas.test', adminUrl = '', isPro = false } = window.alignpressData ?? {};
+const { saasUrl = 'http://stepwise-saas.test', adminUrl = '', isPro = false } = window.stepwiseData ?? {};
 
 const REGISTER_URL = saasUrl + '/register';
-const SETTINGS_URL = adminUrl + 'admin.php?page=alignpress-settings#cloud';
+const SETTINGS_URL = adminUrl + 'admin.php?page=stepwise-settings#cloud';
 
 // ── Feature comparison data ──────────────────────────────────────────────────
 
 const FEATURES = [
-	{ label: __( 'Workflows per site', 'alignpress' ),            free: 'Unlimited',     agency: 'Unlimited',   pro: 'Unlimited' },
-	{ label: __( 'Connected sites', 'alignpress' ),               free: 'Up to 3',       agency: 'Up to 50',    pro: 'Unlimited' },
-	{ label: __( 'AlignPress Cloud dashboard', 'alignpress' ),    free: true,            agency: true,          pro: true },
-	{ label: __( 'JSON export', 'alignpress' ),                   free: true,            agency: true,          pro: true },
-	{ label: __( 'Free workflow templates', 'alignpress' ),       free: true,            agency: true,          pro: true },
-	{ label: __( 'Auto-capture retention', 'alignpress' ),        free: '7 days',        agency: '90 days',     pro: '90 days' },
-	{ label: __( 'Multiple site groups', 'alignpress' ),          free: false,           agency: true,          pro: true },
-	{ label: __( 'Cloud workflow template library', 'alignpress' ), free: false,         agency: true,          pro: true },
-	{ label: __( 'Import from URL', 'alignpress' ),               free: false,           agency: true,          pro: true },
-	{ label: __( 'Fleet push & assignment', 'alignpress' ),       free: false,           agency: true,          pro: true },
-	{ label: __( 'Team members', 'alignpress' ),                  free: false,           agency: true,          pro: true },
-	{ label: __( 'Priority email support', 'alignpress' ),        free: false,           agency: false,         pro: true },
-	{ label: __( 'Early access to new features', 'alignpress' ),  free: false,           agency: false,         pro: true },
+	{ label: __( 'Workflows per site', 'stepwise' ),            free: 'Unlimited',     agency: 'Unlimited',   pro: 'Unlimited' },
+	{ label: __( 'Connected sites', 'stepwise' ),               free: 'Up to 3',       agency: 'Up to 50',    pro: 'Unlimited' },
+	{ label: __( 'Stepwise Cloud dashboard', 'stepwise' ),    free: true,            agency: true,          pro: true },
+	{ label: __( 'JSON export', 'stepwise' ),                   free: true,            agency: true,          pro: true },
+	{ label: __( 'Free workflow templates', 'stepwise' ),       free: true,            agency: true,          pro: true },
+	{ label: __( 'Auto-capture retention', 'stepwise' ),        free: '7 days',        agency: '90 days',     pro: '90 days' },
+	{ label: __( 'Multiple site groups', 'stepwise' ),          free: false,           agency: true,          pro: true },
+	{ label: __( 'Cloud workflow template library', 'stepwise' ), free: false,         agency: true,          pro: true },
+	{ label: __( 'Import from URL', 'stepwise' ),               free: false,           agency: true,          pro: true },
+	{ label: __( 'Fleet push & assignment', 'stepwise' ),       free: false,           agency: true,          pro: true },
+	{ label: __( 'Team members', 'stepwise' ),                  free: false,           agency: true,          pro: true },
+	{ label: __( 'Priority email support', 'stepwise' ),        free: false,           agency: false,         pro: true },
+	{ label: __( 'Early access to new features', 'stepwise' ),  free: false,           agency: false,         pro: true },
 ];
 
 const Check  = () => <span style={ { color: '#6366f1', fontWeight: 700 } }>✓</span>;
@@ -40,26 +40,26 @@ const Cell = ( { value } ) => {
 const PLANS = [
 	{
 		key:       'agency',
-		name:      __( 'Agency', 'alignpress' ),
+		name:      __( 'Agency', 'stepwise' ),
 		price:     '$149',
-		period:    __( '/yr', 'alignpress' ),
-		monthly:   __( '~$12/mo billed annually', 'alignpress' ),
-		sites:     __( 'Up to 50 sites', 'alignpress' ),
-		perSite:   __( 'That\'s just $0.25/site/mo', 'alignpress' ),
+		period:    __( '/yr', 'stepwise' ),
+		monthly:   __( '~$12/mo billed annually', 'stepwise' ),
+		sites:     __( 'Up to 50 sites', 'stepwise' ),
+		perSite:   __( 'That\'s just $0.25/site/mo', 'stepwise' ),
 		highlight: false,
-		cta:       __( 'Get Agency →', 'alignpress' ),
+		cta:       __( 'Get Agency →', 'stepwise' ),
 	},
 	{
 		key:       'agency_pro',
-		name:      __( 'Agency Pro', 'alignpress' ),
+		name:      __( 'Agency Pro', 'stepwise' ),
 		price:     '$249',
-		period:    __( '/yr', 'alignpress' ),
-		monthly:   __( '~$21/mo billed annually', 'alignpress' ),
-		sites:     __( 'Unlimited sites', 'alignpress' ),
-		perSite:   __( '$0.42/site/mo at 50 sites — less as you grow', 'alignpress' ),
+		period:    __( '/yr', 'stepwise' ),
+		monthly:   __( '~$21/mo billed annually', 'stepwise' ),
+		sites:     __( 'Unlimited sites', 'stepwise' ),
+		perSite:   __( '$0.42/site/mo at 50 sites — less as you grow', 'stepwise' ),
 		highlight: true,
-		badge:     __( 'BEST VALUE', 'alignpress' ),
-		cta:       __( 'Get Agency Pro →', 'alignpress' ),
+		badge:     __( 'BEST VALUE', 'stepwise' ),
+		cta:       __( 'Get Agency Pro →', 'stepwise' ),
 	},
 ];
 
@@ -77,9 +77,9 @@ const UpgradePage = () => {
 				<div style={ { ...s.page, textAlign: 'center' } }>
 					<div style={ s.successCard }>
 						<div style={ { fontSize: '40px', marginBottom: '12px' } }>✅</div>
-						<h2 style={ s.successTitle }>{ __( 'You\'re on AlignPress Pro', 'alignpress' ) }</h2>
-						<p style={ s.muted }>{ __( 'All Pro features are unlocked on this site.', 'alignpress' ) }</p>
-						<a href={ SETTINGS_URL } style={ s.link }>{ __( '← Back to Settings', 'alignpress' ) }</a>
+						<h2 style={ s.successTitle }>{ __( 'You\'re on Stepwise Pro', 'stepwise' ) }</h2>
+						<p style={ s.muted }>{ __( 'All Pro features are unlocked on this site.', 'stepwise' ) }</p>
+						<a href={ SETTINGS_URL } style={ s.link }>{ __( '← Back to Settings', 'stepwise' ) }</a>
 					</div>
 				</div>
 			</div>
@@ -92,16 +92,16 @@ const UpgradePage = () => {
 		setError( null );
 		try {
 			await apiFetch( {
-				path:   '/alignpress/v1/settings/saas/connect',
+				path:   '/stepwise/v1/settings/saas/connect',
 				method: 'POST',
 				data:   { license_key: licenseKey.trim() },
 			} );
 			setSuccess( true );
 			setTimeout( () => {
-				window.location.href = ( window.alignpressData?.adminUrl ?? '' ) + 'admin.php?page=alignpress';
+				window.location.href = ( window.stepwiseData?.adminUrl ?? '' ) + 'admin.php?page=stepwise';
 			}, 1500 );
 		} catch ( e ) {
-			setError( e.message ?? __( 'Activation failed. Check your license key and try again.', 'alignpress' ) );
+			setError( e.message ?? __( 'Activation failed. Check your license key and try again.', 'stepwise' ) );
 		} finally {
 			setActivating( false );
 		}
@@ -113,9 +113,9 @@ const UpgradePage = () => {
 
 				{ /* Header */ }
 				<div style={ s.header }>
-					<h1 style={ s.heading }>{ __( 'Upgrade to Agency or Agency Pro', 'alignpress' ) }</h1>
+					<h1 style={ s.heading }>{ __( 'Upgrade to Agency or Agency Pro', 'stepwise' ) }</h1>
 					<p style={ s.subheading }>
-						{ __( 'Manage your full fleet. Billed annually. No per-site fees. Cancel anytime.', 'alignpress' ) }
+						{ __( 'Manage your full fleet. Billed annually. No per-site fees. Cancel anytime.', 'stepwise' ) }
 					</p>
 				</div>
 
@@ -123,14 +123,14 @@ const UpgradePage = () => {
 				<div style={ s.planGrid }>
 					{ /* Free card */ }
 					<div style={ s.planCard }>
-						<div style={ s.planName }>{ __( 'Free', 'alignpress' ) }</div>
+						<div style={ s.planName }>{ __( 'Free', 'stepwise' ) }</div>
 						<div style={ s.planPrice }>
 							<span style={ s.priceAmount }>$0</span>
 						</div>
-						<div style={ s.planSites }>{ __( 'Up to 3 sites', 'alignpress' ) }</div>
-						<div style={ s.planPerSite }>{ __( 'Unlimited workflows', 'alignpress' ) }</div>
+						<div style={ s.planSites }>{ __( 'Up to 3 sites', 'stepwise' ) }</div>
+						<div style={ s.planPerSite }>{ __( 'Unlimited workflows', 'stepwise' ) }</div>
 						<div style={ { ...s.planCta, background: '#f3f4f6', color: '#6b7280', cursor: 'default' } }>
-							{ __( 'Current plan', 'alignpress' ) }
+							{ __( 'Current plan', 'stepwise' ) }
 						</div>
 					</div>
 
@@ -165,14 +165,14 @@ const UpgradePage = () => {
 
 				{ /* Comparison table */ }
 				<div style={ s.tableWrap }>
-					<h3 style={ s.tableTitle }>{ __( 'Compare plans', 'alignpress' ) }</h3>
+					<h3 style={ s.tableTitle }>{ __( 'Compare plans', 'stepwise' ) }</h3>
 					<table style={ s.table }>
 						<thead>
 							<tr>
-								<th style={ { ...s.th, textAlign: 'left', width: '40%' } }>{ __( 'Feature', 'alignpress' ) }</th>
-								<th style={ s.th }>{ __( 'Free', 'alignpress' ) }</th>
-								<th style={ s.th }>{ __( 'Agency', 'alignpress' ) }<br /><span style={ s.thSub }>$149/yr · 50 sites</span></th>
-								<th style={ { ...s.th, color: '#4f46e5' } }>{ __( 'Agency Pro', 'alignpress' ) }<br /><span style={ s.thSub }>$249/yr</span></th>
+								<th style={ { ...s.th, textAlign: 'left', width: '40%' } }>{ __( 'Feature', 'stepwise' ) }</th>
+								<th style={ s.th }>{ __( 'Free', 'stepwise' ) }</th>
+								<th style={ s.th }>{ __( 'Agency', 'stepwise' ) }<br /><span style={ s.thSub }>$149/yr · 50 sites</span></th>
+								<th style={ { ...s.th, color: '#4f46e5' } }>{ __( 'Agency Pro', 'stepwise' ) }<br /><span style={ s.thSub }>$249/yr</span></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -192,12 +192,12 @@ const UpgradePage = () => {
 
 				{ /* How it works */ }
 				<div style={ s.steps }>
-					<h3 style={ s.stepsTitle }>{ __( 'How to get started', 'alignpress' ) }</h3>
+					<h3 style={ s.stepsTitle }>{ __( 'How to get started', 'stepwise' ) }</h3>
 					<div style={ s.stepsGrid }>
 						{ [
-							{ n: '1', title: __( 'Choose a plan above', 'alignpress' ),    body: __( 'Click "Get Agency" or "Get Agency Pro" — you\'ll be taken to the AlignPress dashboard to create your account.', 'alignpress' ) },
-							{ n: '2', title: __( 'Copy your license key', 'alignpress' ),  body: __( 'After subscribing, find your license key in the AlignPress dashboard. It looks like AP-XXXX-XXXX-XXXX-XXXX.', 'alignpress' ) },
-							{ n: '3', title: __( 'Activate below', 'alignpress' ),         body: __( 'Paste the key into the field below and click Activate. Pro features unlock instantly — no restart needed.', 'alignpress' ) },
+							{ n: '1', title: __( 'Choose a plan above', 'stepwise' ),    body: __( 'Click "Get Agency" or "Get Agency Pro" — you\'ll be taken to the Stepwise dashboard to create your account.', 'stepwise' ) },
+							{ n: '2', title: __( 'Copy your license key', 'stepwise' ),  body: __( 'After subscribing, find your license key in the Stepwise dashboard. It looks like SW-XXXX-XXXX-XXXX-XXXX.', 'stepwise' ) },
+							{ n: '3', title: __( 'Activate below', 'stepwise' ),         body: __( 'Paste the key into the field below and click Activate. Pro features unlock instantly — no restart needed.', 'stepwise' ) },
 						].map( ( step ) => (
 							<div key={ step.n } style={ s.step }>
 								<div style={ s.stepNum }>{ step.n }</div>
@@ -210,10 +210,10 @@ const UpgradePage = () => {
 
 				{ /* Activation */ }
 				<div style={ s.activateCard }>
-					<h3 style={ s.activateTitle }>{ __( 'Already have a license key?', 'alignpress' ) }</h3>
+					<h3 style={ s.activateTitle }>{ __( 'Already have a license key?', 'stepwise' ) }</h3>
 					{ success ? (
 						<p style={ { color: '#16a34a', fontWeight: 500 } }>
-							{ __( '✓ License activated! Reloading…', 'alignpress' ) }
+							{ __( '✓ License activated! Reloading…', 'stepwise' ) }
 						</p>
 					) : (
 						<>
@@ -221,19 +221,19 @@ const UpgradePage = () => {
 								<input
 									type="text"
 									style={ s.licenseInput }
-									placeholder="AP-XXXX-XXXX-XXXX-XXXX"
+									placeholder="SW-XXXX-XXXX-XXXX-XXXX"
 									value={ licenseKey }
 									onChange={ ( e ) => setLicenseKey( e.target.value ) }
 									onKeyDown={ ( e ) => e.key === 'Enter' && activate() }
 									autoFocus
 								/>
 								<Button variant="primary" disabled={ activating || ! licenseKey.trim() } onClick={ activate }>
-									{ activating ? __( 'Activating…', 'alignpress' ) : __( 'Activate', 'alignpress' ) }
+									{ activating ? __( 'Activating…', 'stepwise' ) : __( 'Activate', 'stepwise' ) }
 								</Button>
 							</div>
 							{ error && <p style={ s.error }>{ error }</p> }
 							<p style={ s.activateHint }>
-								🔒 { __( 'Your key is stored locally and never shared. Activates instantly — no restart required.', 'alignpress' ) }
+								🔒 { __( 'Your key is stored locally and never shared. Activates instantly — no restart required.', 'stepwise' ) }
 							</p>
 						</>
 					) }

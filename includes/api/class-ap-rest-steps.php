@@ -2,11 +2,11 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * REST controller for alignpress/v1/workflows/:id/steps
+ * REST controller for stepwise/v1/workflows/:id/steps
  */
 class AP_REST_Steps extends WP_REST_Controller {
 
-	protected $namespace = ALIGNPRESS_REST_NAMESPACE;
+	protected $namespace = STEPWISE_REST_NAMESPACE;
 
 	/**
 	 * Register all routes.
@@ -77,7 +77,7 @@ class AP_REST_Steps extends WP_REST_Controller {
 	public function get_items( $request ): WP_REST_Response|WP_Error {
 		$workflow_id = (int) $request['workflow_id'];
 		if ( ! AP_Workflow::get( $workflow_id ) ) {
-			return new WP_Error( 'alignpress_not_found', __( 'Workflow not found.', 'alignpress' ), [ 'status' => 404 ] );
+			return new WP_Error( 'stepwise_not_found', __( 'Workflow not found.', 'stepwise' ), [ 'status' => 404 ] );
 		}
 
 		$steps = AP_Step::for_workflow( $workflow_id );
@@ -93,7 +93,7 @@ class AP_REST_Steps extends WP_REST_Controller {
 	public function get_item( $request ): WP_REST_Response|WP_Error {
 		$step = AP_Step::get( (int) $request['id'] );
 		if ( ! $step || $step->workflow_id !== (int) $request['workflow_id'] ) {
-			return new WP_Error( 'alignpress_not_found', __( 'Step not found.', 'alignpress' ), [ 'status' => 404 ] );
+			return new WP_Error( 'stepwise_not_found', __( 'Step not found.', 'stepwise' ), [ 'status' => 404 ] );
 		}
 		return rest_ensure_response( $step->to_array() );
 	}
@@ -107,10 +107,10 @@ class AP_REST_Steps extends WP_REST_Controller {
 	public function create_item( $request ): WP_REST_Response|WP_Error {
 		$workflow_id = (int) $request['workflow_id'];
 		if ( ! AP_Workflow::get( $workflow_id ) ) {
-			return new WP_Error( 'alignpress_not_found', __( 'Workflow not found.', 'alignpress' ), [ 'status' => 404 ] );
+			return new WP_Error( 'stepwise_not_found', __( 'Workflow not found.', 'stepwise' ), [ 'status' => 404 ] );
 		}
-		if ( alignpress_workflow_steps_locked( $workflow_id ) ) {
-			return new WP_Error( 'alignpress_locked', __( 'Steps cannot be added after a workflow has been pushed to the cloud.', 'alignpress' ), [ 'status' => 403 ] );
+		if ( stepwise_workflow_steps_locked( $workflow_id ) ) {
+			return new WP_Error( 'stepwise_locked', __( 'Steps cannot be added after a workflow has been pushed to the cloud.', 'stepwise' ), [ 'status' => 403 ] );
 		}
 
 		$step = AP_Step::create( [
@@ -144,10 +144,10 @@ class AP_REST_Steps extends WP_REST_Controller {
 		$step = AP_Step::get( $id );
 
 		if ( ! $step || $step->workflow_id !== (int) $request['workflow_id'] ) {
-			return new WP_Error( 'alignpress_not_found', __( 'Step not found.', 'alignpress' ), [ 'status' => 404 ] );
+			return new WP_Error( 'stepwise_not_found', __( 'Step not found.', 'stepwise' ), [ 'status' => 404 ] );
 		}
-		if ( alignpress_workflow_steps_locked( $step->workflow_id ) ) {
-			return new WP_Error( 'alignpress_locked', __( 'Steps cannot be edited after a workflow has been pushed to the cloud.', 'alignpress' ), [ 'status' => 403 ] );
+		if ( stepwise_workflow_steps_locked( $step->workflow_id ) ) {
+			return new WP_Error( 'stepwise_locked', __( 'Steps cannot be edited after a workflow has been pushed to the cloud.', 'stepwise' ), [ 'status' => 403 ] );
 		}
 
 		$data = array_filter( [
@@ -179,10 +179,10 @@ class AP_REST_Steps extends WP_REST_Controller {
 		$step = AP_Step::get( $id );
 
 		if ( ! $step || $step->workflow_id !== (int) $request['workflow_id'] ) {
-			return new WP_Error( 'alignpress_not_found', __( 'Step not found.', 'alignpress' ), [ 'status' => 404 ] );
+			return new WP_Error( 'stepwise_not_found', __( 'Step not found.', 'stepwise' ), [ 'status' => 404 ] );
 		}
-		if ( alignpress_workflow_steps_locked( $step->workflow_id ) ) {
-			return new WP_Error( 'alignpress_locked', __( 'Steps cannot be deleted after a workflow has been pushed to the cloud.', 'alignpress' ), [ 'status' => 403 ] );
+		if ( stepwise_workflow_steps_locked( $step->workflow_id ) ) {
+			return new WP_Error( 'stepwise_locked', __( 'Steps cannot be deleted after a workflow has been pushed to the cloud.', 'stepwise' ), [ 'status' => 403 ] );
 		}
 
 		AP_Step::delete( $id );
@@ -198,15 +198,26 @@ class AP_REST_Steps extends WP_REST_Controller {
 	public function reorder_items( $request ): WP_REST_Response|WP_Error {
 		$workflow_id = (int) $request['workflow_id'];
 		if ( ! AP_Workflow::get( $workflow_id ) ) {
-			return new WP_Error( 'alignpress_not_found', __( 'Workflow not found.', 'alignpress' ), [ 'status' => 404 ] );
+			return new WP_Error( 'stepwise_not_found', __( 'Workflow not found.', 'stepwise' ), [ 'status' => 404 ] );
 		}
-		if ( alignpress_workflow_steps_locked( $workflow_id ) ) {
-			return new WP_Error( 'alignpress_locked', __( 'Steps cannot be reordered after a workflow has been pushed to the cloud.', 'alignpress' ), [ 'status' => 403 ] );
+		if ( stepwise_workflow_steps_locked( $workflow_id ) ) {
+			return new WP_Error( 'stepwise_locked', __( 'Steps cannot be reordered after a workflow has been pushed to the cloud.', 'stepwise' ), [ 'status' => 403 ] );
 		}
 
 		$order = $request->get_param( 'order' );
 		if ( ! is_array( $order ) ) {
-			return new WP_Error( 'alignpress_invalid', __( 'order must be an array of {id, sort_order} objects.', 'alignpress' ), [ 'status' => 400 ] );
+			return new WP_Error( 'stepwise_invalid', __( 'order must be an array of {id, sort_order} objects.', 'stepwise' ), [ 'status' => 400 ] );
+		}
+
+		// Verify every step in the payload belongs to this workflow.
+		$workflow_step_ids = array_map(
+			fn( $s ) => (int) $s->id,
+			AP_Step::for_workflow( $workflow_id )
+		);
+		foreach ( $order as $item ) {
+			if ( ! in_array( (int) ( $item['id'] ?? 0 ), $workflow_step_ids, true ) ) {
+				return new WP_Error( 'stepwise_forbidden', __( 'One or more steps do not belong to this workflow.', 'stepwise' ), [ 'status' => 403 ] );
+			}
 		}
 
 		AP_Step::reorder( $order );
@@ -225,7 +236,7 @@ class AP_REST_Steps extends WP_REST_Controller {
 		if ( current_user_can( 'manage_options' ) ) {
 			return true;
 		}
-		return new WP_Error( 'alignpress_forbidden', __( 'You do not have permission to access this resource.', 'alignpress' ), [ 'status' => 403 ] );
+		return new WP_Error( 'stepwise_forbidden', __( 'You do not have permission to access this resource.', 'stepwise' ), [ 'status' => 403 ] );
 	}
 
 	/**

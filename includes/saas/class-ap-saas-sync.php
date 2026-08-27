@@ -8,9 +8,9 @@ defined( 'ABSPATH' ) || exit;
 class AP_SaaS_Sync {
 
 	public function init(): void {
-		add_action( 'alignpress_execution_completed', [ $this, 'push_completion' ] );
+		add_action( 'stepwise_execution_completed', [ $this, 'push_completion' ] );
 		add_action( 'admin_init',                     [ $this, 'maybe_pull_assignments' ] );
-		add_action( 'alignpress_saas_heartbeat',      [ $this, 'send_heartbeat' ] );
+		add_action( 'stepwise_saas_heartbeat',      [ $this, 'send_heartbeat' ] );
 	}
 
 	/**
@@ -24,20 +24,20 @@ class AP_SaaS_Sync {
 		// Local URL mismatch check — catches clones before the hourly heartbeat fires.
 		// If staging mode is also set (inherited from a cloned production site), this
 		// still runs and disconnects, preventing the clone from silently using live credentials.
-		$registered_url = get_option( 'alignpress_registered_site_url', '' );
+		$registered_url = get_option( 'stepwise_registered_site_url', '' );
 		if ( $registered_url && rtrim( get_site_url(), '/' ) !== rtrim( $registered_url, '/' ) ) {
 			AP_SaaS_Auth::disconnect();
-			set_transient( 'alignpress_url_mismatch_notice', 1, HOUR_IN_SECONDS );
-			alignpress_log( 'Disconnected: local URL mismatch detected on admin_init — site was cloned or migrated.', 'saas' );
+			set_transient( 'stepwise_url_mismatch_notice', 1, HOUR_IN_SECONDS );
+			stepwise_log( 'Disconnected: local URL mismatch detected on admin_init — site was cloned or migrated.', 'saas' );
 			return;
 		}
 
 		// Staging mode: don't pull assignments so live data isn't polluted.
-		if ( alignpress_staging_mode_active() ) {
+		if ( stepwise_staging_mode_active() ) {
 			return;
 		}
 
-		$cache_key = 'alignpress_assignments_check';
+		$cache_key = 'stepwise_assignments_check';
 		if ( get_transient( $cache_key ) ) {
 			return;
 		}
@@ -74,7 +74,7 @@ class AP_SaaS_Sync {
 		$saas_key    = "saas:{$saas_workflow_id}";
 		$existing_id = (int) $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT id FROM {$wpdb->prefix}alignpress_workflows WHERE saas_id = %s LIMIT 1",
+				"SELECT id FROM {$wpdb->prefix}stepwise_workflows WHERE saas_id = %s LIMIT 1",
 				$saas_key
 			)
 		);
@@ -84,7 +84,7 @@ class AP_SaaS_Sync {
 			$user_id          = get_current_user_id() ?: 1;
 			$source_site_url  = isset( $assignment['source_site_url'] ) ? esc_url_raw( $assignment['source_site_url'] ) : null;
 			$wpdb->insert(
-				$wpdb->prefix . 'alignpress_workflows',
+				$wpdb->prefix . 'stepwise_workflows',
 				[
 					'title'           => sanitize_text_field( $assignment['workflow_title'] ),
 					'status'          => 'active',
@@ -102,15 +102,17 @@ class AP_SaaS_Sync {
 			// Import steps from snapshot
 			foreach ( $steps as $i => $step ) {
 				$wpdb->insert(
-					$wpdb->prefix . 'alignpress_steps',
+					$wpdb->prefix . 'stepwise_steps',
 					[
-						'workflow_id' => $workflow_id,
-						'title'       => sanitize_text_field( $step['title'] ?? '' ),
-						'description' => sanitize_textarea_field( $step['description'] ?? '' ),
-						'deep_link'   => esc_url_raw( $step['deep_link'] ?? '' ),
-						'is_required' => (int) ( $step['is_required'] ?? 1 ),
-						'sort_order'  => ( $i + 1 ) * 10,
-						'created_at'  => current_time( 'mysql' ),
+						'workflow_id'       => $workflow_id,
+						'title'             => sanitize_text_field( $step['title'] ?? '' ),
+						'description'       => sanitize_textarea_field( $step['description'] ?? '' ),
+						'deep_link'         => esc_url_raw( $step['deep_link'] ?? '' ),
+						'deep_link_type'    => sanitize_text_field( $step['deep_link_type'] ?? 'static' ),
+						'is_required'       => (int) ( $step['is_required'] ?? 1 ),
+						'evidence_required' => (int) ( $step['evidence_required'] ?? 0 ),
+						'sort_order'        => isset( $step['sort_order'] ) ? (int) $step['sort_order'] : ( $i + 1 ) * 10,
+						'created_at'        => current_time( 'mysql' ),
 					]
 				);
 			}
@@ -120,7 +122,7 @@ class AP_SaaS_Sync {
 			// Sync category if it changed
 			if ( $category ) {
 				$wpdb->update(
-					$wpdb->prefix . 'alignpress_workflows',
+					$wpdb->prefix . 'stepwise_workflows',
 					[ 'category' => $category, 'updated_at' => current_time( 'mysql' ) ],
 					[ 'id' => $workflow_id ]
 				);
@@ -128,7 +130,7 @@ class AP_SaaS_Sync {
 		}
 
 		// Record the assignment ID so we can report completion
-		update_option( "alignpress_saas_assignment_{$workflow_id}", $assignment_id );
+		update_option( "stepwise_saas_assignment_{$workflow_id}", $assignment_id );
 	}
 
 	/**
@@ -142,11 +144,11 @@ class AP_SaaS_Sync {
 		}
 
 		// Staging mode: don't push completions to live SaaS data.
-		if ( alignpress_staging_mode_active() ) {
+		if ( stepwise_staging_mode_active() ) {
 			return;
 		}
 
-		$assignment_id = (int) get_option( "alignpress_saas_assignment_{$execution->workflow_id}", 0 );
+		$assignment_id = (int) get_option( "stepwise_saas_assignment_{$execution->workflow_id}", 0 );
 		if ( ! $assignment_id ) {
 			return;
 		}
@@ -166,7 +168,7 @@ class AP_SaaS_Sync {
 		}
 
 		// Staging mode suppresses all SaaS sync without disconnecting.
-		if ( alignpress_staging_mode_active() ) {
+		if ( stepwise_staging_mode_active() ) {
 			return;
 		}
 
@@ -179,22 +181,14 @@ class AP_SaaS_Sync {
 		// SaaS detected this site's URL doesn't match the registered URL — it's a clone.
 		if ( isset( $result['status'] ) && $result['status'] === 'url_mismatch' ) {
 			AP_SaaS_Auth::disconnect();
-			set_transient( 'alignpress_url_mismatch_notice', 1, HOUR_IN_SECONDS );
-			alignpress_log( 'Disconnected: SaaS reported URL mismatch — site was cloned or migrated.', 'saas' );
+			set_transient( 'stepwise_url_mismatch_notice', 1, HOUR_IN_SECONDS );
+			stepwise_log( 'Disconnected: SaaS reported URL mismatch — site was cloned or migrated.', 'saas' );
 			return;
 		}
 
 		if ( isset( $result['plan'] ) ) {
 			$plan = sanitize_text_field( $result['plan'] );
-			update_option( 'alignpress_license_plan', $plan );
-
-			// Keep capture retention in sync with the current plan so that
-			// upgrades/downgrades are reflected without requiring a reconnect.
-			$correct_retention = in_array( $plan, ALIGNPRESS_PRO_PLANS, true ) ? 90 : 7;
-			$current_retention = (int) get_option( 'alignpress_capture_retention', 7 );
-			if ( $current_retention !== $correct_retention ) {
-				update_option( 'alignpress_capture_retention', $correct_retention );
-			}
+			update_option( 'stepwise_license_plan', $plan );
 		}
 	}
 }

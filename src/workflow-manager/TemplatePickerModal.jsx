@@ -5,7 +5,7 @@ import { __ } from '@wordpress/i18n';
 import Modal from '../shared/Modal';
 import Button from '../shared/Button';
 
-const { isPro = false, upgradeUrl = '#' } = window.alignpressData ?? {};
+const { isPro = false, upgradeUrl = '#' } = window.stepwiseData ?? {};
 
 const TemplatePickerModal = ( { onClose } ) => {
 	const [ templates, setTemplates ] = useState( [] );
@@ -15,13 +15,13 @@ const TemplatePickerModal = ( { onClose } ) => {
 	const [ error, setError ]         = useState( null );
 	const [ filter, setFilter ]       = useState( '' );
 
-	const { fetchWorkflows } = useDispatch( 'alignpress/workflows' );
+	const { fetchWorkflows } = useDispatch( 'stepwise/workflows' );
 
 	useEffect( () => {
-		apiFetch( { path: '/alignpress/v1/saas/templates' } )
+		apiFetch( { path: '/stepwise/v1/saas/templates' } )
 			.then( ( res ) => setTemplates( res.templates ?? [] ) )
 			.catch( ( err ) => {
-				setError( err.message ?? __( 'Could not load templates.', 'alignpress' ) );
+				setError( err.message ?? __( 'Could not load templates.', 'stepwise' ) );
 				setTemplates( [] );
 			} )
 			.finally( () => setLoading( false ) );
@@ -43,7 +43,7 @@ const TemplatePickerModal = ( { onClose } ) => {
 		setError( null );
 		try {
 			const workflow = await apiFetch( {
-				path:   '/alignpress/v1/workflows/import',
+				path:   '/stepwise/v1/workflows/import',
 				method: 'POST',
 				data:   {
 					title:       selected.title,
@@ -55,26 +55,26 @@ const TemplatePickerModal = ( { onClose } ) => {
 			await fetchWorkflows();
 			onClose();
 			if ( workflow?.id ) {
-				const editUrl = `${ window.alignpressData?.adminUrl ?? '' }admin.php?page=alignpress&workflow_id=${ workflow.id }`;
+				const editUrl = `${ window.stepwiseData?.adminUrl ?? '' }admin.php?page=stepwise&workflow_id=${ workflow.id }`;
 				window.location.href = editUrl;
 			}
 		} catch ( err ) {
-			setError( err.message ?? __( 'Failed to import template.', 'alignpress' ) );
+			setError( err.message ?? __( 'Failed to import template.', 'stepwise' ) );
 			setSaving( false );
 		}
 	};
 
 	return (
 		<Modal
-			title={ __( 'Choose a Template', 'alignpress' ) }
+			title={ __( 'Choose a Template', 'stepwise' ) }
 			onClose={ onClose }
 			footer={
 				<>
 					<Button variant="ghost" onClick={ onClose } disabled={ saving }>
-						{ __( 'Cancel', 'alignpress' ) }
+						{ __( 'Cancel', 'stepwise' ) }
 					</Button>
 					<Button variant="primary" onClick={ handleImport } disabled={ ! selected || saving }>
-						{ saving ? __( 'Importing…', 'alignpress' ) : __( 'Import Template', 'alignpress' ) }
+						{ saving ? __( 'Importing…', 'stepwise' ) : __( 'Import Template', 'stepwise' ) }
 					</Button>
 				</>
 			}
@@ -85,7 +85,7 @@ const TemplatePickerModal = ( { onClose } ) => {
 				<div className="ap-loading"><span className="spinner is-active" /></div>
 			) : templates.length === 0 ? (
 				<p style={ { color: '#888', fontSize: '13px' } }>
-					{ __( 'No templates available.', 'alignpress' ) }
+					{ __( 'No templates available.', 'stepwise' ) }
 				</p>
 			) : (
 				<div style={ { display: 'flex', flexDirection: 'column', gap: '12px' } }>
@@ -101,7 +101,7 @@ const TemplatePickerModal = ( { onClose } ) => {
 									cursor: 'pointer',
 								} }
 							>
-								{ __( 'All', 'alignpress' ) }
+								{ __( 'All', 'stepwise' ) }
 							</button>
 							{ categories.map( ( cat ) => (
 								<button
@@ -147,7 +147,7 @@ const TemplatePickerModal = ( { onClose } ) => {
 												</span>
 											) }
 											<span style={ { fontSize: '11px', color: '#9ca3af' } }>
-												{ tpl.steps.length } { __( 'steps', 'alignpress' ) }
+												{ tpl.steps.length } { __( 'steps', 'stepwise' ) }
 											</span>
 										</div>
 									</div>
@@ -159,7 +159,7 @@ const TemplatePickerModal = ( { onClose } ) => {
 									{ isProLocked && (
 										<p style={ { fontSize: '11px', marginTop: '6px', marginBottom: 0 } }>
 											<a href={ upgradeUrl } style={ { color: '#4f46e5' } }>
-												{ __( 'Upgrade to Pro to use this template →', 'alignpress' ) }
+												{ __( 'Upgrade to Pro to use this template →', 'stepwise' ) }
 											</a>
 										</p>
 									) }

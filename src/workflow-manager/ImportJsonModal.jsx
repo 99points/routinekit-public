@@ -11,7 +11,7 @@ const ImportJsonModal = ( { onClose } ) => {
 	const [ saving, setSaving ] = useState( false );
 	const [ error, setError ]   = useState( null );
 
-	const { fetchWorkflows } = useDispatch( 'alignpress/workflows' );
+	const { fetchWorkflows } = useDispatch( 'stepwise/workflows' );
 
 	const handleSubmit = async ( e ) => {
 		e.preventDefault();
@@ -21,37 +21,37 @@ const ImportJsonModal = ( { onClose } ) => {
 		try {
 			parsed = JSON.parse( json.trim() );
 		} catch {
-			setError( __( 'Invalid JSON — please check and try again.', 'alignpress' ) );
+			setError( __( 'Invalid JSON — please check and try again.', 'stepwise' ) );
 			return;
 		}
 
 		setSaving( true );
 		try {
 			const workflow = await apiFetch( {
-				path:   '/alignpress/v1/workflows/import',
+				path:   '/stepwise/v1/workflows/import',
 				method: 'POST',
 				data:   parsed,
 			} );
 			await fetchWorkflows();
 			onClose();
 			if ( workflow?.id ) {
-				const editUrl = `${ window.alignpressData?.adminUrl ?? '' }admin.php?page=alignpress&workflow_id=${ workflow.id }`;
+				const editUrl = `${ window.stepwiseData?.adminUrl ?? '' }admin.php?page=stepwise&workflow_id=${ workflow.id }`;
 				window.location.href = editUrl;
 			}
 		} catch ( err ) {
-			setError( err.message ?? __( 'Import failed.', 'alignpress' ) );
+			setError( err.message ?? __( 'Import failed.', 'stepwise' ) );
 			setSaving( false );
 		}
 	};
 
 	return (
 		<Modal
-			title={ __( 'Import Workflow from JSON', 'alignpress' ) }
+			title={ __( 'Import Workflow from JSON', 'stepwise' ) }
 			onClose={ onClose }
 			footer={
 				<>
 					<Button variant="ghost" onClick={ onClose } disabled={ saving }>
-						{ __( 'Cancel', 'alignpress' ) }
+						{ __( 'Cancel', 'stepwise' ) }
 					</Button>
 					<Button
 						variant="primary"
@@ -59,7 +59,7 @@ const ImportJsonModal = ( { onClose } ) => {
 						form="ap-import-json-form"
 						disabled={ ! json.trim() || saving }
 					>
-						{ saving ? __( 'Importing…', 'alignpress' ) : __( 'Import', 'alignpress' ) }
+						{ saving ? __( 'Importing…', 'stepwise' ) : __( 'Import', 'stepwise' ) }
 					</Button>
 				</>
 			}
@@ -67,13 +67,13 @@ const ImportJsonModal = ( { onClose } ) => {
 			<form id="ap-import-json-form" onSubmit={ handleSubmit }>
 				{ error && <p className="ap-error">{ error }</p> }
 				<div className="ap-field">
-					<label className="alignpress-label" htmlFor="ap-import-json">
-						{ __( 'Workflow JSON', 'alignpress' ) }
+					<label className="stepwise-label" htmlFor="ap-import-json">
+						{ __( 'Workflow JSON', 'stepwise' ) }
 						<span className="ap-required" aria-hidden="true"> *</span>
 					</label>
 					<textarea
 						id="ap-import-json"
-						className="alignpress-input"
+						className="stepwise-input"
 						rows={ 10 }
 						style={ { fontFamily: 'monospace', fontSize: '12px', resize: 'vertical' } }
 						value={ json }
@@ -83,7 +83,7 @@ const ImportJsonModal = ( { onClose } ) => {
 						autoFocus
 					/>
 					<p className="ap-help">
-						{ __( 'Paste the JSON exported from another AlignPress installation.', 'alignpress' ) }
+						{ __( 'Paste the JSON exported from another Stepwise installation.', 'stepwise' ) }
 					</p>
 				</div>
 			</form>

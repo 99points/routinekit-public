@@ -62,7 +62,7 @@ class AP_Deeplinks {
 	 * @return array[]
 	 */
 	public function get_library( bool $active_only = true ): array {
-		$library = apply_filters( 'alignpress_deeplink_library', $this->library );
+		$library = apply_filters( 'stepwise_deeplink_library', $this->library );
 
 		if ( ! $active_only ) {
 			return $library;

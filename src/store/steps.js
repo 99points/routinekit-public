@@ -22,7 +22,7 @@ const actions = {
 		dispatch( actions.setLoading( true ) );
 		try {
 			const steps = await apiFetch( {
-				path: `/alignpress/v1/workflows/${ workflowId }/steps`,
+				path: `/stepwise/v1/workflows/${ workflowId }/steps`,
 			} );
 			dispatch( actions.setSteps( workflowId, steps ) );
 		} catch ( error ) {
@@ -36,7 +36,7 @@ const actions = {
 		dispatch( actions.setSaving( true ) );
 		try {
 			const step = await apiFetch( {
-				path: `/alignpress/v1/workflows/${ workflowId }/steps`,
+				path: `/stepwise/v1/workflows/${ workflowId }/steps`,
 				method: 'POST',
 				data,
 			} );
@@ -54,7 +54,7 @@ const actions = {
 		dispatch( actions.setSaving( true ) );
 		try {
 			const step = await apiFetch( {
-				path: `/alignpress/v1/workflows/${ workflowId }/steps/${ stepId }`,
+				path: `/stepwise/v1/workflows/${ workflowId }/steps/${ stepId }`,
 				method: 'PATCH',
 				data,
 			} );
@@ -71,7 +71,7 @@ const actions = {
 	deleteStep: ( workflowId, stepId ) => async ( { dispatch } ) => {
 		try {
 			await apiFetch( {
-				path: `/alignpress/v1/workflows/${ workflowId }/steps/${ stepId }`,
+				path: `/stepwise/v1/workflows/${ workflowId }/steps/${ stepId }`,
 				method: 'DELETE',
 			} );
 			dispatch( actions.removeStep( workflowId, stepId ) );
@@ -85,7 +85,7 @@ const actions = {
 	reorderSteps: ( workflowId, order ) => async ( { dispatch } ) => {
 		try {
 			const steps = await apiFetch( {
-				path: `/alignpress/v1/workflows/${ workflowId }/steps/reorder`,
+				path: `/stepwise/v1/workflows/${ workflowId }/steps/reorder`,
 				method: 'PATCH',
 				data: { order },
 			} );
@@ -153,7 +153,7 @@ const selectors = {
 	getError:    ( state ) => state.error,
 };
 
-const store = createReduxStore( 'alignpress/steps', { reducer, actions, selectors } );
+const store = createReduxStore( 'stepwise/steps', { reducer, actions, selectors } );
 register( store );
 
 export default store;
