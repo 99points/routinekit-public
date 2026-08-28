@@ -4,7 +4,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * SaaS authentication — license key activation and site connection.
  */
-class AP_SaaS_Auth {
+class Stepwise_SaaS_Auth {
 
 	/**
 	 * Connect this site to the SaaS using a license key.
@@ -13,8 +13,8 @@ class AP_SaaS_Auth {
 	 * @param string $license_key
 	 * @return array|WP_Error
 	 */
-	public static function connect( string $license_key ): array|WP_Error {
-		$client = new AP_SaaS_Client();
+	public static function connect( string $license_key ) {
+		$client = new Stepwise_SaaS_Client();
 		$result = $client->connect_site( sanitize_text_field( $license_key ) );
 
 		if ( is_wp_error( $result ) ) {
@@ -62,7 +62,7 @@ class AP_SaaS_Auth {
 	public static function disconnect(): void {
 		// Fire-and-forget — local cleanup always runs even if the API call fails.
 		if ( self::is_connected() ) {
-			( new AP_SaaS_Client() )->deregister_site();
+			( new Stepwise_SaaS_Client() )->deregister_site();
 		}
 
 		delete_option( 'stepwise_site_api_key' );

@@ -39,7 +39,7 @@ const SaasConnectCta = () => {
 					{ __( 'Run this on multiple sites', 'stepwise' ) }
 				</strong>
 				<p className="ap-saas-cta__text">
-					{ __( 'Connect your free Stepwise account and push this workflow to up to 3 sites instantly — no re-building required.', 'stepwise' ) }
+					{ __( 'Connect your free Stepwise account to push this workflow to client sites, track completions, and manage everything from one dashboard — no re-building required.', 'stepwise' ) }
 				</p>
 				<a href={ settingsUrl } className="ap-saas-cta__btn">
 					{ __( 'Connect free →', 'stepwise' ) }
@@ -52,7 +52,7 @@ const SaasConnectCta = () => {
 // ── Workflow Setup Checklist ─────────────────────────────────────────────────
 const WorkflowChecklist = ( { workflow, steps } ) => {
 	const [ dismissed, setDismissed ] = useState(
-		() => !! localStorage.getItem( `ap_checklist_dismissed_${ workflow.id }` )
+		() => !! localStorage.getItem( `stepwise_checklist_dismissed_${ workflow.id }` )
 	);
 
 	if ( dismissed ) return null;
@@ -115,7 +115,7 @@ const WorkflowChecklist = ( { workflow, steps } ) => {
 	const allDone     = doneCount === items.length;
 
 	const handleDismiss = () => {
-		localStorage.setItem( `ap_checklist_dismissed_${ workflow.id }`, '1' );
+		localStorage.setItem( `stepwise_checklist_dismissed_${ workflow.id }`, '1' );
 		setDismissed( true );
 	};
 
@@ -180,25 +180,38 @@ const GroupAssignPanel = ( { workflowId, pushedGroupIds = [], category = '' } ) 
 	}, [] );
 
 	const handleAssign = async ( groupId ) => {
-		if ( ! category ) {
-			alert( __( 'Please select a category in Playbook Settings before assigning to a group.', 'stepwise' ) );
-			return;
-		}
-		if ( ! window.confirm( __( 'Push this workflow to all sites in the selected group? Steps will be locked and cannot be edited after pushing.', 'stepwise' ) ) ) {
-			return;
-		}
 		setPushing( groupId );
 		setError( null );
 		try {
+			const next = [ ...assignedIds, Number( groupId ) ];
 			await apiFetch( {
-				path:   `/stepwise/v1/saas/groups/${ groupId }/assign`,
+				path:   `/stepwise/v1/workflows/${ workflowId }/assign-groups`,
 				method: 'POST',
-				data:   { workflow_id: workflowId },
+				data:   { group_ids: next },
 			} );
-			setAssignedIds( ( prev ) => [ ...prev, Number( groupId ) ] );
+			setAssignedIds( next );
 			await fetchWorkflows();
 		} catch ( e ) {
-			setError( e.message ?? __( 'Assignment failed.', 'stepwise' ) );
+			setError( e.message ?? __( 'Could not save group assignment.', 'stepwise' ) );
+		} finally {
+			setPushing( null );
+		}
+	};
+
+	const handleUnassign = async ( groupId ) => {
+		setPushing( groupId );
+		setError( null );
+		try {
+			const next = assignedIds.filter( ( id ) => id !== Number( groupId ) );
+			await apiFetch( {
+				path:   `/stepwise/v1/workflows/${ workflowId }/assign-groups`,
+				method: 'POST',
+				data:   { group_ids: next },
+			} );
+			setAssignedIds( next );
+			await fetchWorkflows();
+		} catch ( e ) {
+			setError( e.message ?? __( 'Could not remove group assignment.', 'stepwise' ) );
 		} finally {
 			setPushing( null );
 		}
@@ -232,9 +245,14 @@ const GroupAssignPanel = ( { workflowId, pushedGroupIds = [], category = '' } ) 
 						<div key={ group.id } style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' } }>
 							<span style={ { fontSize: '13px', fontWeight: 500 } }>{ group.name }</span>
 							{ isAssigned ? (
-								<span style={ { fontSize: '12px', fontWeight: 500, color: '#16a34a' } }>
-									{ __( 'Assigned ✓', 'stepwise' ) }
-								</span>
+								<Button
+									variant="ghost"
+									size="sm"
+									onClick={ () => handleUnassign( group.id ) }
+									disabled={ isBusy || pushing !== null }
+								>
+									{ isBusy ? __( 'Removing…', 'stepwise' ) : __( 'Remove', 'stepwise' ) }
+								</Button>
 							) : (
 								<Button
 									variant="secondary"
@@ -256,12 +274,19 @@ const GroupAssignPanel = ( { workflowId, pushedGroupIds = [], category = '' } ) 
 const PlaybookSettingsPanel = ( { workflow, workflowId } ) => {
 	const [ open, setOpen ]             = useState( true );
 	const [ status, setStatus ]         = useState( workflow.status === 'active' );
-	const [ category, setCategory ]     = useState( workflow.category ?? '' );
+	const [ category, setCategory ]     = useState( workflow.category || window.stepwiseData?.defaultCategory || '' );
 	const [ saving, setSaving ]         = useState( false );
 	const [ showConfirm, setShowConfirm ] = useState( false );
 
 	const { saveWorkflow } = useDispatch( 'stepwise/workflows' );
 
+	// Auto-save the default category on mount if the workflow has none yet.
+	useEffect( () => {
+		const def = window.stepwiseData?.defaultCategory;
+		if ( ! workflow.category && def ) {
+			saveWorkflow( workflowId, { category: def } ).catch( () => {} );
+		}
+	}, [ workflowId ] );
 
 	const handleStatusToggle = ( val ) => {
 		if ( ! val && status ) {

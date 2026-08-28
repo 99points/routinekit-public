@@ -8,7 +8,7 @@ defined( 'ABSPATH' ) || exit;
  * Serves pending captures to the React toast component, and handles
  * adding captured changes to a workflow as steps.
  */
-class AP_REST_Capture extends WP_REST_Controller {
+class Stepwise_REST_Capture extends WP_REST_Controller {
 
 	protected $namespace = STEPWISE_REST_NAMESPACE;
 
@@ -144,7 +144,7 @@ class AP_REST_Capture extends WP_REST_Controller {
 	 * @param WP_REST_Request $request
 	 * @return WP_REST_Response|WP_Error
 	 */
-	public function add_to_workflow( $request ): WP_REST_Response|WP_Error {
+	public function add_to_workflow( $request ) {
 		global $wpdb;
 
 		$workflow_id = (int) $request->get_param( 'workflow_id' );
@@ -152,7 +152,7 @@ class AP_REST_Capture extends WP_REST_Controller {
 		$step_title  = $request->get_param( 'step_title' );
 		$user_id     = get_current_user_id();
 
-		$workflow = AP_Workflow::get( $workflow_id );
+		$workflow = Stepwise_Workflow::get( $workflow_id );
 		if ( ! $workflow ) {
 			return new WP_Error( 'stepwise_not_found', __( 'Workflow not found.', 'stepwise' ), [ 'status' => 404 ] );
 		}
@@ -207,7 +207,7 @@ class AP_REST_Capture extends WP_REST_Controller {
 			$deep_link = ltrim( $path . ( $query ? '?' . $query : '' ), '/' );
 		}
 
-		$step = AP_Step::create( [
+		$step = Stepwise_Step::create( [
 			'workflow_id'      => $workflow_id,
 			'title'            => $step_title,
 			'deep_link'        => $deep_link,
@@ -241,7 +241,7 @@ class AP_REST_Capture extends WP_REST_Controller {
 	 * @param WP_REST_Request $request
 	 * @return WP_REST_Response|WP_Error
 	 */
-	public function manual_capture( $request ): WP_REST_Response|WP_Error {
+	public function manual_capture( $request ) {
 		global $wpdb;
 
 		$label        = $request->get_param( 'label' );
@@ -253,10 +253,8 @@ class AP_REST_Capture extends WP_REST_Controller {
 		$workflow_id  = (int) ( $request->get_param( 'workflow_id' ) ?? 0 );
 		$user_id      = get_current_user_id();
 
-		// Build insert data — omit 'source' if the column doesn't exist yet.
-		$table      = $wpdb->prefix . 'stepwise_capture_buffer';
-		$cols       = $wpdb->get_col( "DESC {$table}", 0 ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching
-		$has_source = in_array( 'source', $cols, true );
+		// The 'source' column is guaranteed present since the activator migration (v1.2.3).
+		$table = $wpdb->prefix . 'stepwise_capture_buffer';
 
 		$row = [
 			'option_name'  => sanitize_key( $field_key ) ?: '_manual_',
@@ -266,13 +264,9 @@ class AP_REST_Capture extends WP_REST_Controller {
 			'page_url'     => $page_url,
 			'captured_by'  => $user_id,
 			'status'       => 'pending',
+			'source'       => 'manual',
 		];
-		$formats = [ '%s', '%s', '%s', '%s', '%s', '%d', '%s' ];
-
-		if ( $has_source ) {
-			$row['source'] = 'manual';
-			$formats[]     = '%s';
-		}
+		$formats = [ '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s' ];
 
 		$inserted = $wpdb->insert( $table, $row, $formats );
 
@@ -284,7 +278,7 @@ class AP_REST_Capture extends WP_REST_Controller {
 
 		// If a workflow was selected, immediately create a step from this capture.
 		if ( $workflow_id > 0 ) {
-			$workflow = AP_Workflow::get( $workflow_id );
+			$workflow = Stepwise_Workflow::get( $workflow_id );
 			if ( $workflow ) {
 				$deep_link = '';
 				if ( $page_url ) {
@@ -293,7 +287,7 @@ class AP_REST_Capture extends WP_REST_Controller {
 					$deep_link = ltrim( $path . ( $query ? '?' . $query : '' ), '/' );
 				}
 
-				$step = AP_Step::create( [
+				$step = Stepwise_Step::create( [
 					'workflow_id'      => $workflow_id,
 					'title'            => $label,
 					'deep_link'        => $deep_link,
@@ -410,8 +404,8 @@ class AP_REST_Capture extends WP_REST_Controller {
 	 *
 	 * @return bool|WP_Error
 	 */
-	public function permissions_check(): bool|WP_Error {
-		if ( current_user_can( 'manage_options' ) ) {
+	public function permissions_check() {
+		if ( stepwise_current_user_can_edit() ) {
 			return true;
 		}
 		return new WP_Error( 'stepwise_forbidden', __( 'You do not have permission to access this resource.', 'stepwise' ), [ 'status' => 403 ] );

@@ -24,7 +24,7 @@ const actions = {
 			// returns them for up to 5 minutes after cancellation.
 			if ( execution && execution.status === 'abandoned' ) {
 				try {
-					const dismissed = new Set( JSON.parse( localStorage.getItem( 'ap_runner_dismissed_ids' ) || '[]' ).map( String ) );
+					const dismissed = new Set( JSON.parse( localStorage.getItem( 'stepwise_runner_dismissed_ids' ) || '[]' ).map( String ) );
 					if ( dismissed.has( String( execution.id ) ) ) execution = null;
 				} catch {}
 			}

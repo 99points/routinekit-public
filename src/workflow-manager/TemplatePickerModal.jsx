@@ -5,7 +5,6 @@ import { __ } from '@wordpress/i18n';
 import Modal from '../shared/Modal';
 import Button from '../shared/Button';
 
-const { isPro = false, upgradeUrl = '#' } = window.stepwiseData ?? {};
 
 const TemplatePickerModal = ( { onClose } ) => {
 	const [ templates, setTemplates ] = useState( [] );
@@ -27,7 +26,7 @@ const TemplatePickerModal = ( { onClose } ) => {
 			.finally( () => setLoading( false ) );
 	}, [] );
 
-	const categories = [ ...new Set( templates.map( ( t ) => t.category ) ) ].sort();
+	const categories = [ ...new Set( templates.map( ( t ) => t.category ).filter( Boolean ) ) ].sort();
 
 	const visible = filter
 		? templates.filter( ( t ) => t.category === filter )
@@ -35,10 +34,6 @@ const TemplatePickerModal = ( { onClose } ) => {
 
 	const handleImport = async () => {
 		if ( ! selected ) return;
-		if ( selected.plan === 'pro' && ! isPro ) {
-			window.location.href = upgradeUrl;
-			return;
-		}
 		setSaving( true );
 		setError( null );
 		try {
@@ -123,44 +118,28 @@ const TemplatePickerModal = ( { onClose } ) => {
 
 					<div style={ { display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '360px', overflowY: 'auto' } }>
 						{ visible.map( ( tpl ) => {
-							const isProLocked = tpl.plan === 'pro' && ! isPro;
-							const isSelected  = selected?.id === tpl.id;
+							const isSelected = selected?.id === tpl.id;
 							return (
 								<div
 									key={ tpl.id }
-									onClick={ () => ! isProLocked && setSelected( tpl ) }
+									onClick={ () => setSelected( tpl ) }
 									style={ {
 										padding: '12px 14px', borderRadius: '6px', border: '1.5px solid',
 										borderColor: isSelected ? '#6366f1' : '#e5e7eb',
-										background: isSelected ? '#eef2ff' : isProLocked ? '#fafafa' : '#fff',
-										cursor: isProLocked ? 'default' : 'pointer',
-										opacity: isProLocked ? 0.7 : 1,
+										background: isSelected ? '#eef2ff' : '#fff',
+										cursor: 'pointer',
 										transition: 'border-color 0.1s',
 									} }
 								>
 									<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between' } }>
 										<span style={ { fontSize: '13px', fontWeight: 600, color: '#111' } }>{ tpl.title }</span>
-										<div style={ { display: 'flex', gap: '6px', alignItems: 'center' } }>
-											{ tpl.plan === 'pro' && (
-												<span style={ { fontSize: '10px', fontWeight: 700, padding: '1px 6px', borderRadius: '4px', background: '#eef2ff', color: '#4f46e5' } }>
-													PRO
-												</span>
-											) }
-											<span style={ { fontSize: '11px', color: '#9ca3af' } }>
-												{ tpl.steps.length } { __( 'steps', 'stepwise' ) }
-											</span>
-										</div>
+										<span style={ { fontSize: '11px', color: '#9ca3af' } }>
+											{ tpl.steps.length } { __( 'steps', 'stepwise' ) }
+										</span>
 									</div>
 									{ tpl.description && (
 										<p style={ { fontSize: '12px', color: '#6b7280', marginTop: '4px', marginBottom: 0 } }>
 											{ tpl.description }
-										</p>
-									) }
-									{ isProLocked && (
-										<p style={ { fontSize: '11px', marginTop: '6px', marginBottom: 0 } }>
-											<a href={ upgradeUrl } style={ { color: '#4f46e5' } }>
-												{ __( 'Upgrade to Pro to use this template →', 'stepwise' ) }
-											</a>
 										</p>
 									) }
 								</div>

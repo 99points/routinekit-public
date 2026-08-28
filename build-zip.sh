@@ -24,6 +24,9 @@ EXCLUDES=(
   ".distignore"
 )
 
+echo "→ Building JS assets…"
+npm --prefix "$PLUGIN_DIR" run build
+
 mkdir -p "$DIST_DIR"
 rm -f "$OUT"
 

@@ -13,35 +13,23 @@ const ImportUrlModal = ( { onClose } ) => {
 
 	const { fetchWorkflows } = useDispatch( 'stepwise/workflows' );
 
-	const { saasConnected = false } = window.stepwiseData ?? {};
-
 	const handleSubmit = async ( e ) => {
 		e.preventDefault();
 		if ( ! url.trim() ) return;
 		setSaving( true );
 		setError( null );
 		try {
-			let workflow;
-			if ( saasConnected ) {
-				// Proxy through SaaS — server-enforced Pro gate, fetch happens on our server
-				const parsed = await apiFetch( {
-					path:   '/stepwise/v1/saas/import-url',
-					method: 'POST',
-					data:   { url: url.trim() },
-				} );
-				// parsed contains {title, description, category, steps} — import locally
-				workflow = await apiFetch( {
-					path:   '/stepwise/v1/workflows/import',
-					method: 'POST',
-					data:   parsed,
-				} );
-			} else {
-				workflow = await apiFetch( {
-					path:   '/stepwise/v1/workflows/import-url',
-					method: 'POST',
-					data:   { url: url.trim() },
-				} );
-			}
+			// Proxy through SaaS — plan gate enforced server-side, fetch is SSRF-safe
+			const parsed = await apiFetch( {
+				path:   '/stepwise/v1/saas/import-url',
+				method: 'POST',
+				data:   { url: url.trim() },
+			} );
+			const workflow = await apiFetch( {
+				path:   '/stepwise/v1/workflows/import',
+				method: 'POST',
+				data:   parsed,
+			} );
 			await fetchWorkflows();
 			onClose();
 			if ( workflow?.id ) {

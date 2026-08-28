@@ -7,7 +7,7 @@ defined( 'ABSPATH' ) || exit;
  * Provides a curated list of admin deep-links and resolves URL templates
  * to full admin URLs for the Runner sidebar.
  */
-class AP_Deeplinks {
+class Stepwise_Deeplinks {
 
 	/**
 	 * Curated library of admin deep-links.

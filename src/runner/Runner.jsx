@@ -23,9 +23,9 @@ import AuditTrail from './AuditTrail';
 import '../store';
 
 const { runnerPosition = 'right' } = window.stepwiseData ?? {};
-const RUNNER_CLOSED_KEY     = 'ap_runner_closed_id';
-const RUNNER_DISMISSED_KEY  = 'ap_runner_dismissed_ids';
-const RUNNER_PINNED_KEY     = 'ap_runner_pinned';
+const RUNNER_CLOSED_KEY     = 'stepwise_runner_closed_id';
+const RUNNER_DISMISSED_KEY  = 'stepwise_runner_dismissed_ids';
+const RUNNER_PINNED_KEY     = 'stepwise_runner_pinned';
 
 /**
  * Returns { panelStyle, onPointerDown } for a freely-draggable fixed panel.

@@ -5,7 +5,7 @@ defined( 'ABSPATH' ) || exit;
  * Admin-post handlers for SaaS connection/disconnection forms.
  * These are form-submit targets (action=stepwise_saas_activate / _deactivate).
  */
-class AP_SaaS_Admin {
+class Stepwise_SaaS_Admin {
 
 	/**
 	 * Handle POST stepwise_saas_activate
@@ -24,7 +24,7 @@ class AP_SaaS_Admin {
 			return;
 		}
 
-		$result = AP_SaaS_Auth::connect( $key );
+		$result = Stepwise_SaaS_Auth::connect( $key );
 
 		if ( is_wp_error( $result ) ) {
 			$this->redirect_settings( 'saas_error', $result->get_error_message() );
@@ -44,7 +44,7 @@ class AP_SaaS_Admin {
 
 		check_admin_referer( 'stepwise_saas_deactivate' );
 
-		AP_SaaS_Auth::disconnect();
+		Stepwise_SaaS_Auth::disconnect();
 
 		$this->redirect_settings( 'saas_disconnected', '1' );
 	}

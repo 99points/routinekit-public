@@ -4,7 +4,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * REST controller for stepwise/v1/workflows/:id/steps
  */
-class AP_REST_Steps extends WP_REST_Controller {
+class Stepwise_REST_Steps extends WP_REST_Controller {
 
 	protected $namespace = STEPWISE_REST_NAMESPACE;
 
@@ -74,13 +74,13 @@ class AP_REST_Steps extends WP_REST_Controller {
 	 * @param WP_REST_Request $request
 	 * @return WP_REST_Response|WP_Error
 	 */
-	public function get_items( $request ): WP_REST_Response|WP_Error {
+	public function get_items( $request ) {
 		$workflow_id = (int) $request['workflow_id'];
-		if ( ! AP_Workflow::get( $workflow_id ) ) {
+		if ( ! Stepwise_Workflow::get( $workflow_id ) ) {
 			return new WP_Error( 'stepwise_not_found', __( 'Workflow not found.', 'stepwise' ), [ 'status' => 404 ] );
 		}
 
-		$steps = AP_Step::for_workflow( $workflow_id );
+		$steps = Stepwise_Step::for_workflow( $workflow_id );
 		return rest_ensure_response( array_map( fn( $s ) => $s->to_array(), $steps ) );
 	}
 
@@ -90,8 +90,8 @@ class AP_REST_Steps extends WP_REST_Controller {
 	 * @param WP_REST_Request $request
 	 * @return WP_REST_Response|WP_Error
 	 */
-	public function get_item( $request ): WP_REST_Response|WP_Error {
-		$step = AP_Step::get( (int) $request['id'] );
+	public function get_item( $request ) {
+		$step = Stepwise_Step::get( (int) $request['id'] );
 		if ( ! $step || $step->workflow_id !== (int) $request['workflow_id'] ) {
 			return new WP_Error( 'stepwise_not_found', __( 'Step not found.', 'stepwise' ), [ 'status' => 404 ] );
 		}
@@ -104,16 +104,16 @@ class AP_REST_Steps extends WP_REST_Controller {
 	 * @param WP_REST_Request $request
 	 * @return WP_REST_Response|WP_Error
 	 */
-	public function create_item( $request ): WP_REST_Response|WP_Error {
+	public function create_item( $request ) {
 		$workflow_id = (int) $request['workflow_id'];
-		if ( ! AP_Workflow::get( $workflow_id ) ) {
+		if ( ! Stepwise_Workflow::get( $workflow_id ) ) {
 			return new WP_Error( 'stepwise_not_found', __( 'Workflow not found.', 'stepwise' ), [ 'status' => 404 ] );
 		}
 		if ( stepwise_workflow_steps_locked( $workflow_id ) ) {
 			return new WP_Error( 'stepwise_locked', __( 'Steps cannot be added after a workflow has been pushed to the cloud.', 'stepwise' ), [ 'status' => 403 ] );
 		}
 
-		$step = AP_Step::create( [
+		$step = Stepwise_Step::create( [
 			'workflow_id'       => $workflow_id,
 			'title'             => $request->get_param( 'title' ),
 			'description'       => $request->get_param( 'description' ) ?? '',
@@ -139,9 +139,9 @@ class AP_REST_Steps extends WP_REST_Controller {
 	 * @param WP_REST_Request $request
 	 * @return WP_REST_Response|WP_Error
 	 */
-	public function update_item( $request ): WP_REST_Response|WP_Error {
+	public function update_item( $request ) {
 		$id   = (int) $request['id'];
-		$step = AP_Step::get( $id );
+		$step = Stepwise_Step::get( $id );
 
 		if ( ! $step || $step->workflow_id !== (int) $request['workflow_id'] ) {
 			return new WP_Error( 'stepwise_not_found', __( 'Step not found.', 'stepwise' ), [ 'status' => 404 ] );
@@ -160,7 +160,7 @@ class AP_REST_Steps extends WP_REST_Controller {
 			'sort_order'        => $request->get_param( 'sort_order' ),
 		], fn( $v ) => null !== $v );
 
-		$updated = AP_Step::update( $id, $data );
+		$updated = Stepwise_Step::update( $id, $data );
 		if ( is_wp_error( $updated ) ) {
 			return $updated;
 		}
@@ -174,9 +174,9 @@ class AP_REST_Steps extends WP_REST_Controller {
 	 * @param WP_REST_Request $request
 	 * @return WP_REST_Response|WP_Error
 	 */
-	public function delete_item( $request ): WP_REST_Response|WP_Error {
+	public function delete_item( $request ) {
 		$id   = (int) $request['id'];
-		$step = AP_Step::get( $id );
+		$step = Stepwise_Step::get( $id );
 
 		if ( ! $step || $step->workflow_id !== (int) $request['workflow_id'] ) {
 			return new WP_Error( 'stepwise_not_found', __( 'Step not found.', 'stepwise' ), [ 'status' => 404 ] );
@@ -185,7 +185,7 @@ class AP_REST_Steps extends WP_REST_Controller {
 			return new WP_Error( 'stepwise_locked', __( 'Steps cannot be deleted after a workflow has been pushed to the cloud.', 'stepwise' ), [ 'status' => 403 ] );
 		}
 
-		AP_Step::delete( $id );
+		Stepwise_Step::delete( $id );
 		return rest_ensure_response( [ 'deleted' => true, 'id' => $id ] );
 	}
 
@@ -195,9 +195,9 @@ class AP_REST_Steps extends WP_REST_Controller {
 	 * @param WP_REST_Request $request
 	 * @return WP_REST_Response|WP_Error
 	 */
-	public function reorder_items( $request ): WP_REST_Response|WP_Error {
+	public function reorder_items( $request ) {
 		$workflow_id = (int) $request['workflow_id'];
-		if ( ! AP_Workflow::get( $workflow_id ) ) {
+		if ( ! Stepwise_Workflow::get( $workflow_id ) ) {
 			return new WP_Error( 'stepwise_not_found', __( 'Workflow not found.', 'stepwise' ), [ 'status' => 404 ] );
 		}
 		if ( stepwise_workflow_steps_locked( $workflow_id ) ) {
@@ -212,7 +212,7 @@ class AP_REST_Steps extends WP_REST_Controller {
 		// Verify every step in the payload belongs to this workflow.
 		$workflow_step_ids = array_map(
 			fn( $s ) => (int) $s->id,
-			AP_Step::for_workflow( $workflow_id )
+			Stepwise_Step::for_workflow( $workflow_id )
 		);
 		foreach ( $order as $item ) {
 			if ( ! in_array( (int) ( $item['id'] ?? 0 ), $workflow_step_ids, true ) ) {
@@ -220,9 +220,9 @@ class AP_REST_Steps extends WP_REST_Controller {
 			}
 		}
 
-		AP_Step::reorder( $order );
+		Stepwise_Step::reorder( $order );
 
-		$steps = AP_Step::for_workflow( $workflow_id );
+		$steps = Stepwise_Step::for_workflow( $workflow_id );
 		return rest_ensure_response( array_map( fn( $s ) => $s->to_array(), $steps ) );
 	}
 
@@ -232,8 +232,8 @@ class AP_REST_Steps extends WP_REST_Controller {
 	 * @param WP_REST_Request $request
 	 * @return bool|WP_Error
 	 */
-	public function permissions_check( WP_REST_Request $request ): bool|WP_Error {
-		if ( current_user_can( 'manage_options' ) ) {
+	public function permissions_check( WP_REST_Request $request ) {
+		if ( stepwise_current_user_can_edit() ) {
 			return true;
 		}
 		return new WP_Error( 'stepwise_forbidden', __( 'You do not have permission to access this resource.', 'stepwise' ), [ 'status' => 403 ] );
@@ -260,7 +260,7 @@ class AP_REST_Steps extends WP_REST_Controller {
 			],
 			'deep_link' => [
 				'type'              => 'string',
-				'sanitize_callback' => 'esc_url_raw',
+				'sanitize_callback' => 'esc_url',
 			],
 			'deep_link_type' => [
 				'type'              => 'string',

@@ -7,7 +7,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * An execution represents one instance of a workflow being run on a site.
  */
-class AP_Execution {
+class Stepwise_Execution {
 
 	/** @var int */
 	public int $id;
@@ -45,7 +45,7 @@ class AP_Execution {
 	 * @param int $id
 	 * @return static|null
 	 */
-	public static function get( int $id ): ?static {
+	public static function get( int $id ): ?Stepwise_Execution {
 		global $wpdb;
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
@@ -81,7 +81,7 @@ class AP_Execution {
 	 *
 	 * @return static|null
 	 */
-	public static function get_active(): ?static {
+	public static function get_active(): ?Stepwise_Execution {
 		global $wpdb;
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
@@ -113,10 +113,10 @@ class AP_Execution {
 	 * @param int $workflow_id
 	 * @return static|WP_Error
 	 */
-	public static function start( int $workflow_id ): static|WP_Error {
+	public static function start( int $workflow_id ) {
 		global $wpdb;
 
-		$workflow = AP_Workflow::get( $workflow_id );
+		$workflow = Stepwise_Workflow::get( $workflow_id );
 		if ( ! $workflow ) {
 			return new WP_Error( 'stepwise_not_found', __( 'Workflow not found.', 'stepwise' ) );
 		}
@@ -192,7 +192,7 @@ class AP_Execution {
 		$execution_id = (int) $wpdb->insert_id;
 
 		// Seed step_completions rows for every step in the workflow.
-		$steps = AP_Step::for_workflow( $workflow_id );
+		$steps = Stepwise_Step::for_workflow( $workflow_id );
 		foreach ( $steps as $step ) {
 			$wpdb->insert(
 				$wpdb->prefix . 'stepwise_step_completions',
@@ -206,7 +206,7 @@ class AP_Execution {
 		}
 
 		// Update workflow's last_run_at and increment run_count.
-		AP_Workflow::update( $workflow_id, [ 'last_run_at' => $now ] );
+		Stepwise_Workflow::update( $workflow_id, [ 'last_run_at' => $now ] );
 		$wpdb->query(
 			$wpdb->prepare(
 				"UPDATE {$wpdb->prefix}stepwise_workflows SET run_count = run_count + 1 WHERE id = %d",
@@ -352,7 +352,7 @@ class AP_Execution {
 	 * @param array $assignment
 	 * @return static|WP_Error
 	 */
-	public static function create_from_saas_assignment( array $assignment ): static|WP_Error {
+	public static function create_from_saas_assignment( array $assignment ) {
 		global $wpdb;
 
 		$workflow_id       = absint( $assignment['workflow_id'] ?? 0 );
@@ -396,7 +396,7 @@ class AP_Execution {
 	 * @param object $row
 	 * @return static
 	 */
-	public static function from_row( object $row ): static {
+	public static function from_row( object $row ): Stepwise_Execution {
 		$instance                     = new static();
 		$instance->id                 = (int) $row->id;
 		$instance->workflow_id        = (int) $row->workflow_id;

@@ -67,7 +67,7 @@ class Stepwise {
 	 * Register all admin-facing hooks.
 	 */
 	private function define_admin_hooks(): void {
-		$admin = new AP_Admin();
+		$admin = new Stepwise_Admin();
 
 		$this->loader->add_filter( 'user_has_cap',          $admin, 'grant_stepwise_caps', 10, 3 );
 		$this->loader->add_filter( 'plugin_action_links_' . plugin_basename( STEPWISE_PLUGIN_FILE ), $admin, 'plugin_action_links' );
@@ -79,22 +79,22 @@ class Stepwise {
 		$this->loader->add_action( 'admin_footer',          $admin, 'render_capture_mounts' );
 		$this->loader->add_action( 'admin_footer-plugins.php', $admin, 'render_delete_warning_script' );
 
-		$notices = new AP_Notices();
+		$notices = new Stepwise_Notices();
 		$this->loader->add_action( 'admin_notices', $notices, 'render' );
 
 		$this->loader->add_action( 'admin_init', $this, 'register_privacy_policy_content' );
 		$this->loader->add_action( 'admin_init', $this, 'maybe_run_migrations' );
 
-		$settings = new AP_Settings();
+		$settings = new Stepwise_Settings();
 		$this->loader->add_action( 'admin_init',    $settings, 'register_settings' );
 		$this->loader->add_action( 'rest_api_init', $settings, 'register_rest_routes' );
 
-		$saas_admin = new AP_SaaS_Admin();
+		$saas_admin = new Stepwise_SaaS_Admin();
 		$this->loader->add_action( 'admin_post_stepwise_saas_activate',   $saas_admin, 'handle_activate' );
 		$this->loader->add_action( 'admin_post_stepwise_saas_deactivate', $saas_admin, 'handle_deactivate' );
 
-		if ( AP_SaaS_Auth::is_connected() ) {
-			$saas_sync = new AP_SaaS_Sync();
+		if ( Stepwise_SaaS_Auth::is_connected() ) {
+			$saas_sync = new Stepwise_SaaS_Sync();
 			$saas_sync->init();
 		}
 	}
@@ -103,14 +103,14 @@ class Stepwise {
 	 * Register all REST API routes.
 	 */
 	private function define_api_hooks(): void {
-		$rest_workflows   = new AP_REST_Workflows();
-		$rest_steps       = new AP_REST_Steps();
-		$rest_executions  = new AP_REST_Executions();
-		$rest_capture     = new AP_REST_Capture();
-		$rest_evidence    = new AP_REST_Evidence();
-		$rest_saas        = new AP_REST_SaaS();
-		$rest_templates   = new AP_REST_Templates();
-		$rest_step_notes  = new AP_REST_Step_Notes();
+		$rest_workflows   = new Stepwise_REST_Workflows();
+		$rest_steps       = new Stepwise_REST_Steps();
+		$rest_executions  = new Stepwise_REST_Executions();
+		$rest_capture     = new Stepwise_REST_Capture();
+		$rest_evidence    = new Stepwise_REST_Evidence();
+		$rest_saas        = new Stepwise_REST_SaaS();
+		$rest_templates   = new Stepwise_REST_Templates();
+		$rest_step_notes  = new Stepwise_REST_Step_Notes();
 
 		$this->loader->add_action( 'rest_api_init', $rest_workflows,   'register_routes' );
 		$this->loader->add_action( 'rest_api_init', $rest_steps,       'register_routes' );
@@ -129,7 +129,7 @@ class Stepwise {
 	 * Register auto-capture hooks (fires on every admin page load).
 	 */
 	private function define_capture_hooks(): void {
-		$capture = new AP_Capture();
+		$capture = new Stepwise_Capture();
 		// Priority 1 — must register before options.php calls update_option()
 		// which fires on the same 'init' hook at default priority 10.
 		$this->loader->add_action( 'init',                             $capture, 'init',           1 );

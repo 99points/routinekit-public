@@ -22,6 +22,7 @@ $tables = [
 	'stepwise_executions',
 	'stepwise_step_completions',
 	'stepwise_capture_buffer',
+	'stepwise_step_notes',
 ];
 
 foreach ( $tables as $table ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
@@ -70,6 +71,8 @@ $options = [
 	'stepwise_last_sync',
 	'stepwise_sync_queue',
 	'stepwise_saas_site_key',
+	'stepwise_staging_mode',
+	'stepwise_registered_site_url',
 ];
 
 foreach ( $options as $option ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound

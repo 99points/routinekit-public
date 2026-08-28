@@ -5,10 +5,11 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Pulls SaaS workflow assignments and pushes completions back.
  */
-class AP_SaaS_Sync {
+class Stepwise_SaaS_Sync {
 
 	public function init(): void {
 		add_action( 'stepwise_execution_completed', [ $this, 'push_completion' ] );
+		add_action( 'stepwise_execution_completed', [ $this, 'send_completion_notification' ] );
 		add_action( 'admin_init',                     [ $this, 'maybe_pull_assignments' ] );
 		add_action( 'stepwise_saas_heartbeat',      [ $this, 'send_heartbeat' ] );
 	}
@@ -17,7 +18,7 @@ class AP_SaaS_Sync {
 	 * Pull SaaS assignments on admin_init, cached for 15 minutes.
 	 */
 	public function maybe_pull_assignments(): void {
-		if ( ! AP_SaaS_Auth::is_connected() ) {
+		if ( ! Stepwise_SaaS_Auth::is_connected() ) {
 			return;
 		}
 
@@ -26,7 +27,7 @@ class AP_SaaS_Sync {
 		// still runs and disconnects, preventing the clone from silently using live credentials.
 		$registered_url = get_option( 'stepwise_registered_site_url', '' );
 		if ( $registered_url && rtrim( get_site_url(), '/' ) !== rtrim( $registered_url, '/' ) ) {
-			AP_SaaS_Auth::disconnect();
+			Stepwise_SaaS_Auth::disconnect();
 			set_transient( 'stepwise_url_mismatch_notice', 1, HOUR_IN_SECONDS );
 			stepwise_log( 'Disconnected: local URL mismatch detected on admin_init — site was cloned or migrated.', 'saas' );
 			return;
@@ -44,7 +45,7 @@ class AP_SaaS_Sync {
 
 		set_transient( $cache_key, true, 15 * MINUTE_IN_SECONDS );
 
-		$client = new AP_SaaS_Client();
+		$client = new Stepwise_SaaS_Client();
 		$result = $client->get_assignments();
 
 		if ( is_wp_error( $result ) || empty( $result['assignments'] ) ) {
@@ -107,7 +108,7 @@ class AP_SaaS_Sync {
 						'workflow_id'       => $workflow_id,
 						'title'             => sanitize_text_field( $step['title'] ?? '' ),
 						'description'       => sanitize_textarea_field( $step['description'] ?? '' ),
-						'deep_link'         => esc_url_raw( $step['deep_link'] ?? '' ),
+						'deep_link'         => esc_url( $step['deep_link'] ?? '' ),
 						'deep_link_type'    => sanitize_text_field( $step['deep_link_type'] ?? 'static' ),
 						'is_required'       => (int) ( $step['is_required'] ?? 1 ),
 						'evidence_required' => (int) ( $step['evidence_required'] ?? 0 ),
@@ -139,7 +140,7 @@ class AP_SaaS_Sync {
 	 * @param object $execution
 	 */
 	public function push_completion( $execution ): void {
-		if ( ! AP_SaaS_Auth::is_connected() ) {
+		if ( ! Stepwise_SaaS_Auth::is_connected() ) {
 			return;
 		}
 
@@ -153,8 +154,58 @@ class AP_SaaS_Sync {
 			return;
 		}
 
-		$client = new AP_SaaS_Client();
+		$client = new Stepwise_SaaS_Client();
 		$client->complete_assignment( $assignment_id );
+	}
+
+	/**
+	 * Send a completion notification email when a workflow execution finishes.
+	 * Respects the stepwise_notify_completed and stepwise_notify_email settings.
+	 *
+	 * @param object $execution
+	 */
+	public function send_completion_notification( $execution ): void {
+		if ( ! get_option( 'stepwise_notify_completed', true ) ) {
+			return;
+		}
+
+		$to = sanitize_email( get_option( 'stepwise_notify_email', '' ) );
+		if ( ! $to ) {
+			$to = sanitize_email( get_option( 'admin_email', '' ) );
+		}
+		if ( ! is_email( $to ) ) {
+			return;
+		}
+
+		$workflow = Stepwise_Workflow::get( (int) $execution->workflow_id );
+		/* translators: %d: workflow ID */
+		$title    = $workflow ? esc_html( $workflow->title ) : sprintf( __( 'Workflow #%d', 'stepwise' ), $execution->workflow_id );
+
+		$completed_by = '';
+		if ( ! empty( $execution->started_by ) ) {
+			$user         = get_userdata( (int) $execution->started_by );
+			$completed_by = $user ? $user->display_name : '';
+		}
+
+		$site_name = get_bloginfo( 'name' );
+		$site_url  = get_site_url();
+
+		/* translators: %1$s: workflow title, %2$s: site name */
+		$subject = sprintf( __( '[%2$s] Workflow completed: %1$s', 'stepwise' ), $title, $site_name );
+
+		/* translators: %s: site name */
+		$body  = sprintf( __( 'A workflow was just completed on %s.', 'stepwise' ), $site_name ) . "\n\n";
+		/* translators: %s: workflow title */
+		$body .= sprintf( __( 'Workflow: %s', 'stepwise' ), $title ) . "\n";
+		if ( $completed_by ) {
+			/* translators: %s: user display name */
+			$body .= sprintf( __( 'Completed by: %s', 'stepwise' ), $completed_by ) . "\n";
+		}
+		/* translators: %s: completion datetime */
+		$body .= sprintf( __( 'Completed at: %s', 'stepwise' ), $execution->completed_at ) . "\n";
+		$body .= "\n" . $site_url . "\n";
+
+		wp_mail( $to, $subject, $body );
 	}
 
 	/**
@@ -163,7 +214,7 @@ class AP_SaaS_Sync {
 	 * auto-disconnect and surface an admin notice so the admin can reconnect fresh.
 	 */
 	public function send_heartbeat(): void {
-		if ( ! AP_SaaS_Auth::is_connected() ) {
+		if ( ! Stepwise_SaaS_Auth::is_connected() ) {
 			return;
 		}
 
@@ -172,7 +223,7 @@ class AP_SaaS_Sync {
 			return;
 		}
 
-		$result = ( new AP_SaaS_Client() )->heartbeat();
+		$result = ( new Stepwise_SaaS_Client() )->heartbeat();
 
 		if ( is_wp_error( $result ) ) {
 			return;
@@ -180,7 +231,7 @@ class AP_SaaS_Sync {
 
 		// SaaS detected this site's URL doesn't match the registered URL — it's a clone.
 		if ( isset( $result['status'] ) && $result['status'] === 'url_mismatch' ) {
-			AP_SaaS_Auth::disconnect();
+			Stepwise_SaaS_Auth::disconnect();
 			set_transient( 'stepwise_url_mismatch_notice', 1, HOUR_IN_SECONDS );
 			stepwise_log( 'Disconnected: SaaS reported URL mismatch — site was cloned or migrated.', 'saas' );
 			return;

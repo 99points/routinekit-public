@@ -1,4 +1,11 @@
-/* Stepwise — ⊕ Capture Step floating button (vanilla JS, no jQuery/React) */
+/*!
+ * Stepwise — Auto-Capture watcher (vanilla JS, no jQuery/React)
+ * Plugin:  Stepwise — Reusable Configuration Checklists
+ * Version: 1.0.0
+ * Author:  Zeeshan Rasool <https://profiles.wordpress.org/codeleftover/>
+ * License: GPLv2 or later <https://www.gnu.org/licenses/gpl-2.0.html>
+ * Source:  https://github.com/99points/stepwise-public
+ */
 ( function () {
 	'use strict';
 

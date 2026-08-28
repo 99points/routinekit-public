@@ -1,4 +1,4 @@
-=== Stepwise — Site Configuration Checklists ===
+=== Stepwise — Reusable Configuration Checklists ===
 Contributors: codeleftover
 Tags: workflow, checklist, agency, configuration, site management
 Requires at least: 6.0
@@ -24,18 +24,17 @@ Build reusable, step-by-step configuration checklists inside one site, then run 
 * **25+ Deep-Links** — pre-built links to the most common WordPress, WooCommerce, Yoast SEO, Wordfence, and UpdraftPlus settings pages
 * **5 Starter Templates** — New Site Setup, Security Hardening, WooCommerce Launch, SEO Setup, Site Migration
 * **JSON Export/Import** — share workflows between sites via JSON file or URL
-* **3 Active Workflows** included on the free plan
+* **Import from URL** — import any shared workflow directly from a URL (requires a connected Stepwise account)
 
-= Pro Features =
+= Pro Features (Agency / Agency Pro) =
 
-* **Unlimited Workflows** — no cap on active workflows per site
 * **SaaS Dashboard** — manage and assign workflows across all your client sites from one central dashboard
 * **Site Groups & Fleet Assignment** — push workflows to groups of client sites from your dashboard
-* **Import from URL** — import any shared workflow directly from a URL
-* **90-Day Auto-Capture Retention** — extended capture history vs 7 days on free
+* **Note Sharing** — share step notes across sites via the central dashboard
 * **Evidence Capture** — upload screenshots or PDFs as proof of completion per step
 * **Audit Trail** — full timestamped log of who completed what and when, with before/after option snapshots
 * **Progress Sync** — execution progress synced back to your central dashboard
+* **Priority Support** — dedicated support for Agency and Agency Pro subscribers
 
 = How It Works =
 
@@ -63,7 +62,7 @@ No. Stepwise is complementary to multi-site management tools. It focuses on *wha
 
 = Can I share workflows between sites? =
 
-Yes — use the JSON Export button on any workflow, then import the JSON file on another site. Pro users can also import from a URL and share via the central SaaS dashboard.
+Yes — use the JSON Export button on any workflow, then import the JSON file on another site. Users with a connected Stepwise account can also import directly from a URL. Pro users can additionally manage and assign workflows across all sites from the central dashboard.
 
 = How does Auto-Capture work? =
 
@@ -91,9 +90,9 @@ Yes — each run is tracked separately as an execution with its own audit trail.
 
 == External Services ==
 
-Stepwise communicates with an external service **only when you explicitly connect to Stepwise Cloud** (a Pro feature). No data is sent to any external server on the free plan.
+Stepwise communicates with an external service **only when you explicitly connect to Stepwise Cloud**. No data is sent to any external server without an active connection.
 
-= Stepwise Cloud (Pro only) =
+= Stepwise Cloud =
 
 When you enter a license key and connect to Stepwise Cloud, this plugin sends data to and receives data from `https://app.wpstepwise.com`.
 
@@ -118,11 +117,34 @@ When you enter a license key and connect to Stepwise Cloud, this plugin sends da
 
 Stepwise captures wp_options changes made during your admin sessions to help you build workflow steps (Auto-Capture feature). This data is stored locally in your own database and is never sent externally on the free plan.
 
-The Auto-Capture buffer stores: the option name, old value, new value, the URL of the admin page where the change occurred, and the WordPress user ID of the person who made the change. This data is retained for a configurable period (default: 7 days) and deleted automatically. It is fully removed when the plugin is uninstalled.
+The Auto-Capture buffer stores: the option name, old value, new value, the URL of the admin page where the change occurred, and the WordPress user ID of the person who made the change. This data is retained for a configurable period (default: 30 days, adjustable in Settings) and deleted automatically. It is fully removed when the plugin is uninstalled.
 
 Execution audit trails store: which user ran a workflow, which steps were completed or skipped, timestamps, and any notes or evidence files uploaded. This data is stored locally in your database.
 
 If you connect to Stepwise Cloud (Pro), please review the Stepwise Cloud privacy policy at https://wpstepwise.com/privacy.
+
+== Source Code ==
+
+The complete source code for this plugin, including all JSX/JavaScript source files, is publicly available at:
+
+https://github.com/99points/stepwise-public
+
+== Build Instructions ==
+
+The JavaScript assets in this plugin are compiled from source files in the `src/` directory using [@wordpress/scripts](https://developer.wordpress.org/block-editor/reference-guides/packages/packages-scripts/) (webpack).
+
+To rebuild from source:
+
+1. Install Node.js (v18+) and npm
+2. Run `npm install` in the plugin root
+3. Run `npm run build` to compile production assets into `assets/js/`
+
+== Third-Party Libraries ==
+
+This plugin includes the following third-party library:
+
+* **html2canvas** (v1.4.1, MIT License) — https://html2canvas.hertzen.com
+  Used to capture screenshots of the admin screen for step evidence. Bundled in `assets/js/html2canvas.min.js` (vanilla capture watcher) and in the webpack chunk `assets/js/548.js` (React runner notes).
 
 == Changelog ==
 
@@ -134,12 +156,12 @@ If you connect to Stepwise Cloud (Pro), please review the Stepwise Cloud privacy
 * 25+ built-in deep-links (WP core, WooCommerce, Yoast, Wordfence, UpdraftPlus, Rank Math, WPForms, SMTP, CF7)
 * 5 starter workflow templates
 * JSON export and import (file and URL)
-* Pro: unlimited workflows
-* Pro: SaaS connection for cross-site fleet management and assignment push
+* Import from URL (requires connected Stepwise account)
+* Auto-Capture retention configurable by all users (default: 30 days)
+* Pro: SaaS dashboard for cross-site fleet management and assignment push
+* Pro: note sharing across sites
 * Pro: evidence upload per step
 * Pro: full audit trail with user attribution and option snapshots
-* Pro: 90-day auto-capture retention
-* Pro: import workflows from URL
 
 == Upgrade Notice ==
 

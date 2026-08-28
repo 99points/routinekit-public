@@ -7,21 +7,28 @@ import Modal from '../shared/Modal';
 import Button from '../shared/Button';
 
 const ImportJsonModal = ( { onClose } ) => {
-	const [ json, setJson ]     = useState( '' );
+	const [ file, setFile ]     = useState( null );
 	const [ saving, setSaving ] = useState( false );
 	const [ error, setError ]   = useState( null );
 
 	const { fetchWorkflows } = useDispatch( 'stepwise/workflows' );
 
+	const handleFile = ( e ) => {
+		setError( null );
+		setFile( e.target.files[ 0 ] ?? null );
+	};
+
 	const handleSubmit = async ( e ) => {
 		e.preventDefault();
+		if ( ! file ) return;
 		setError( null );
 
 		let parsed;
 		try {
-			parsed = JSON.parse( json.trim() );
+			const text = await file.text();
+			parsed = JSON.parse( text );
 		} catch {
-			setError( __( 'Invalid JSON — please check and try again.', 'stepwise' ) );
+			setError( __( 'Invalid JSON file — please check and try again.', 'stepwise' ) );
 			return;
 		}
 
@@ -46,7 +53,7 @@ const ImportJsonModal = ( { onClose } ) => {
 
 	return (
 		<Modal
-			title={ __( 'Import Workflow from JSON', 'stepwise' ) }
+			title={ __( 'Import Workflow', 'stepwise' ) }
 			onClose={ onClose }
 			footer={
 				<>
@@ -57,7 +64,7 @@ const ImportJsonModal = ( { onClose } ) => {
 						variant="primary"
 						type="submit"
 						form="ap-import-json-form"
-						disabled={ ! json.trim() || saving }
+						disabled={ ! file || saving }
 					>
 						{ saving ? __( 'Importing…', 'stepwise' ) : __( 'Import', 'stepwise' ) }
 					</Button>
@@ -68,23 +75,26 @@ const ImportJsonModal = ( { onClose } ) => {
 				{ error && <p className="ap-error">{ error }</p> }
 				<div className="ap-field">
 					<label className="stepwise-label" htmlFor="ap-import-json">
-						{ __( 'Workflow JSON', 'stepwise' ) }
+						{ __( 'Workflow JSON file', 'stepwise' ) }
 						<span className="ap-required" aria-hidden="true"> *</span>
 					</label>
-					<textarea
+					<input
 						id="ap-import-json"
+						type="file"
+						accept=".json,application/json"
 						className="stepwise-input"
-						rows={ 10 }
-						style={ { fontFamily: 'monospace', fontSize: '12px', resize: 'vertical' } }
-						value={ json }
-						onChange={ ( e ) => setJson( e.target.value ) }
-						placeholder='{ "title": "My Workflow", "steps": [ … ] }'
+						onChange={ handleFile }
 						required
 						autoFocus
 					/>
-					<p className="ap-help">
-						{ __( 'Paste the JSON exported from another Stepwise installation.', 'stepwise' ) }
-					</p>
+					{ file && (
+						<p className="ap-help">{ file.name } &mdash; { ( file.size / 1024 ).toFixed( 1 ) } KB</p>
+					) }
+					{ ! file && (
+						<p className="ap-help">
+							{ __( 'Select the .json file exported from another Stepwise installation.', 'stepwise' ) }
+						</p>
+					) }
 				</div>
 			</form>
 		</Modal>

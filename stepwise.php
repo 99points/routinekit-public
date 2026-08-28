@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:       Stepwise — Site Configuration Checklists
+ * Plugin Name:       Stepwise — Reusable Configuration Checklists
  * Plugin URI:        https://wpstepwise.com
  * Description:       Stepwise lets you build reusable, step-by-step site configuration checklists and run them across client sites — saving hours of repetitive WordPress setup work.
  * Version:           1.0.0

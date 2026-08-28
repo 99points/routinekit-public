@@ -7,7 +7,7 @@ defined( 'ABSPATH' ) || exit;
  * GET  /stepwise/v1/templates           — list available templates
  * POST /stepwise/v1/templates/:key/import — import a template as a workflow
  */
-class AP_REST_Templates {
+class Stepwise_REST_Templates {
 
 	/** @var string */
 	protected string $namespace = STEPWISE_REST_NAMESPACE;
@@ -46,7 +46,7 @@ class AP_REST_Templates {
 	 * @return WP_REST_Response
 	 */
 	public function get_items( WP_REST_Request $request ): WP_REST_Response {
-		return rest_ensure_response( AP_Templates::get_available() );
+		return rest_ensure_response( Stepwise_Templates::get_available() );
 	}
 
 	/**
@@ -55,21 +55,10 @@ class AP_REST_Templates {
 	 * @param WP_REST_Request $request
 	 * @return WP_REST_Response|WP_Error
 	 */
-	public function import_item( WP_REST_Request $request ): WP_REST_Response|WP_Error {
-		if ( ! stepwise_is_pro() && stepwise_at_workflow_limit() ) {
-			return new WP_Error(
-				'stepwise_limit_reached',
-				sprintf(
-					/* translators: %d: workflow limit */
-					__( 'Free plan is limited to %d active workflows. Upgrade to Pro for unlimited workflows.', 'stepwise' ),
-					STEPWISE_FREE_WORKFLOW_LIMIT
-				),
-				[ 'status' => 403 ]
-			);
-		}
+	public function import_item( WP_REST_Request $request ) {
 
 		$key      = sanitize_file_name( $request['key'] );
-		$workflow = AP_Templates::import( $key );
+		$workflow = Stepwise_Templates::import( $key );
 
 		if ( is_wp_error( $workflow ) ) {
 			$workflow->add_data( [ 'status' => 404 ] );
@@ -85,7 +74,7 @@ class AP_REST_Templates {
 	 * @param WP_REST_Request $request
 	 * @return bool|WP_Error
 	 */
-	public function permissions_check( WP_REST_Request $request ): bool|WP_Error {
+	public function permissions_check( WP_REST_Request $request ) {
 		if ( current_user_can( 'manage_options' ) ) {
 			return true;
 		}

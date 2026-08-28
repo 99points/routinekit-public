@@ -6,7 +6,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * Reads JSON files from /templates/ and imports them as workflows + steps.
  */
-class AP_Templates {
+class Stepwise_Templates {
 
 	/**
 	 * Return a list of all available template keys and metadata.
@@ -72,9 +72,9 @@ class AP_Templates {
 	 * Import a template by key. Creates a workflow + steps in the DB.
 	 *
 	 * @param string $template_key
-	 * @return AP_Workflow|WP_Error
+	 * @return Stepwise_Workflow|WP_Error
 	 */
-	public static function import( string $template_key ): AP_Workflow|WP_Error {
+	public static function import( string $template_key ) {
 		$file = STEPWISE_TEMPLATES_DIR . sanitize_file_name( $template_key ) . '.json';
 
 		if ( ! file_exists( $file ) ) {
@@ -86,7 +86,7 @@ class AP_Templates {
 			return new WP_Error( 'stepwise_invalid', __( 'Template file is invalid JSON.', 'stepwise' ) );
 		}
 
-		$workflow = AP_Workflow::create( [
+		$workflow = Stepwise_Workflow::create( [
 			'title'        => $data['title'],
 			'description'  => $data['description'] ?? '',
 			'status'       => 'active',
@@ -100,7 +100,7 @@ class AP_Templates {
 		}
 
 		foreach ( $data['steps'] as $step_data ) {
-			AP_Step::create( array_merge( $step_data, [ 'workflow_id' => $workflow->id ] ) );
+			Stepwise_Step::create( array_merge( $step_data, [ 'workflow_id' => $workflow->id ] ) );
 		}
 
 		return $workflow;

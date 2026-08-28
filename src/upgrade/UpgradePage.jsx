@@ -16,7 +16,7 @@ const FEATURES = [
 	{ label: __( 'Stepwise Cloud dashboard', 'stepwise' ),    free: true,            agency: true,          pro: true },
 	{ label: __( 'JSON export', 'stepwise' ),                   free: true,            agency: true,          pro: true },
 	{ label: __( 'Free workflow templates', 'stepwise' ),       free: true,            agency: true,          pro: true },
-	{ label: __( 'Auto-capture retention', 'stepwise' ),        free: '7 days',        agency: '90 days',     pro: '90 days' },
+	{ label: __( 'Auto-capture', 'stepwise' ),                  free: true,            agency: true,           pro: true },
 	{ label: __( 'Multiple site groups', 'stepwise' ),          free: false,           agency: true,          pro: true },
 	{ label: __( 'Cloud workflow template library', 'stepwise' ), free: false,         agency: true,          pro: true },
 	{ label: __( 'Import from URL', 'stepwise' ),               free: false,           agency: true,          pro: true },

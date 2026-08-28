@@ -1,80 +1,81 @@
 {
-    "template_key": "woocommerce-launch",
-    "title": "WooCommerce Launch",
-    "description": "Pre-launch checklist for WooCommerce stores — payments, tax, shipping, and legal pages",
-    "version": "1.0",
-    "steps": [
-        {
-            "sort_order": 10,
-            "title": "Run WooCommerce Setup Wizard",
-            "instructions": "Complete the WooCommerce setup wizard if not already done. Set store address, currency, and selling location.",
-            "deep_link": "admin.php?page=wc-setup",
-            "is_required": true,
-            "evidence_required": false
-        },
-        {
-            "sort_order": 20,
-            "title": "Configure payment gateways",
-            "instructions": "Enable and configure Stripe or PayPal. Add API keys from client's payment processor account. Test with a $1 order.",
-            "deep_link": "admin.php?page=wc-settings&tab=checkout",
-            "is_required": true,
-            "evidence_required": true
-        },
-        {
-            "sort_order": 30,
-            "title": "Configure tax settings",
-            "instructions": "Enable tax calculation. Set up tax rates for the client's jurisdiction. Verify prices display correctly with tax.",
-            "deep_link": "admin.php?page=wc-settings&tab=tax",
-            "is_required": true,
-            "evidence_required": false
-        },
-        {
-            "sort_order": 40,
-            "title": "Set up shipping zones and methods",
-            "instructions": "Create shipping zones for all regions the client ships to. Add flat rate or real-time rates. Add free shipping threshold if applicable.",
-            "deep_link": "admin.php?page=wc-settings&tab=shipping",
-            "is_required": true,
-            "evidence_required": false
-        },
-        {
-            "sort_order": 50,
-            "title": "Configure email notifications",
-            "instructions": "Set From name and From address to client's business. Customise email templates with logo and brand colours.",
-            "deep_link": "admin.php?page=wc-settings&tab=email",
-            "is_required": true,
-            "evidence_required": false
-        },
-        {
-            "sort_order": 60,
-            "title": "Create required legal pages",
-            "instructions": "Create Privacy Policy, Terms & Conditions, Refund Policy, and Shipping Policy pages. Assign them in WooCommerce > Settings > Advanced.",
-            "deep_link": "admin.php?page=wc-settings&tab=advanced",
-            "is_required": true,
-            "evidence_required": false
-        },
-        {
-            "sort_order": 70,
-            "title": "Set up transactional email (SMTP)",
-            "instructions": "Install and configure an SMTP plugin (WP Mail SMTP, FluentSMTP). Connect to SendGrid, Mailgun, or Postmark. Send a test email.",
-            "deep_link": "plugins.php",
-            "is_required": true,
-            "evidence_required": true
-        },
-        {
-            "sort_order": 80,
-            "title": "Place a test order end-to-end",
-            "instructions": "Place a complete test order. Verify payment processes, order confirmation email is received, stock decrements, and admin order notification fires.",
-            "deep_link": "admin.php?page=wc-orders",
-            "is_required": true,
-            "evidence_required": true
-        },
-        {
-            "sort_order": 90,
-            "title": "Enable and verify SSL checkout",
-            "instructions": "Confirm checkout page forces HTTPS. Check for mixed content warnings. Verify payment gateway is in live (not test) mode.",
-            "deep_link": "admin.php?page=wc-settings",
-            "is_required": true,
-            "evidence_required": false
-        }
-    ]
+	"template_key": "woocommerce-launch",
+	"title": "WooCommerce Launch",
+	"description": "Pre-launch checklist for WooCommerce stores \u2014 payments, tax, shipping, and legal pages",
+	"version": "1.0",
+	"steps": [
+		{
+			"sort_order": 10,
+			"title": "Run WooCommerce Setup Wizard",
+			"instructions": "Complete the WooCommerce setup wizard if not already done. Set store address, currency, and selling location.",
+			"deep_link": "admin.php?page=wc-setup",
+			"is_required": true,
+			"evidence_required": false
+		},
+		{
+			"sort_order": 20,
+			"title": "Configure payment gateways",
+			"instructions": "Enable and configure Stripe or PayPal. Add API keys from client's payment processor account. Test with a $1 order.",
+			"deep_link": "admin.php?page=wc-settings&tab=checkout",
+			"is_required": true,
+			"evidence_required": true
+		},
+		{
+			"sort_order": 30,
+			"title": "Configure tax settings",
+			"instructions": "Enable tax calculation. Set up tax rates for the client's jurisdiction. Verify prices display correctly with tax.",
+			"deep_link": "admin.php?page=wc-settings&tab=tax",
+			"is_required": true,
+			"evidence_required": false
+		},
+		{
+			"sort_order": 40,
+			"title": "Set up shipping zones and methods",
+			"instructions": "Create shipping zones for all regions the client ships to. Add flat rate or real-time rates. Add free shipping threshold if applicable.",
+			"deep_link": "admin.php?page=wc-settings&tab=shipping",
+			"is_required": true,
+			"evidence_required": false
+		},
+		{
+			"sort_order": 50,
+			"title": "Configure email notifications",
+			"instructions": "Set From name and From address to client's business. Customise email templates with logo and brand colours.",
+			"deep_link": "admin.php?page=wc-settings&tab=email",
+			"is_required": true,
+			"evidence_required": false
+		},
+		{
+			"sort_order": 60,
+			"title": "Create required legal pages",
+			"instructions": "Create Privacy Policy, Terms & Conditions, Refund Policy, and Shipping Policy pages. Assign them in WooCommerce > Settings > Advanced.",
+			"deep_link": "admin.php?page=wc-settings&tab=advanced",
+			"is_required": true,
+			"evidence_required": false
+		},
+		{
+			"sort_order": 70,
+			"title": "Set up transactional email (SMTP)",
+			"instructions": "Install and configure an SMTP plugin (WP Mail SMTP, FluentSMTP). Connect to SendGrid, Mailgun, or Postmark. Send a test email.",
+			"deep_link": "plugins.php",
+			"is_required": true,
+			"evidence_required": true
+		},
+		{
+			"sort_order": 80,
+			"title": "Place a test order end-to-end",
+			"instructions": "Place a complete test order. Verify payment processes, order confirmation email is received, stock decrements, and admin order notification fires.",
+			"deep_link": "admin.php?page=wc-orders",
+			"is_required": true,
+			"evidence_required": true
+		},
+		{
+			"sort_order": 90,
+			"title": "Enable and verify SSL checkout",
+			"instructions": "Confirm checkout page forces HTTPS. Check for mixed content warnings. Verify payment gateway is in live (not test) mode.",
+			"deep_link": "admin.php?page=wc-settings",
+			"is_required": true,
+			"evidence_required": false
+		}
+	],
+	"category": "WooCommerce"
 }

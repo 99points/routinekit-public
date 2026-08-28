@@ -11,7 +11,7 @@ const {
 	currentUserId = 0,
 } = window.stepwiseData ?? {};
 
-const canShare = isConnected && ( saasPlan === 'pro' || saasPlan === 'agency_pro' );
+const canShare = isConnected && [ 'agency', 'agency_pro' ].includes( saasPlan );
 
 const ALLOWED_TYPES = [ 'image/jpeg', 'image/png', 'image/gif', 'image/webp' ];
 const MAX_MB        = 10;

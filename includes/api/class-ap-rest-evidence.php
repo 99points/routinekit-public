@@ -9,7 +9,7 @@ defined( 'ABSPATH' ) || exit;
  * Accepts a multipart file upload, saves it to the WP media library,
  * and stores the attachment URL on the step_completion row.
  */
-class AP_REST_Evidence {
+class Stepwise_REST_Evidence {
 
 	/** @var string */
 	protected string $namespace = STEPWISE_REST_NAMESPACE;
@@ -50,7 +50,7 @@ class AP_REST_Evidence {
 	 * @param WP_REST_Request $request
 	 * @return WP_REST_Response|WP_Error
 	 */
-	public function upload_evidence( WP_REST_Request $request ): WP_REST_Response|WP_Error {
+	public function upload_evidence( WP_REST_Request $request ) {
 		$execution_id = (int) $request['execution_id'];
 		$step_id      = (int) $request['step_id'];
 
@@ -131,7 +131,7 @@ class AP_REST_Evidence {
 	 * @param WP_REST_Request $request
 	 * @return WP_REST_Response|WP_Error
 	 */
-	public function delete_evidence( WP_REST_Request $request ): WP_REST_Response|WP_Error {
+	public function delete_evidence( WP_REST_Request $request ) {
 		$execution_id = (int) $request['execution_id'];
 		$step_id      = (int) $request['step_id'];
 
@@ -152,7 +152,7 @@ class AP_REST_Evidence {
 	 * @param WP_REST_Request $request
 	 * @return bool|WP_Error
 	 */
-	public function permissions_check( WP_REST_Request $request ): bool|WP_Error {
+	public function permissions_check( WP_REST_Request $request ) {
 		if ( stepwise_current_user_can_run() ) {
 			return true;
 		}

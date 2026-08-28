@@ -4,7 +4,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Settings page — registers WP Settings API groups and a REST save endpoint.
  */
-class AP_Settings {
+class Stepwise_Settings {
 
 	/**
 	 * Register all plugin settings with the WP Settings API.
@@ -25,7 +25,7 @@ class AP_Settings {
 
 		// Playbook defaults
 		register_setting( 'stepwise_defaults', 'stepwise_default_status',   [ 'type' => 'string',  'default' => 'active', 'sanitize_callback' => [ $this, 'sanitize_default_status' ] ] );
-		register_setting( 'stepwise_defaults', 'stepwise_default_category', [ 'type' => 'string',  'default' => '',       'sanitize_callback' => 'sanitize_text_field' ] );
+		register_setting( 'stepwise_defaults', 'stepwise_default_category', [ 'type' => 'string',  'default' => 'general', 'sanitize_callback' => 'sanitize_text_field' ] );
 		register_setting( 'stepwise_defaults', 'stepwise_show_run_button',  [ 'type' => 'boolean', 'default' => true,     'sanitize_callback' => 'rest_sanitize_boolean' ] );
 
 		// Team & access
@@ -175,9 +175,9 @@ class AP_Settings {
 	/**
 	 * POST /stepwise/v1/settings/saas/connect
 	 */
-	public function rest_saas_connect( WP_REST_Request $request ): WP_REST_Response|WP_Error {
+	public function rest_saas_connect( WP_REST_Request $request ) {
 		$license_key = $request->get_param( 'license_key' );
-		$result      = AP_SaaS_Auth::connect( $license_key );
+		$result      = Stepwise_SaaS_Auth::connect( $license_key );
 
 		if ( is_wp_error( $result ) ) {
 			return new WP_Error( 'stepwise_connect_failed', $result->get_error_message(), [ 'status' => 400 ] );
@@ -194,7 +194,7 @@ class AP_Settings {
 	 * POST /stepwise/v1/settings/saas/disconnect
 	 */
 	public function rest_saas_disconnect(): WP_REST_Response {
-		AP_SaaS_Auth::disconnect();
+		Stepwise_SaaS_Auth::disconnect();
 		return new WP_REST_Response( [ 'success' => true ], 200 );
 	}
 

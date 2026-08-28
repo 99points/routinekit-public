@@ -44,7 +44,7 @@ class Stepwise_Activator {
 
 		// v1.2.0 — step notes table for existing installs.
 		$notes_table = $wpdb->prefix . 'stepwise_step_notes';
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- table name built from $wpdb->prefix, not user input
 		$table_exists = $wpdb->get_var( "SHOW TABLES LIKE '{$notes_table}'" );
 		if ( $table_exists !== $notes_table ) {
 			$c = $wpdb->get_charset_collate();

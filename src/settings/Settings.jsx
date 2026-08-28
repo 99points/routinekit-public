@@ -463,7 +463,7 @@ const LicenseSection = () => {
 						<li>{ __( 'Unlimited workflows', 'stepwise' ) }</li>
 						<li>{ __( 'Up to 3 connected sites', 'stepwise' ) }</li>
 						<li>{ __( 'Stepwise Cloud dashboard', 'stepwise' ) }</li>
-						<li>{ __( 'Auto-capture (7 days)', 'stepwise' ) }</li>
+						<li>{ __( 'Auto-capture', 'stepwise' ) }</li>
 						<li>{ __( 'JSON export', 'stepwise' ) }</li>
 						<li className="ap-plan-card__feature--locked">{ __( 'Multiple site groups', 'stepwise' ) }</li>
 						<li className="ap-plan-card__feature--locked">{ __( 'Cloud template library', 'stepwise' ) }</li>
@@ -484,7 +484,7 @@ const LicenseSection = () => {
 						<li>{ __( 'Cloud workflow template library', 'stepwise' ) }</li>
 						<li>{ __( 'Import from URL', 'stepwise' ) }</li>
 						<li>{ __( 'Team members', 'stepwise' ) }</li>
-						<li>{ __( 'Auto-capture (90 days)', 'stepwise' ) }</li>
+						<li>{ __( 'Auto-capture', 'stepwise' ) }</li>
 					</ul>
 					{ ! isPro && (
 						<Button variant="primary" onClick={ () => { window.location.href = d.upgradeUrl ?? '#'; } }>

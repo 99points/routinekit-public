@@ -7,7 +7,7 @@ import '../store';
 
 const { captureAutodismiss = 8, captureEnabled = true } = window.stepwiseData ?? {};
 
-const CLOSED_KEY = 'ap_toast_closed_ids';
+const CLOSED_KEY = 'stepwise_toast_closed_ids';
 
 const getClosedIds = () => {
 	try { return new Set( JSON.parse( localStorage.getItem( CLOSED_KEY ) || '[]' ).map( String ) ); }

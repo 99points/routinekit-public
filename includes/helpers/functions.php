@@ -39,7 +39,7 @@ function stepwise_is_staging_env(): bool {
 
 	// Common local TLDs
 	foreach ( [ '.local', '.test', '.localhost', '.dev' ] as $tld ) {
-		if ( str_ends_with( $host, $tld ) ) {
+		if ( substr( $host, -strlen( $tld ) ) === $tld ) {
 			return true;
 		}
 	}
@@ -89,15 +89,15 @@ function stepwise_at_workflow_limit(): bool {
 /**
  * Return the singleton SaaS client (any connected site, free or Pro).
  *
- * @return AP_SaaS_Client|null
+ * @return Stepwise_SaaS_Client|null
  */
-function stepwise_saas(): ?AP_SaaS_Client {
-	if ( ! AP_SaaS_Auth::is_connected() ) {
+function stepwise_saas(): ?Stepwise_SaaS_Client {
+	if ( ! Stepwise_SaaS_Auth::is_connected() ) {
 		return null;
 	}
 	static $client = null;
 	if ( null === $client ) {
-		$client = new AP_SaaS_Client();
+		$client = new Stepwise_SaaS_Client();
 	}
 	return $client;
 }
@@ -140,7 +140,7 @@ function stepwise_current_user_can_run(): bool {
  * @return bool
  */
 function stepwise_workflow_steps_locked( int $workflow_id ): bool {
-	$workflow = AP_Workflow::get( $workflow_id );
+	$workflow = Stepwise_Workflow::get( $workflow_id );
 	if ( ! $workflow ) {
 		return false;
 	}

@@ -6,7 +6,7 @@ defined( 'ABSPATH' ) || exit;
  * REST endpoints for SaaS integration (groups, templates, import-url).
  * Used by the WP plugin JS — proxies requests to the SaaS API.
  */
-class AP_REST_SaaS {
+class Stepwise_REST_SaaS {
 
 	protected string $namespace = STEPWISE_REST_NAMESPACE;
 
@@ -29,6 +29,17 @@ class AP_REST_SaaS {
 			],
 		] );
 
+		// POST /stepwise/v1/workflows/{id}/assign-groups — save group IDs locally, no SaaS push
+		register_rest_route( $this->namespace, '/workflows/(?P<id>[\d]+)/assign-groups', [
+			'methods'             => WP_REST_Server::CREATABLE,
+			'callback'            => [ $this, 'save_workflow_groups' ],
+			'permission_callback' => [ $this, 'edit_permission' ],
+			'args'                => [
+				'id'        => [ 'type' => 'integer', 'sanitize_callback' => 'absint' ],
+				'group_ids' => [ 'type' => 'array', 'required' => true, 'items' => [ 'type' => 'integer' ] ],
+			],
+		] );
+
 		// GET /stepwise/v1/saas/templates — local bundled templates available to all editors; SaaS templates require Pro
 		register_rest_route( $this->namespace, '/saas/templates', [
 			'methods'             => WP_REST_Server::READABLE,
@@ -47,8 +58,8 @@ class AP_REST_SaaS {
 		] );
 	}
 
-	public function get_groups(): WP_REST_Response|WP_Error {
-		if ( ! AP_SaaS_Auth::is_connected() ) {
+	public function get_groups() {
+		if ( ! Stepwise_SaaS_Auth::is_connected() ) {
 			return rest_ensure_response( [ 'groups' => [] ] );
 		}
 
@@ -57,7 +68,7 @@ class AP_REST_SaaS {
 			return rest_ensure_response( [ 'groups' => $cached ] );
 		}
 
-		$result = ( new AP_SaaS_Client() )->get_groups();
+		$result = ( new Stepwise_SaaS_Client() )->get_groups();
 
 		if ( is_wp_error( $result ) ) {
 			return new WP_Error( 'stepwise_saas_error', $result->get_error_message(), [ 'status' => 502 ] );
@@ -69,8 +80,8 @@ class AP_REST_SaaS {
 		return rest_ensure_response( [ 'groups' => $groups ] );
 	}
 
-	public function assign_to_group( WP_REST_Request $request ): WP_REST_Response|WP_Error {
-		if ( ! AP_SaaS_Auth::is_connected() ) {
+	public function assign_to_group( WP_REST_Request $request ) {
+		if ( ! Stepwise_SaaS_Auth::is_connected() ) {
 			return new WP_Error( 'stepwise_not_connected', __( 'Not connected to Stepwise Cloud.', 'stepwise' ), [ 'status' => 400 ] );
 		}
 
@@ -112,7 +123,7 @@ class AP_REST_SaaS {
 			: [];
 		$merged_group_ids   = array_values( array_unique( array_merge( $existing_group_ids, [ $group_id ] ) ) );
 
-		$locked = AP_Workflow::update( $workflow_id, [
+		$locked = Stepwise_Workflow::update( $workflow_id, [
 			'pushed_at'        => current_time( 'mysql' ),
 			'pushed_group_ids' => wp_json_encode( $merged_group_ids ),
 		] );
@@ -120,7 +131,7 @@ class AP_REST_SaaS {
 			return new WP_Error( 'stepwise_db_error', __( 'Could not lock workflow before pushing. Please try again.', 'stepwise' ), [ 'status' => 500 ] );
 		}
 
-		$result = ( new AP_SaaS_Client() )->assign_workflow_to_group( $group_id, [
+		$result = ( new Stepwise_SaaS_Client() )->assign_workflow_to_group( $group_id, [
 			'workflow_id'    => $workflow_id,
 			'workflow_title' => $workflow->title,
 			'category'       => $workflow->category ?? '',
@@ -130,7 +141,7 @@ class AP_REST_SaaS {
 
 		if ( is_wp_error( $result ) ) {
 			// Roll back the local lock — the push did not reach the SaaS.
-			AP_Workflow::update( $workflow_id, [
+			Stepwise_Workflow::update( $workflow_id, [
 				'pushed_at'        => $workflow->pushed_at ?? null,
 				'pushed_group_ids' => $workflow->pushed_group_ids ?? null,
 			] );
@@ -143,17 +154,41 @@ class AP_REST_SaaS {
 		] );
 	}
 
-	public function get_templates(): WP_REST_Response|WP_Error {
+	/**
+	 * POST /stepwise/v1/workflows/{id}/assign-groups
+	 * Save group IDs to the workflow locally — no SaaS push happens here.
+	 */
+	public function save_workflow_groups( WP_REST_Request $request ) {
+		$workflow_id = (int) $request['id'];
+		$group_ids   = array_map( 'absint', (array) $request->get_param( 'group_ids' ) );
+
+		$workflow = Stepwise_Workflow::get( $workflow_id );
+		if ( ! $workflow ) {
+			return new WP_Error( 'stepwise_not_found', __( 'Workflow not found.', 'stepwise' ), [ 'status' => 404 ] );
+		}
+
+		$result = Stepwise_Workflow::update( $workflow_id, [
+			'pushed_group_ids' => wp_json_encode( array_values( array_unique( $group_ids ) ) ),
+		] );
+
+		if ( is_wp_error( $result ) ) {
+			return new WP_Error( 'stepwise_db_error', __( 'Could not save group assignment.', 'stepwise' ), [ 'status' => 500 ] );
+		}
+
+		return rest_ensure_response( [ 'success' => true, 'group_ids' => $group_ids ] );
+	}
+
+	public function get_templates() {
 		// Always include bundled local templates (free plan feature).
-		$local     = AP_Templates::get_available_with_steps();
+		$local     = Stepwise_Templates::get_available_with_steps();
 		$saas      = [];
 
-		if ( AP_SaaS_Auth::is_connected() ) {
+		if ( Stepwise_SaaS_Auth::is_connected() ) {
 			$cached = get_transient( 'stepwise_saas_templates' );
 			if ( $cached !== false ) {
 				$saas = $cached;
 			} else {
-				$result = ( new AP_SaaS_Client() )->get_templates();
+				$result = ( new Stepwise_SaaS_Client() )->get_templates();
 				if ( is_wp_error( $result ) ) {
 					// SaaS unreachable — log and fall back to local templates only.
 					stepwise_log( 'SaaS templates fetch failed: ' . $result->get_error_message(), 'saas' );
@@ -167,13 +202,13 @@ class AP_REST_SaaS {
 		return rest_ensure_response( [ 'templates' => array_values( array_merge( $local, $saas ) ) ] );
 	}
 
-	public function import_url( WP_REST_Request $request ): WP_REST_Response|WP_Error {
-		if ( ! AP_SaaS_Auth::is_connected() ) {
+	public function import_url( WP_REST_Request $request ) {
+		if ( ! Stepwise_SaaS_Auth::is_connected() ) {
 			return new WP_Error( 'stepwise_not_connected', __( 'Not connected to Stepwise Cloud.', 'stepwise' ), [ 'status' => 400 ] );
 		}
 
 		$url    = $request->get_param( 'url' );
-		$result = ( new AP_SaaS_Client() )->import_url( $url );
+		$result = ( new Stepwise_SaaS_Client() )->import_url( $url );
 
 		if ( is_wp_error( $result ) ) {
 			return $result;
@@ -183,7 +218,7 @@ class AP_REST_SaaS {
 	}
 
 	public function edit_permission(): bool {
-		return current_user_can( 'manage_options' ) && AP_SaaS_Auth::is_connected();
+		return current_user_can( 'manage_options' ) && Stepwise_SaaS_Auth::is_connected();
 	}
 
 	public function editor_permission(): bool {

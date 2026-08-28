@@ -4,7 +4,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Admin menu, page shells, and script/style enqueuing.
  */
-class AP_Admin {
+class Stepwise_Admin {
 
 	/**
 	 * Grant the stepwise_run pseudo-capability to any user whose WP role
@@ -50,8 +50,17 @@ class AP_Admin {
 		return array_merge( $custom, $links );
 	}
 
+	/**
+	 * Hook suffixes returned by add_menu_page / add_submenu_page.
+	 * Captured at menu-registration time so enqueue_scripts doesn't rely on
+	 * hardcoded guesses that vary across WordPress versions and hosting setups.
+	 *
+	 * @var string[]
+	 */
+	private array $page_hooks = [];
+
 	public function register_menus(): void {
-		add_menu_page(
+		$hook = add_menu_page(
 			__( 'Stepwise', 'stepwise' ),
 			__( 'Stepwise', 'stepwise' ),
 			'stepwise_run',
@@ -60,8 +69,9 @@ class AP_Admin {
 			'data:image/svg+xml;base64,' . base64_encode( '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><rect x="5" y="10" width="19" height="6.5" rx="2" fill="#a7aaad" opacity=".5"/><rect x="5" y="20.75" width="19" height="6.5" rx="2" fill="#a7aaad" opacity=".5"/><rect x="5" y="31.5" width="19" height="6.5" rx="2" fill="#a7aaad" opacity=".5"/><path d="M26 27 32 33 43 13" stroke="#a7aaad" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>' ),
 			30
 		);
+		$this->page_hooks[] = $hook;
 
-		add_submenu_page(
+		$this->page_hooks[] = add_submenu_page(
 			'stepwise',
 			__( 'Workflows', 'stepwise' ),
 			__( 'Workflows', 'stepwise' ),
@@ -70,7 +80,7 @@ class AP_Admin {
 			[ $this, 'render_workflow_manager' ]
 		);
 
-		add_submenu_page(
+		$this->page_hooks[] = add_submenu_page(
 			'stepwise',
 			__( 'Settings', 'stepwise' ),
 			__( 'Settings', 'stepwise' ),
@@ -80,7 +90,7 @@ class AP_Admin {
 		);
 
 		// Capture page — child of stepwise so the menu stays open; hidden via CSS not remove_submenu_page
-		add_submenu_page(
+		$this->page_hooks[] = add_submenu_page(
 			'stepwise',
 			__( 'Captured Steps', 'stepwise' ),
 			__( 'Captured Steps', 'stepwise' ),
@@ -91,7 +101,7 @@ class AP_Admin {
 
 		// Always register the upgrade page so direct URL visits don't hit WP's
 		// "not allowed" wall. render_upgrade() redirects Pro users to the main page.
-		add_submenu_page(
+		$this->page_hooks[] = add_submenu_page(
 			'stepwise',
 			__( 'Upgrade to Pro', 'stepwise' ),
 			__( 'Upgrade to Pro', 'stepwise' ),
@@ -115,6 +125,27 @@ class AP_Admin {
 	}
 
 	/**
+	 * Drop dependency handles that this WordPress install doesn't know about.
+	 *
+	 * @wordpress/scripts writes the dependency list against the WP version it was
+	 * built with, so a bundle built on a newer WP can list handles an older site
+	 * has never registered (e.g. 'react-jsx-runtime', added in WP 6.6). When any
+	 * dependency is unregistered, WP_Dependencies::all_deps() silently refuses to
+	 * print the script *and everything that depends on it* — no error, no notice,
+	 * just a blank page. Filtering here means a missing handle costs us that one
+	 * polyfill instead of the whole app.
+	 *
+	 * @param string[] $handles
+	 * @return string[]
+	 */
+	private function filter_registered_deps( array $handles ): array {
+		return array_values( array_filter(
+			$handles,
+			fn( $handle ) => wp_script_is( $handle, 'registered' )
+		) );
+	}
+
+	/**
 	 * Register the shared webpack runtime chunk. Must fire before either
 	 * entry point is enqueued so both entries resolve chunks correctly.
 	 */
@@ -125,10 +156,13 @@ class AP_Admin {
 		$runtime_asset = STEPWISE_PLUGIN_DIR . 'assets/js/runtime.asset.php';
 		$runtime       = file_exists( $runtime_asset ) ? require $runtime_asset : [ 'dependencies' => [], 'version' => null ];
 
+		// Split-chunk URLs resolve themselves: the bundle is built with
+		// output.publicPath 'auto', so the runtime derives them from its own
+		// <script> tag. Nothing to inject from here.
 		wp_register_script(
 			'stepwise-runtime',
 			STEPWISE_PLUGIN_URL . 'assets/js/runtime.js',
-			$runtime['dependencies'],
+			$this->filter_registered_deps( $runtime['dependencies'] ),
 			$runtime['version'] ?? $this->asset_version( 'assets/js/runtime.js' ),
 			true
 		);
@@ -152,7 +186,11 @@ class AP_Admin {
 		wp_enqueue_script(
 			'stepwise-admin',
 			STEPWISE_PLUGIN_URL . 'assets/js/stepwise-admin.js',
-			array_merge( [ 'stepwise-runtime' ], $deps['dependencies'], [ 'wp-api-fetch', 'wp-data', 'wp-element', 'wp-i18n' ] ),
+			$this->filter_registered_deps( array_merge(
+				[ 'stepwise-runtime' ],
+				$deps['dependencies'],
+				[ 'wp-api-fetch', 'wp-data', 'wp-element', 'wp-i18n' ]
+			) ),
 			$deps['version'] ?? $this->asset_version( 'assets/js/stepwise-admin.js' ),
 			true
 		);
@@ -178,7 +216,7 @@ class AP_Admin {
 		wp_enqueue_script(
 			'stepwise-capture',
 			STEPWISE_PLUGIN_URL . 'assets/js/stepwise-capture.js',
-			array_merge( [ 'stepwise-runtime' ], $capture_deps['dependencies'] ),
+			$this->filter_registered_deps( array_merge( [ 'stepwise-runtime' ], $capture_deps['dependencies'] ) ),
 			$capture_deps['version'] ?? $this->asset_version( 'assets/js/stepwise-capture.js' ),
 			true
 		);
@@ -202,8 +240,8 @@ class AP_Admin {
 				true
 			);
 
-			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- composed from trusted server vars, not user input
-			$page_url = esc_url_raw( ( is_ssl() ? 'https' : 'http' ) . '://' . ( $_SERVER['HTTP_HOST'] ?? '' ) . ( $_SERVER['REQUEST_URI'] ?? '' ) );
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized,WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- composed from trusted server vars, not user input
+			$page_url = esc_url_raw( ( is_ssl() ? 'https' : 'http' ) . '://' . wp_unslash( $_SERVER['HTTP_HOST'] ?? '' ) . wp_unslash( $_SERVER['REQUEST_URI'] ?? '' ) );
 
 			wp_localize_script( 'stepwise-capture-watcher', 'stepwiseCapture', [
 				'restUrl'   => rest_url( STEPWISE_REST_NAMESPACE . '/' ),
@@ -248,7 +286,7 @@ class AP_Admin {
 			'restUrl'     => rest_url( STEPWISE_REST_NAMESPACE . '/' ),
 			'isPro'        => stepwise_is_pro(),
 			'licensePlan'  => get_option( 'stepwise_license_plan', 'free' ),
-			'isConnected'  => AP_SaaS_Auth::is_connected(),
+			'isConnected'  => Stepwise_SaaS_Auth::is_connected(),
 			'saasPlan'     => get_option( 'stepwise_license_plan', 'free' ),
 			'version'     => STEPWISE_VERSION,
 			// Current user's resolved permissions — computed server-side so JS
@@ -261,6 +299,7 @@ class AP_Admin {
 			'currentPage' => $this->get_current_page(),
 			'workflowId'  => $workflow_id ?: null,
 			'adminUrl'    => admin_url(),
+			'pluginUrl'   => STEPWISE_PLUGIN_URL,
 			'upgradeUrl'  => stepwise_is_pro() ? null : admin_url( 'admin.php?page=stepwise-upgrade' ),
 
 			// Auto-Capture
@@ -278,7 +317,7 @@ class AP_Admin {
 
 			// Playbook defaults
 			'defaultStatus'   => get_option( 'stepwise_default_status', 'active' ),
-			'defaultCategory' => get_option( 'stepwise_default_category', '' ),
+			'defaultCategory' => get_option( 'stepwise_default_category', 'general' ),
 			'showRunButton'   => (bool) get_option( 'stepwise_show_run_button', true ),
 
 			// Team & Access
@@ -293,11 +332,11 @@ class AP_Admin {
 
 			// Cloud / SaaS
 			'saasUrl'              => rtrim( get_option( 'stepwise_saas_url', STEPWISE_SAAS_DEFAULT_URL ), '/' ),
-			'saasConnected'        => AP_SaaS_Auth::is_connected(),
+			'saasConnected'        => Stepwise_SaaS_Auth::is_connected(),
 			'stagingMode'          => (bool) get_option( 'stepwise_staging_mode', false ),
 			'stagingAutoDetected'  => stepwise_is_staging_env(),
 			'lastSync'      => get_option( 'stepwise_last_sync', '' ),
-			'deeplinks'     => ( new AP_Deeplinks() )->get_library( true ),
+			'deeplinks'     => ( new Stepwise_Deeplinks() )->get_library( true ),
 		];
 	}
 
@@ -374,18 +413,19 @@ class AP_Admin {
 	 * @return array<array{id: int, title: string}>
 	 */
 	private function get_workflow_options(): array {
-		$workflows = AP_Workflow::all( 'active', 50, 0 );
+		$workflows = Stepwise_Workflow::all( 'active', 50, 0 );
 		return array_map( fn( $w ) => [ 'id' => $w->id, 'title' => $w->title ], $workflows );
 	}
 
 	private function is_stepwise_page( string $hook ): bool {
-		$stepwise_hooks = [
-			'toplevel_page_stepwise',
-			'stepwise_page_stepwise-settings',
-			'stepwise_page_stepwise-upgrade',
-			'stepwise_page_stepwise-capture',
-		];
-		return in_array( $hook, $stepwise_hooks, true );
+		// Also match by page query var as a fallback in case page_hooks wasn't
+		// populated (e.g. capability check failed during register_menus).
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$page = sanitize_text_field( wp_unslash( $_GET['page'] ?? '' ) );
+		if ( 0 === strpos( $page, 'stepwise' ) ) {
+			return true;
+		}
+		return in_array( $hook, array_filter( $this->page_hooks ), true );
 	}
 
 	/**
@@ -395,7 +435,7 @@ class AP_Admin {
 	public function render_capture_mounts(): void {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$page = sanitize_text_field( wp_unslash( $_GET['page'] ?? '' ) );
-		if ( str_starts_with( $page, 'stepwise' ) ) {
+		if ( 0 === strpos( $page, 'stepwise' ) ) {
 			return;
 		}
 		?>
@@ -418,7 +458,7 @@ class AP_Admin {
 		remove_all_actions( 'all_admin_notices' );
 
 		// Re-add only our own notices
-		$notices = new AP_Notices();
+		$notices = new Stepwise_Notices();
 		add_action( 'admin_notices', [ $notices, 'render' ] );
 	}
 
@@ -427,7 +467,7 @@ class AP_Admin {
 	 * Runs only on plugins.php via the admin_footer-plugins.php hook.
 	 */
 	public function render_delete_warning_script(): void {
-		if ( ! AP_SaaS_Auth::is_connected() ) {
+		if ( ! Stepwise_SaaS_Auth::is_connected() ) {
 			return;
 		}
 		$message = __( "You're connected to Stepwise Cloud.\n\nDisconnect first (Settings → Cloud) to free your license slot before deleting.\n\nDelete anyway without disconnecting?", 'stepwise' );

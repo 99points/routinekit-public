@@ -7,7 +7,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * Wraps all database operations for the stepwise_steps table.
  */
-class AP_Step {
+class Stepwise_Step {
 
 	/** @var int */
 	public int $id;
@@ -48,7 +48,7 @@ class AP_Step {
 	 * @param int $id
 	 * @return static|null
 	 */
-	public static function get( int $id ): ?static {
+	public static function get( int $id ): ?Stepwise_Step {
 		global $wpdb;
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
@@ -80,7 +80,7 @@ class AP_Step {
 
 	/**
 	 * Batch-fetch steps for multiple workflows in a single query.
-	 * Returns an array keyed by workflow_id, each value being an array of AP_Step objects.
+	 * Returns an array keyed by workflow_id, each value being an array of Stepwise_Step objects.
 	 *
 	 * @param int[] $workflow_ids
 	 * @return array<int, static[]>
@@ -111,7 +111,7 @@ class AP_Step {
 	 * @param array $data
 	 * @return static|WP_Error
 	 */
-	public static function create( array $data ): static|WP_Error {
+	public static function create( array $data ) {
 		global $wpdb;
 
 		$workflow_id = absint( $data['workflow_id'] ?? 0 );
@@ -139,7 +139,7 @@ class AP_Step {
 			'workflow_id'       => $workflow_id,
 			'title'             => $title,
 			'description'       => sanitize_textarea_field( $data['description'] ?? '' ),
-			'deep_link'         => isset( $data['deep_link'] ) ? esc_url_raw( $data['deep_link'] ) : null,
+			'deep_link'         => isset( $data['deep_link'] ) ? esc_url( $data['deep_link'] ) : null,
 			'deep_link_type'    => in_array( $data['deep_link_type'] ?? '', [ 'static', 'dynamic' ], true )
 				? $data['deep_link_type']
 				: 'static',
@@ -172,7 +172,7 @@ class AP_Step {
 	 * @param array $data
 	 * @return static|WP_Error
 	 */
-	public static function update( int $id, array $data ): static|WP_Error {
+	public static function update( int $id, array $data ) {
 		global $wpdb;
 
 		$update  = [];
@@ -187,7 +187,7 @@ class AP_Step {
 			$formats[]             = '%s';
 		}
 		if ( isset( $data['deep_link'] ) ) {
-			$update['deep_link'] = esc_url_raw( $data['deep_link'] );
+			$update['deep_link'] = esc_url( $data['deep_link'] );
 			$formats[]           = '%s';
 		}
 		if ( isset( $data['deep_link_type'] ) && in_array( $data['deep_link_type'], [ 'static', 'dynamic' ], true ) ) {
@@ -264,7 +264,7 @@ class AP_Step {
 	 * @param object $row
 	 * @return static
 	 */
-	public static function from_row( object $row ): static {
+	public static function from_row( object $row ): Stepwise_Step {
 		$instance                  = new static();
 		$instance->id              = (int) $row->id;
 		$instance->workflow_id     = (int) $row->workflow_id;

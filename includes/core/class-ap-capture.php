@@ -8,7 +8,7 @@ defined( 'ABSPATH' ) || exit;
  * Detects meaningful wp_options changes during settings form submissions
  * and buffers them so the user can add them to a workflow.
  */
-class AP_Capture {
+class Stepwise_Capture {
 
 	/**
 	 * Substrings that, if present in an option name, mean it should be ignored.
@@ -101,7 +101,7 @@ class AP_Capture {
 	 */
 	public function cleanup_buffer(): void {
 		global $wpdb;
-		$days = (int) get_option( 'stepwise_capture_retention', 7 );
+		$days = (int) get_option( 'stepwise_capture_retention', 30 );
 		if ( $days < 1 ) {
 			return;
 		}
@@ -280,7 +280,7 @@ class AP_Capture {
 			if ( '' === $pattern ) {
 				continue;
 			}
-			if ( str_contains( $pattern, '*' ) ) {
+			if ( false !== strpos( $pattern, '*' ) ) {
 				if ( fnmatch( $pattern, $option ) ) {
 					return true;
 				}

@@ -1,10 +1,11 @@
 <?php
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- custom plugin tables; WP object cache not applicable
 defined( 'ABSPATH' ) || exit;
 
 /**
  * HTTP client for all SaaS API communication.
  */
-class AP_SaaS_Client {
+class Stepwise_SaaS_Client {
 
 	/** @var string */
 	private string $base_url;
@@ -27,7 +28,7 @@ class AP_SaaS_Client {
 	 * @param string $license_key
 	 * @return array|WP_Error
 	 */
-	public function connect_site( string $license_key ): array|WP_Error {
+	public function connect_site( string $license_key ) {
 		return $this->post_public( '/api/connect', [
 			'license_key'    => $license_key,
 			'site_url'       => get_site_url(),
@@ -42,7 +43,7 @@ class AP_SaaS_Client {
 	 *
 	 * @return array|WP_Error
 	 */
-	public function get_assignments(): array|WP_Error {
+	public function get_assignments() {
 		return $this->get( '/api/site/assignments' );
 	}
 
@@ -52,7 +53,7 @@ class AP_SaaS_Client {
 	 * @param int $assignment_id
 	 * @return array|WP_Error
 	 */
-	public function complete_assignment( int $assignment_id ): array|WP_Error {
+	public function complete_assignment( int $assignment_id ) {
 		return $this->post( "/api/site/assignments/{$assignment_id}/complete", [] );
 	}
 
@@ -62,7 +63,7 @@ class AP_SaaS_Client {
 	 *
 	 * @return array|WP_Error
 	 */
-	public function get_groups(): array|WP_Error {
+	public function get_groups() {
 		return $this->get( '/api/site/groups' );
 	}
 
@@ -73,7 +74,7 @@ class AP_SaaS_Client {
 	 * @param array $workflow_data  title, workflow_id, steps, version
 	 * @return array|WP_Error
 	 */
-	public function assign_workflow_to_group( int $group_id, array $workflow_data ): array|WP_Error {
+	public function assign_workflow_to_group( int $group_id, array $workflow_data ) {
 		return $this->post( "/api/groups/{$group_id}/assign-workflow", $workflow_data );
 	}
 
@@ -82,7 +83,7 @@ class AP_SaaS_Client {
 	 *
 	 * @return array|WP_Error
 	 */
-	public function get_templates(): array|WP_Error {
+	public function get_templates() {
 		return $this->get( '/api/templates' );
 	}
 
@@ -92,7 +93,7 @@ class AP_SaaS_Client {
 	 * @param string $url
 	 * @return array|WP_Error
 	 */
-	public function import_url( string $url ): array|WP_Error {
+	public function import_url( string $url ) {
 		return $this->post( '/api/import-url', [ 'url' => $url ] );
 	}
 
@@ -102,7 +103,7 @@ class AP_SaaS_Client {
 	 *
 	 * @return array|WP_Error
 	 */
-	public function deregister_site(): array|WP_Error {
+	public function deregister_site() {
 		return $this->delete( '/api/site' );
 	}
 
@@ -111,7 +112,7 @@ class AP_SaaS_Client {
 	 *
 	 * @return array|WP_Error
 	 */
-	public function heartbeat(): array|WP_Error {
+	public function heartbeat() {
 		return $this->post( '/api/site/heartbeat', [
 			'wp_version'     => get_bloginfo( 'version' ),
 			'plugin_version' => STEPWISE_VERSION,
@@ -138,7 +139,7 @@ class AP_SaaS_Client {
 	 * @param array $note_data
 	 * @return array|WP_Error
 	 */
-	public function push_shared_note( array $note_data ): array|WP_Error {
+	public function push_shared_note( array $note_data ) {
 		$result = $this->post( '/api/step-notes', $note_data );
 		if ( ! is_wp_error( $result ) && ! empty( $result['saas_note_id'] ) && ! empty( $note_data['local_note_id'] ) ) {
 			global $wpdb;
@@ -159,7 +160,7 @@ class AP_SaaS_Client {
 	 * @param string $saas_note_id
 	 * @return array|WP_Error
 	 */
-	public function delete_shared_note( string $saas_note_id ): array|WP_Error {
+	public function delete_shared_note( string $saas_note_id ) {
 		return $this->delete( "/api/step-notes/{$saas_note_id}" );
 	}
 
@@ -170,13 +171,13 @@ class AP_SaaS_Client {
 	 * @param string|null $screenshot_url
 	 * @return array|WP_Error
 	 */
-	public function update_shared_note_screenshot( string $saas_note_id, ?string $screenshot_url ): array|WP_Error {
+	public function update_shared_note_screenshot( string $saas_note_id, ?string $screenshot_url ) {
 		return $this->patch( "/api/step-notes/{$saas_note_id}", [ 'screenshot_url' => $screenshot_url ] );
 	}
 
 	// ── Private HTTP helpers ──────────────────────────────────────────────────
 
-	private function get( string $endpoint ): array|WP_Error {
+	private function get( string $endpoint ) {
 		$response = wp_remote_get( $this->base_url . $endpoint, [
 			'headers' => $this->get_headers(),
 			'timeout' => $this->timeout,
@@ -184,7 +185,7 @@ class AP_SaaS_Client {
 		return $this->handle_response( $response );
 	}
 
-	private function post( string $endpoint, array $body ): array|WP_Error {
+	private function post( string $endpoint, array $body ) {
 		$response = wp_remote_post( $this->base_url . $endpoint, [
 			'headers' => $this->get_headers(),
 			'body'    => wp_json_encode( $body ),
@@ -193,7 +194,7 @@ class AP_SaaS_Client {
 		return $this->handle_response( $response );
 	}
 
-	private function delete( string $endpoint ): array|WP_Error {
+	private function delete( string $endpoint ) {
 		$response = wp_remote_request( $this->base_url . $endpoint, [
 			'method'  => 'DELETE',
 			'headers' => $this->get_headers(),
@@ -202,7 +203,7 @@ class AP_SaaS_Client {
 		return $this->handle_response( $response );
 	}
 
-	private function patch( string $endpoint, array $body ): array|WP_Error {
+	private function patch( string $endpoint, array $body ) {
 		$response = wp_remote_request( $this->base_url . $endpoint, [
 			'method'  => 'PATCH',
 			'headers' => $this->get_headers(),
@@ -213,7 +214,7 @@ class AP_SaaS_Client {
 	}
 
 	/** POST without auth header — used only for /api/connect */
-	private function post_public( string $endpoint, array $body ): array|WP_Error {
+	private function post_public( string $endpoint, array $body ) {
 		$response = wp_remote_post( $this->base_url . $endpoint, [
 			'headers' => [
 				'Content-Type' => 'application/json',
@@ -225,7 +226,7 @@ class AP_SaaS_Client {
 		return $this->handle_response( $response );
 	}
 
-	private function get_headers(): array {
+	private function get_headers() {
 		return [
 			'X-Stepwise-Key' => $this->api_key,
 			'Content-Type'     => 'application/json',
@@ -233,7 +234,7 @@ class AP_SaaS_Client {
 		];
 	}
 
-	private function handle_response( $response ): array|WP_Error {
+	private function handle_response( $response ) {
 		if ( is_wp_error( $response ) ) {
 			return $response;
 		}

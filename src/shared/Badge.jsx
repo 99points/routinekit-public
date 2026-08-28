@@ -6,7 +6,7 @@ const Badge = ( { children, variant = 'default' } ) => (
 
 Badge.propTypes = {
 	children: PropTypes.node.isRequired,
-	variant:  PropTypes.oneOf( [ 'default', 'active', 'draft', 'archived', 'pro' ] ),
+	variant:  PropTypes.oneOf( [ 'default', 'active', 'draft', 'archived', 'pro', 'pushed' ] ),
 };
 
 export default Badge;

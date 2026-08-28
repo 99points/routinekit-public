@@ -44,12 +44,12 @@ const ConnectGateModal = ( { onClose, onContinue } ) => {
 		>
 			<div className="ap-gate-modal">
 				<p className="ap-gate-modal__lead">
-					{ __( 'Free local workflows are limited to 3. But here\'s the thing — connecting your free Stepwise account doesn\'t just remove that limit.', 'stepwise' ) }
+					{ __( 'Connecting your free Stepwise account unlocks cloud features — push workflows to client sites, track completions, and manage everything from one dashboard.', 'stepwise' ) }
 				</p>
 				<ul className="ap-gate-modal__perks">
 					<li>
 						<span className="ap-gate-modal__perk-icon">🌐</span>
-						<span>{ __( 'Push any workflow to up to 3 sites in one click', 'stepwise' ) }</span>
+						<span>{ __( 'Push any workflow to client sites in one click', 'stepwise' ) }</span>
 					</li>
 					<li>
 						<span className="ap-gate-modal__perk-icon">♾️</span>
@@ -98,12 +98,13 @@ const SwitchRunModal = ( { currentTitle, nextTitle, onConfirm, onCancel } ) => (
 );
 
 const WorkflowManager = () => {
-	const [ showCreate, setShowCreate ]           = useState( false );
-	const [ showImportUrl, setShowImportUrl ]     = useState( false );
-	const [ showImportJson, setShowImportJson ]   = useState( false );
-	const [ showTemplates, setShowTemplates ]     = useState( false );
-	const [ showGate, setShowGate ]               = useState( false );
-	const [ pendingRun, setPendingRun ]           = useState( null ); // { workflowId, workflowTitle }
+	const [ showCreate, setShowCreate ]               = useState( false );
+	const [ showImportUrl, setShowImportUrl ]         = useState( false );
+	const [ showImportJson, setShowImportJson ]       = useState( false );
+	const [ showImportMenu, setShowImportMenu ]       = useState( false );
+	const [ showTemplates, setShowTemplates ]         = useState( false );
+	const [ showGate, setShowGate ]                   = useState( false );
+	const [ pendingRun, setPendingRun ]               = useState( null ); // { workflowId, workflowTitle }
 
 	const { fetchWorkflows } = useDispatch( 'stepwise/workflows' );
 	const { startExecution, fetchActiveExecution } = useDispatch( 'stepwise/execution' );
@@ -166,22 +167,33 @@ const WorkflowManager = () => {
 						>
 							{ __( 'Templates', 'stepwise' ) }
 						</button>
-						{ isPro && saasConnected && (
+						<div className="ap-import-dropdown" style={ { position: 'relative' } }>
 							<button
 								type="button"
 								className="stepwise-btn stepwise-btn--ghost stepwise-btn--sm"
-								onClick={ () => setShowImportUrl( true ) }
+								onClick={ () => setShowImportMenu( ( v ) => ! v ) }
 							>
-								{ __( 'Import URL', 'stepwise' ) }
+								{ __( 'Import Workflow', 'stepwise' ) } ▾
 							</button>
-						) }
-						<button
-							type="button"
-							className="stepwise-btn stepwise-btn--ghost stepwise-btn--sm"
-							onClick={ () => setShowImportJson( true ) }
-						>
-							{ __( 'Import JSON', 'stepwise' ) }
-						</button>
+							{ showImportMenu && (
+								<>
+									<div
+										className="ap-import-dropdown__backdrop"
+										onClick={ () => setShowImportMenu( false ) }
+									/>
+									<div className="ap-import-dropdown__menu">
+										<button
+											type="button"
+											className="ap-import-dropdown__item"
+											onClick={ () => { setShowImportMenu( false ); setShowImportJson( true ); } }
+										>
+											{ __( 'Import JSON', 'stepwise' ) }
+										</button>
+										{ /* Import via URL — temporarily hidden */ }
+									</div>
+								</>
+							) }
+						</div>
 						<Button
 							variant="secondary"
 							onClick={ handleCreate }

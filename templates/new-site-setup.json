@@ -1,72 +1,73 @@
 {
-    "template_key": "new-site-setup",
-    "title": "New Site Setup",
-    "description": "Standard configuration steps for every new client WordPress site",
-    "version": "1.0",
-    "steps": [
-        {
-            "sort_order": 10,
-            "title": "Set site title and tagline",
-            "instructions": "Update to the client's official business name. Do not use the dev/staging placeholder.",
-            "deep_link": "options-general.php",
-            "is_required": true,
-            "evidence_required": false
-        },
-        {
-            "sort_order": 20,
-            "title": "Set admin email address",
-            "instructions": "Change from developer email to client's primary contact. Confirm they can receive emails to this address.",
-            "deep_link": "options-general.php",
-            "is_required": true,
-            "evidence_required": false
-        },
-        {
-            "sort_order": 30,
-            "title": "Configure permalink structure",
-            "instructions": "Set to Post name unless client has specific requirements. Save twice — first save generates .htaccess.",
-            "deep_link": "options-permalink.php",
-            "is_required": true,
-            "evidence_required": false
-        },
-        {
-            "sort_order": 40,
-            "title": "Set timezone and date format",
-            "instructions": "Set to client's local timezone, not UTC. Critical for scheduled posts and WooCommerce orders.",
-            "deep_link": "options-general.php",
-            "is_required": true,
-            "evidence_required": false
-        },
-        {
-            "sort_order": 50,
-            "title": "Disable search engine indexing on staging",
-            "instructions": "Check Settings > Reading. Staging: indexing OFF. Live: indexing ON. Verify before handoff.",
-            "deep_link": "options-reading.php",
-            "is_required": true,
-            "evidence_required": true
-        },
-        {
-            "sort_order": 60,
-            "title": "Delete default content",
-            "instructions": "Remove Hello World post, Sample Page, and any default plugins (Hello Dolly). Leave Akismet if needed.",
-            "deep_link": "edit.php",
-            "is_required": true,
-            "evidence_required": false
-        },
-        {
-            "sort_order": 70,
-            "title": "Set default user role",
-            "instructions": "Change default user role from Subscriber to appropriate role for this site.",
-            "deep_link": "options-general.php",
-            "is_required": false,
-            "evidence_required": false
-        },
-        {
-            "sort_order": 80,
-            "title": "Configure comment settings",
-            "instructions": "Disable comments if not needed. Enable moderation queue if comments are on.",
-            "deep_link": "options-discussion.php",
-            "is_required": true,
-            "evidence_required": false
-        }
-    ]
+	"template_key": "new-site-setup",
+	"title": "New Site Setup",
+	"description": "Standard configuration steps for every new client WordPress site",
+	"version": "1.0",
+	"steps": [
+		{
+			"sort_order": 10,
+			"title": "Set site title and tagline",
+			"instructions": "Update to the client's official business name. Do not use the dev/staging placeholder.",
+			"deep_link": "options-general.php",
+			"is_required": true,
+			"evidence_required": false
+		},
+		{
+			"sort_order": 20,
+			"title": "Set admin email address",
+			"instructions": "Change from developer email to client's primary contact. Confirm they can receive emails to this address.",
+			"deep_link": "options-general.php",
+			"is_required": true,
+			"evidence_required": false
+		},
+		{
+			"sort_order": 30,
+			"title": "Configure permalink structure",
+			"instructions": "Set to Post name unless client has specific requirements. Save twice \u2014 first save generates .htaccess.",
+			"deep_link": "options-permalink.php",
+			"is_required": true,
+			"evidence_required": false
+		},
+		{
+			"sort_order": 40,
+			"title": "Set timezone and date format",
+			"instructions": "Set to client's local timezone, not UTC. Critical for scheduled posts and WooCommerce orders.",
+			"deep_link": "options-general.php",
+			"is_required": true,
+			"evidence_required": false
+		},
+		{
+			"sort_order": 50,
+			"title": "Disable search engine indexing on staging",
+			"instructions": "Check Settings > Reading. Staging: indexing OFF. Live: indexing ON. Verify before handoff.",
+			"deep_link": "options-reading.php",
+			"is_required": true,
+			"evidence_required": true
+		},
+		{
+			"sort_order": 60,
+			"title": "Delete default content",
+			"instructions": "Remove Hello World post, Sample Page, and any default plugins (Hello Dolly). Leave Akismet if needed.",
+			"deep_link": "edit.php",
+			"is_required": true,
+			"evidence_required": false
+		},
+		{
+			"sort_order": 70,
+			"title": "Set default user role",
+			"instructions": "Change default user role from Subscriber to appropriate role for this site.",
+			"deep_link": "options-general.php",
+			"is_required": false,
+			"evidence_required": false
+		},
+		{
+			"sort_order": 80,
+			"title": "Configure comment settings",
+			"instructions": "Disable comments if not needed. Enable moderation queue if comments are on.",
+			"deep_link": "options-discussion.php",
+			"is_required": true,
+			"evidence_required": false
+		}
+	],
+	"category": "Setup"
 }

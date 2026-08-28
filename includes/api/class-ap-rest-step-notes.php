@@ -12,7 +12,7 @@ defined( 'ABSPATH' ) || exit;
  * DELETE /stepwise/v1/steps/:step_id/notes/:note_id/screenshot
  * POST   /stepwise/v1/sync/notes   — SaaS calls this to push shared notes in
  */
-class AP_REST_Step_Notes {
+class Stepwise_REST_Step_Notes {
 
 	protected string $namespace = STEPWISE_REST_NAMESPACE;
 
@@ -104,11 +104,22 @@ class AP_REST_Step_Notes {
 
 	// ── GET /steps/:step_id/notes ─────────────────────────────────────────────
 
-	public function get_notes( WP_REST_Request $request ): WP_REST_Response {
+	public function get_notes( WP_REST_Request $request ) {
 		global $wpdb;
 
 		$step_id = (int) $request['step_id'];
-		$rows    = $wpdb->get_results(
+
+		$step = Stepwise_Step::get( $step_id );
+		if ( ! $step ) {
+			return new WP_Error( 'stepwise_not_found', __( 'Step not found.', 'stepwise' ), [ 'status' => 404 ] );
+		}
+
+		// Verify the step's workflow exists and is accessible to this user.
+		if ( ! Stepwise_Workflow::get( $step->workflow_id ) ) {
+			return new WP_Error( 'stepwise_not_found', __( 'Workflow not found.', 'stepwise' ), [ 'status' => 404 ] );
+		}
+
+		$rows = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT * FROM {$wpdb->prefix}stepwise_step_notes
 				 WHERE step_id = %d
@@ -123,7 +134,7 @@ class AP_REST_Step_Notes {
 
 	// ── POST /steps/:step_id/notes ────────────────────────────────────────────
 
-	public function create_note( WP_REST_Request $request ): WP_REST_Response|WP_Error {
+	public function create_note( WP_REST_Request $request ) {
 		global $wpdb;
 
 		$step_id  = (int) $request['step_id'];
@@ -131,16 +142,7 @@ class AP_REST_Step_Notes {
 		$shared   = (bool) $request->get_param( 'shared' );
 		$user     = wp_get_current_user();
 
-		// Gate sharing at Pro+
-		if ( $shared && ! $this->user_can_share() ) {
-			return new WP_Error(
-				'stepwise_plan_required',
-				__( 'Sharing notes to other sites requires a Pro plan.', 'stepwise' ),
-				[ 'status' => 403 ]
-			);
-		}
-
-		$step = AP_Step::get( $step_id );
+		$step = Stepwise_Step::get( $step_id );
 		if ( ! $step ) {
 			return new WP_Error( 'stepwise_not_found', __( 'Step not found.', 'stepwise' ), [ 'status' => 404 ] );
 		}
@@ -168,7 +170,7 @@ class AP_REST_Step_Notes {
 		);
 
 		// Push shared note to SaaS for fan-out to other sites
-		if ( $shared && AP_SaaS_Auth::is_connected() ) {
+		if ( $shared && Stepwise_SaaS_Auth::is_connected() ) {
 			$this->push_note_to_saas( $note );
 		}
 
@@ -179,7 +181,7 @@ class AP_REST_Step_Notes {
 
 	// ── DELETE /steps/:step_id/notes/:note_id ────────────────────────────────
 
-	public function delete_note( WP_REST_Request $request ): WP_REST_Response|WP_Error {
+	public function delete_note( WP_REST_Request $request ) {
 		global $wpdb;
 
 		$note_id = (int) $request['note_id'];
@@ -206,8 +208,8 @@ class AP_REST_Step_Notes {
 		}
 
 		// Notify SaaS to remove from other sites
-		if ( ! empty( $note['saas_note_id'] ) && AP_SaaS_Auth::is_connected() ) {
-			( new AP_SaaS_Client() )->delete_shared_note( $note['saas_note_id'] );
+		if ( ! empty( $note['saas_note_id'] ) && Stepwise_SaaS_Auth::is_connected() ) {
+			( new Stepwise_SaaS_Client() )->delete_shared_note( $note['saas_note_id'] );
 		}
 
 		$wpdb->delete( $wpdb->prefix . 'stepwise_step_notes', [ 'id' => $note_id ], [ '%d' ] );
@@ -217,7 +219,7 @@ class AP_REST_Step_Notes {
 
 	// ── POST /steps/:step_id/notes/:note_id/screenshot ───────────────────────
 
-	public function upload_screenshot( WP_REST_Request $request ): WP_REST_Response|WP_Error {
+	public function upload_screenshot( WP_REST_Request $request ) {
 		global $wpdb;
 
 		$note_id = (int) $request['note_id'];
@@ -281,8 +283,8 @@ class AP_REST_Step_Notes {
 		);
 
 		// Sync updated screenshot URL to SaaS if note is shared
-		if ( ! empty( $note['saas_note_id'] ) && AP_SaaS_Auth::is_connected() ) {
-			( new AP_SaaS_Client() )->update_shared_note_screenshot( $note['saas_note_id'], $screenshot_url );
+		if ( ! empty( $note['saas_note_id'] ) && Stepwise_SaaS_Auth::is_connected() ) {
+			( new Stepwise_SaaS_Client() )->update_shared_note_screenshot( $note['saas_note_id'], $screenshot_url );
 		}
 
 		return rest_ensure_response( [
@@ -293,7 +295,7 @@ class AP_REST_Step_Notes {
 
 	// ── DELETE /steps/:step_id/notes/:note_id/screenshot ─────────────────────
 
-	public function delete_screenshot( WP_REST_Request $request ): WP_REST_Response|WP_Error {
+	public function delete_screenshot( WP_REST_Request $request ) {
 		global $wpdb;
 
 		$note_id = (int) $request['note_id'];
@@ -322,8 +324,8 @@ class AP_REST_Step_Notes {
 		);
 
 		// Notify SaaS to clear screenshot on other sites
-		if ( ! empty( $note['saas_note_id'] ) && AP_SaaS_Auth::is_connected() ) {
-			( new AP_SaaS_Client() )->update_shared_note_screenshot( $note['saas_note_id'], null );
+		if ( ! empty( $note['saas_note_id'] ) && Stepwise_SaaS_Auth::is_connected() ) {
+			( new Stepwise_SaaS_Client() )->update_shared_note_screenshot( $note['saas_note_id'], null );
 		}
 
 		return rest_ensure_response( [ 'deleted' => true ] );
@@ -331,7 +333,7 @@ class AP_REST_Step_Notes {
 
 	// ── POST /sync/notes — SaaS pushes shared note in ────────────────────────
 
-	public function sync_inbound( WP_REST_Request $request ): WP_REST_Response|WP_Error {
+	public function sync_inbound( WP_REST_Request $request ) {
 		global $wpdb;
 
 		$params       = $request->get_json_params();
@@ -434,7 +436,7 @@ class AP_REST_Step_Notes {
 
 	// ── DELETE /sync/notes/:saas_note_id — SaaS removes a sideloaded note ───
 
-	public function sync_delete( WP_REST_Request $request ): WP_REST_Response|WP_Error {
+	public function sync_delete( WP_REST_Request $request ) {
 		global $wpdb;
 
 		$saas_note_id = sanitize_text_field( $request['saas_note_id'] );
@@ -492,21 +494,21 @@ class AP_REST_Step_Notes {
 		);
 
 		// Notify SaaS to clear screenshot on other sites
-		if ( ! empty( $note['saas_note_id'] ) && AP_SaaS_Auth::is_connected() ) {
-			( new AP_SaaS_Client() )->update_shared_note_screenshot( $note['saas_note_id'], null );
+		if ( ! empty( $note['saas_note_id'] ) && Stepwise_SaaS_Auth::is_connected() ) {
+			( new Stepwise_SaaS_Client() )->update_shared_note_screenshot( $note['saas_note_id'], null );
 		}
 	}
 
 	// ── Permission callbacks ──────────────────────────────────────────────────
 
-	public function run_permission(): bool|WP_Error {
+	public function run_permission() {
 		if ( stepwise_current_user_can_run() ) {
 			return true;
 		}
 		return new WP_Error( 'stepwise_forbidden', __( 'You do not have permission.', 'stepwise' ), [ 'status' => 403 ] );
 	}
 
-	public function sync_permission(): bool|WP_Error {
+	public function sync_permission() {
 		// SaaS calls this with the site's API key in the header
 		$api_key = get_option( 'stepwise_site_api_key', '' );
 		$header  = isset( $_SERVER['HTTP_X_STEPWISE_KEY'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_STEPWISE_KEY'] ) ) : '';
@@ -537,7 +539,7 @@ class AP_REST_Step_Notes {
 	}
 
 	private function push_note_to_saas( array $note ): void {
-		( new AP_SaaS_Client() )->push_shared_note( [
+		( new Stepwise_SaaS_Client() )->push_shared_note( [
 			'local_note_id'     => $note['id'],
 			'workflow_id'       => $note['workflow_id'],
 			'step_id'           => $note['step_id'],
@@ -565,16 +567,12 @@ class AP_REST_Step_Notes {
 		return media_sideload_image( $url, 0, null, 'id' );
 	}
 
-	private function user_can_share(): bool {
-		return stepwise_is_pro();
-	}
-
 	/**
 	 * Returns false for loopback, private RFC-1918, and link-local addresses.
 	 * Guards sideload_image() against SSRF when screenshot URLs come from peer sites.
 	 */
 	private function is_public_url( string $url ): bool {
-		$host = parse_url( $url, PHP_URL_HOST );
+		$host = wp_parse_url( $url, PHP_URL_HOST );
 		if ( ! $host ) {
 			return false;
 		}

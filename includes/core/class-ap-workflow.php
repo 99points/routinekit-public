@@ -7,7 +7,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * Wraps all database operations for the stepwise_workflows table.
  */
-class AP_Workflow {
+class Stepwise_Workflow {
 
 	/** @var int */
 	public int $id;
@@ -61,7 +61,7 @@ class AP_Workflow {
 	 * @param int $id
 	 * @return static|null
 	 */
-	public static function get( int $id ): ?static {
+	public static function get( int $id ): ?Stepwise_Workflow {
 		global $wpdb;
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
@@ -119,7 +119,7 @@ class AP_Workflow {
 	 * @param array $data
 	 * @return static|WP_Error
 	 */
-	public static function create( array $data ): static|WP_Error {
+	public static function create( array $data ) {
 		global $wpdb;
 
 		$insert = [
@@ -162,7 +162,7 @@ class AP_Workflow {
 	 * @param array $data
 	 * @return static|WP_Error
 	 */
-	public static function update( int $id, array $data ): static|WP_Error {
+	public static function update( int $id, array $data ) {
 		global $wpdb;
 
 		$allowed_fields = [ 'title', 'description', 'status', 'saas_id', 'last_run_at', 'pushed_at', 'pushed_group_ids', 'category' ];
@@ -271,7 +271,7 @@ class AP_Workflow {
 	 * @param object $row
 	 * @return static
 	 */
-	public static function from_row( object $row ): static {
+	public static function from_row( object $row ): Stepwise_Workflow {
 		$instance               = new static();
 		$instance->id           = (int) $row->id;
 		$instance->title        = $row->title;
@@ -297,12 +297,12 @@ class AP_Workflow {
 	/**
 	 * Serialize the workflow to an array (for REST responses and SaaS sync).
 	 *
-	 * @param AP_Step[]|null $preloaded_steps Pass pre-fetched steps to avoid an extra query per workflow.
+	 * @param Stepwise_Step[]|null $preloaded_steps Pass pre-fetched steps to avoid an extra query per workflow.
 	 *                                         null triggers a single per-workflow fetch (fine for single-item responses).
 	 * @return array
 	 */
 	public function to_array( ?array $preloaded_steps = null ): array {
-		$steps = $preloaded_steps ?? AP_Step::for_workflow( $this->id );
+		$steps = $preloaded_steps ?? Stepwise_Step::for_workflow( $this->id );
 		return [
 			'id'           => $this->id,
 			'title'        => $this->title,

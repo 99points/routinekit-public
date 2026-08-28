@@ -4,7 +4,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Admin notices — workflow limit warnings and upgrade prompts.
  */
-class AP_Notices {
+class Stepwise_Notices {
 
 	/**
 	 * Render any queued admin notices.
@@ -51,27 +51,4 @@ class AP_Notices {
 		<?php
 	}
 
-	/**
-	 * Show the free-tier limit banner.
-	 */
-	private function render_limit_notice(): void {
-		$upgrade_url = esc_url( admin_url( 'admin.php?page=stepwise-upgrade' ) );
-		?>
-		<div class="notice notice-warning">
-			<p>
-				<?php
-				printf(
-					wp_kses(
-						/* translators: 1: workflow limit count, 2: URL of the upgrade page */
-						__( 'You have reached the <strong>%1$d active workflow</strong> limit on the free plan. <a href="%2$s">Upgrade to Pro</a> for unlimited workflows.', 'stepwise' ),
-						[ 'strong' => [], 'a' => [ 'href' => [] ] ]
-					),
-					absint( STEPWISE_FREE_WORKFLOW_LIMIT ),
-					esc_url( $upgrade_url )
-				);
-				?>
-			</p>
-		</div>
-		<?php
-	}
 }

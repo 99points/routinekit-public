@@ -127,7 +127,7 @@ const RunnerStep = ( { step, executionId, completion, isCurrent, isExpanded, isP
 						</a>
 					) }
 
-					<RunnerNotes stepId={ step.id } isSaas={ isSaas } />
+					<RunnerNotes stepId={ step.id } isSaas={ isSaas || isPushed } />
 
 					{ ! isPushed && ! isSaas && (
 						<button

@@ -7,100 +7,101 @@ import Modal from '../shared/Modal';
 import Button from '../shared/Button';
 
 const PushToSaasModal = ( { workflowId, pushedGroupIds = [], onClose, onPushed } ) => {
-	const [ groups, setGroups ]           = useState( [] );
-	const [ loading, setLoading ]         = useState( true );
-	const [ pushing, setPushing ]         = useState( null ); // group id being pushed, or null
-	const [ error, setError ]             = useState( null );
-	const [ assignedIds, setAssignedIds ] = useState( pushedGroupIds.map( Number ) );
+	const [ pushing, setPushing ]     = useState( false );
+	const [ error, setError ]         = useState( null );
+	const [ allGroups, setAllGroups ] = useState( [] );
 
 	const { fetchWorkflows } = useDispatch( 'stepwise/workflows' );
 
+	const groupIds  = pushedGroupIds.map( Number );
+	const hasGroups = groupIds.length > 0;
+
 	useEffect( () => {
+		if ( ! hasGroups ) return;
 		apiFetch( { path: '/stepwise/v1/saas/groups' } )
-			.then( ( res ) => setGroups( res.groups ?? [] ) )
-			.catch( () => setError( __( 'Could not load groups.', 'stepwise' ) ) )
-			.finally( () => setLoading( false ) );
+			.then( ( res ) => setAllGroups( res.groups ?? [] ) )
+			.catch( () => {} );
 	}, [] );
 
-	const handlePush = async ( groupId ) => {
-		if ( ! window.confirm( __( 'Push this workflow to all sites in the selected group? Steps will be locked and cannot be edited after pushing to the cloud.', 'stepwise' ) ) ) {
-			return;
-		}
-		setPushing( groupId );
+	const doPush = async () => {
+		setPushing( true );
 		setError( null );
 		try {
-			await apiFetch( {
-				path:   `/stepwise/v1/saas/groups/${ groupId }/assign`,
-				method: 'POST',
-				data:   { workflow_id: workflowId },
-			} );
-			const next = [ ...assignedIds, Number( groupId ) ];
-			setAssignedIds( next );
+			for ( const groupId of groupIds ) {
+				await apiFetch( {
+					path:   `/stepwise/v1/saas/groups/${ groupId }/assign`,
+					method: 'POST',
+					data:   { workflow_id: workflowId },
+				} );
+			}
 			await fetchWorkflows();
 			onPushed();
+			onClose();
 		} catch ( err ) {
 			setError( err.message ?? __( 'Push failed.', 'stepwise' ) );
-		} finally {
-			setPushing( null );
+			setPushing( false );
 		}
 	};
 
+	// No groups assigned yet
+	if ( ! hasGroups ) {
+		return (
+			<Modal
+				title={ __( 'Push to Cloud', 'stepwise' ) }
+				onClose={ onClose }
+				size="sm"
+				footer={
+					<Button variant="ghost" onClick={ onClose }>
+						{ __( 'Close', 'stepwise' ) }
+					</Button>
+				}
+			>
+				<p style={ { marginBottom: '10px' } }>
+					{ __( 'No groups assigned to this workflow yet.', 'stepwise' ) }
+				</p>
+				<p style={ { fontSize: '13px', color: '#555' } }>
+					{ __( 'Open the workflow in the step builder, use the "Assign to Group" panel to tag which groups should receive it, then come back and push.', 'stepwise' ) }
+				</p>
+			</Modal>
+		);
+	}
+
 	return (
 		<Modal
-			title={ __( 'Assign to Group', 'stepwise' ) }
+			title={ __( 'Before you push…', 'stepwise' ) }
 			onClose={ onClose }
 			size="sm"
 			footer={
-				<Button variant="ghost" onClick={ onClose }>
-					{ __( 'Close', 'stepwise' ) }
-				</Button>
+				<>
+					<Button variant="ghost" onClick={ onClose } disabled={ pushing }>
+						{ __( 'Cancel', 'stepwise' ) }
+					</Button>
+					<Button variant="primary" onClick={ doPush } disabled={ pushing }>
+						{ pushing ? __( 'Pushing…', 'stepwise' ) : __( 'Yes, push it', 'stepwise' ) }
+					</Button>
+				</>
 			}
 		>
-			<p className="ap-help" style={ { marginBottom: '16px' } }>
-				{ __( 'Push this workflow to all sites in a group via the cloud.', 'stepwise' ) }
+			<p style={ { marginBottom: '12px' } }>
+				{ __( 'Make sure your workflow is finalised before pushing. Once pushed to the cloud:', 'stepwise' ) }
 			</p>
-
-			{ error && <p className="ap-error" style={ { marginBottom: '12px' } }>{ error }</p> }
-
-			{ loading && <p>{ __( 'Loading groups…', 'stepwise' ) }</p> }
-
-			{ ! loading && ! groups.length && (
-				<div className="ap-push-no-groups">
-					<p>{ __( 'This site is not in any groups yet.', 'stepwise' ) }</p>
-					<p style={ { marginTop: '10px' } }>{ __( 'Groups are created and managed from your Stepwise Cloud dashboard. To push this workflow:', 'stepwise' ) }</p>
-					<ol style={ { marginTop: '8px', paddingLeft: '18px', lineHeight: '1.9' } }>
-						<li>{ __( 'Go to your Stepwise Cloud dashboard → Groups → create a group and add this site to it.', 'stepwise' ) }</li>
-						<li>{ __( 'Come back here and open "Assign to Group" again.', 'stepwise' ) }</li>
-					</ol>
-				</div>
-			) }
-
-			{ ! loading && groups.length > 0 && (
-				<div className="ap-push-groups">
-					{ groups.map( ( g ) => {
-						const isAssigned = assignedIds.includes( Number( g.id ) );
-						const isBusy     = pushing === g.id;
-						return (
-							<div key={ g.id } className="ap-push-group-row">
-								<span className="ap-push-group-row__name">{ g.name }</span>
-								{ isAssigned ? (
-									<span className="ap-push-group-row__assigned">
-										{ __( 'Assigned ✓', 'stepwise' ) }
-									</span>
-								) : (
-									<Button
-										variant="secondary"
-										disabled={ isBusy || pushing !== null }
-										onClick={ () => handlePush( g.id ) }
-									>
-										{ isBusy ? __( 'Assigning…', 'stepwise' ) : __( 'Assign', 'stepwise' ) }
-									</Button>
-								) }
-							</div>
-						);
-					} ) }
-				</div>
-			) }
+			<ul style={ { paddingLeft: '20px', marginBottom: '12px', lineHeight: 1.7 } }>
+				<li>{ __( 'You cannot add, remove, or reorder steps', 'stepwise' ) }</li>
+				<li>{ __( 'Step titles and settings are locked', 'stepwise' ) }</li>
+			</ul>
+			<p style={ { color: '#16a34a', fontSize: '13px', marginBottom: '16px' } }>
+				{ __( '✓ You can still run the workflow, complete steps, and add notes normally.', 'stepwise' ) }
+			</p>
+			<p style={ { fontSize: '13px', color: '#555', marginBottom: '6px' } }>
+				{ __( 'Will be pushed to:', 'stepwise' ) }
+			</p>
+			<ul style={ { paddingLeft: '20px', lineHeight: 1.8, fontSize: '13px' } }>
+				{ groupIds.map( ( id ) => {
+					const name = allGroups.find( ( g ) => Number( g.id ) === id )?.name;
+					return <li key={ id }>{ name ?? `#${ id }` }</li>;
+				} ) }
+			</ul>
+			{ error && <p style={ { color: '#dc2626', fontSize: '13px', marginTop: '12px' } }>{ error }</p> }
 		</Modal>
 	);
 };
