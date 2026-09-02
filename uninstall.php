@@ -18,7 +18,6 @@ global $wpdb;
 // WP-Cron fire hooks that no longer have a listener. This is safe either way.
 wp_clear_scheduled_hook( 'routinekit_cleanup_capture_buffer' );
 wp_clear_scheduled_hook( 'routinekit_saas_heartbeat' );
-wp_clear_scheduled_hook( 'stepwise_saas_heartbeat' ); // legacy — clears any pre-rebrand cron still in the DB
 
 /*
  * Data removal is opt-in. By default a delete leaves workflows, steps, executions,

@@ -243,5 +243,12 @@ class Routinekit_SaaS_Sync {
 			$plan = sanitize_text_field( $result['plan'] );
 			update_option( 'routinekit_license_plan', $plan );
 		}
+
+		// Also pull assignments here so they arrive on sites nobody logs into.
+		// maybe_pull_assignments() is otherwise only reached on admin_init, which
+		// on an unattended client site may not fire for days. Its own transient
+		// keeps this from doubling up when an admin is active. Every guard above
+		// (connected, staging, clone) has already passed by this point.
+		$this->maybe_pull_assignments();
 	}
 }
