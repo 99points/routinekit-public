@@ -1,7 +1,6 @@
 <?php
 /**
  * Plugin Name:       RoutineKit — Reusable Configuration Checklists
- * Plugin URI:        https://profiles.wordpress.org/codeleftover/
  * Description:       RoutineKit lets you build reusable, step-by-step site configuration checklists and run them across client sites — saving hours of repetitive WordPress setup work.
  * Version:           1.0.0
  * Requires at least: 6.0
