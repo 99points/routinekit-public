@@ -512,7 +512,7 @@ class Routinekit_REST_Step_Notes {
 	public function sync_permission() {
 		// SaaS calls this with the site's API key in the header
 		$api_key = get_option( 'routinekit_site_api_key', '' );
-		$header  = isset( $_SERVER['HTTP_X_STEPWISE_KEY'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_STEPWISE_KEY'] ) ) : '';
+		$header  = isset( $_SERVER['HTTP_X_ROUTINEKIT_KEY'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_ROUTINEKIT_KEY'] ) ) : '';
 		if ( $api_key && hash_equals( $api_key, $header ) ) {
 			return true;
 		}
