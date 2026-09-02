@@ -5,9 +5,9 @@ import { __ } from '@wordpress/i18n';
 import AddToWorkflowModal from './AddToWorkflowModal';
 import '../store';
 
-const { captureAutodismiss = 8, captureEnabled = true } = window.stepwiseData ?? {};
+const { captureAutodismiss = 8, captureEnabled = true } = window.routinekitData ?? {};
 
-const CLOSED_KEY = 'stepwise_toast_closed_ids';
+const CLOSED_KEY = 'routinekit_toast_closed_ids';
 
 const getClosedIds = () => {
 	try { return new Set( JSON.parse( localStorage.getItem( CLOSED_KEY ) || '[]' ).map( String ) ); }
@@ -23,17 +23,17 @@ const CaptureToast = () => {
 	const [ visible, setVisible ]     = useState( false );
 	const [ showModal, setShowModal ] = useState( false );
 
-	const { fetchActiveExecution }  = useDispatch( 'stepwise/execution' );
-	const activeExecution = useSelect( ( select ) => select( 'stepwise/execution' ).getActiveExecution() );
+	const { fetchActiveExecution }  = useDispatch( 'routinekit/execution' );
+	const activeExecution = useSelect( ( select ) => select( 'routinekit/execution' ).getActiveExecution() );
 	const hasActiveRun    = !! activeExecution && activeExecution.status === 'in_progress';
 
 	// On mount: fetch execution state, then fetch captures only if a run is active.
 	useEffect( () => {
 		if ( ! captureEnabled ) return;
 		fetchActiveExecution().then( () => {
-			const exec = window.wp?.data?.select( 'stepwise/execution' )?.getActiveExecution();
+			const exec = window.wp?.data?.select( 'routinekit/execution' )?.getActiveExecution();
 			if ( ! exec || exec.status !== 'in_progress' ) return;
-			apiFetch( { path: '/stepwise/v1/capture/all' } )
+			apiFetch( { path: '/routinekit/v1/capture/all' } )
 				.then( ( data ) => {
 					if ( data?.changes?.length > 0 ) {
 						const closedIds  = getClosedIds();
@@ -73,7 +73,7 @@ const CaptureToast = () => {
 
 	const handleDismiss = () => {
 		apiFetch( {
-			path:   '/stepwise/v1/capture/dismiss',
+			path:   '/routinekit/v1/capture/dismiss',
 			method: 'DELETE',
 			data:   { capture_ids: changes.map( ( c ) => c.id ) },
 		} ).catch( () => {} );
@@ -90,34 +90,34 @@ const CaptureToast = () => {
 					type="button"
 					className="ap-capture-toast__close"
 					onClick={ handleClose }
-					aria-label={ __( 'Close', 'stepwise' ) }
+					aria-label={ __( 'Close', 'routinekit' ) }
 				>
 					&times;
 				</button>
 				<div className="ap-capture-toast__body">
 					<strong>
 						{ count } { count === 1
-							? __( 'setting changed', 'stepwise' )
-							: __( 'settings changed', 'stepwise' ) }
+							? __( 'setting changed', 'routinekit' )
+							: __( 'settings changed', 'routinekit' ) }
 					</strong>
 					<span className="ap-capture-toast__sub">
-						{ __( 'Add to workflow?', 'stepwise' ) }
+						{ __( 'Add to workflow?', 'routinekit' ) }
 					</span>
 				</div>
 				<div className="ap-capture-toast__actions">
 					<button
 						type="button"
-						className="stepwise-btn stepwise-btn--primary stepwise-btn--sm"
+						className="routinekit-btn routinekit-btn--primary routinekit-btn--sm"
 						onClick={ () => setShowModal( true ) }
 					>
-						{ __( 'Add to Workflow', 'stepwise' ) }
+						{ __( 'Add to Workflow', 'routinekit' ) }
 					</button>
 					<button
 						type="button"
-						className="stepwise-btn stepwise-btn--ghost stepwise-btn--sm"
+						className="routinekit-btn routinekit-btn--ghost routinekit-btn--sm"
 						onClick={ handleDismiss }
 					>
-						{ __( 'Dismiss', 'stepwise' ) }
+						{ __( 'Dismiss', 'routinekit' ) }
 					</button>
 				</div>
 			</div>

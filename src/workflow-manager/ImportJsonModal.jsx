@@ -11,7 +11,7 @@ const ImportJsonModal = ( { onClose } ) => {
 	const [ saving, setSaving ] = useState( false );
 	const [ error, setError ]   = useState( null );
 
-	const { fetchWorkflows } = useDispatch( 'stepwise/workflows' );
+	const { fetchWorkflows } = useDispatch( 'routinekit/workflows' );
 
 	const handleFile = ( e ) => {
 		setError( null );
@@ -28,37 +28,37 @@ const ImportJsonModal = ( { onClose } ) => {
 			const text = await file.text();
 			parsed = JSON.parse( text );
 		} catch {
-			setError( __( 'Invalid JSON file — please check and try again.', 'stepwise' ) );
+			setError( __( 'Invalid JSON file — please check and try again.', 'routinekit' ) );
 			return;
 		}
 
 		setSaving( true );
 		try {
 			const workflow = await apiFetch( {
-				path:   '/stepwise/v1/workflows/import',
+				path:   '/routinekit/v1/workflows/import',
 				method: 'POST',
 				data:   parsed,
 			} );
 			await fetchWorkflows();
 			onClose();
 			if ( workflow?.id ) {
-				const editUrl = `${ window.stepwiseData?.adminUrl ?? '' }admin.php?page=stepwise&workflow_id=${ workflow.id }`;
+				const editUrl = `${ window.routinekitData?.adminUrl ?? '' }admin.php?page=routinekit&workflow_id=${ workflow.id }`;
 				window.location.href = editUrl;
 			}
 		} catch ( err ) {
-			setError( err.message ?? __( 'Import failed.', 'stepwise' ) );
+			setError( err.message ?? __( 'Import failed.', 'routinekit' ) );
 			setSaving( false );
 		}
 	};
 
 	return (
 		<Modal
-			title={ __( 'Import Workflow', 'stepwise' ) }
+			title={ __( 'Import Workflow', 'routinekit' ) }
 			onClose={ onClose }
 			footer={
 				<>
 					<Button variant="ghost" onClick={ onClose } disabled={ saving }>
-						{ __( 'Cancel', 'stepwise' ) }
+						{ __( 'Cancel', 'routinekit' ) }
 					</Button>
 					<Button
 						variant="primary"
@@ -66,7 +66,7 @@ const ImportJsonModal = ( { onClose } ) => {
 						form="ap-import-json-form"
 						disabled={ ! file || saving }
 					>
-						{ saving ? __( 'Importing…', 'stepwise' ) : __( 'Import', 'stepwise' ) }
+						{ saving ? __( 'Importing…', 'routinekit' ) : __( 'Import', 'routinekit' ) }
 					</Button>
 				</>
 			}
@@ -74,15 +74,15 @@ const ImportJsonModal = ( { onClose } ) => {
 			<form id="ap-import-json-form" onSubmit={ handleSubmit }>
 				{ error && <p className="ap-error">{ error }</p> }
 				<div className="ap-field">
-					<label className="stepwise-label" htmlFor="ap-import-json">
-						{ __( 'Workflow JSON file', 'stepwise' ) }
+					<label className="routinekit-label" htmlFor="ap-import-json">
+						{ __( 'Workflow JSON file', 'routinekit' ) }
 						<span className="ap-required" aria-hidden="true"> *</span>
 					</label>
 					<input
 						id="ap-import-json"
 						type="file"
 						accept=".json,application/json"
-						className="stepwise-input"
+						className="routinekit-input"
 						onChange={ handleFile }
 						required
 						autoFocus
@@ -92,7 +92,7 @@ const ImportJsonModal = ( { onClose } ) => {
 					) }
 					{ ! file && (
 						<p className="ap-help">
-							{ __( 'Select the .json file exported from another Stepwise installation.', 'stepwise' ) }
+							{ __( 'Select the .json file exported from another RoutineKit installation.', 'routinekit' ) }
 						</p>
 					) }
 				</div>

@@ -2,7 +2,7 @@
 defined( 'ABSPATH' ) || exit;
 ?>
 <div class="wrap">
-	<div id="stepwise-root" data-page="settings"></div>
+	<div id="routinekit-root" data-page="settings"></div>
 </div>
-<div id="stepwise-runner-root"></div>
-<div id="stepwise-capture-root"></div>
+<div id="routinekit-runner-root"></div>
+<div id="routinekit-capture-root"></div>

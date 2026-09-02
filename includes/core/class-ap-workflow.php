@@ -5,9 +5,9 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Workflow CRUD model.
  *
- * Wraps all database operations for the stepwise_workflows table.
+ * Wraps all database operations for the routinekit_workflows table.
  */
-class Stepwise_Workflow {
+class Routinekit_Workflow {
 
 	/** @var int */
 	public int $id;
@@ -61,11 +61,11 @@ class Stepwise_Workflow {
 	 * @param int $id
 	 * @return static|null
 	 */
-	public static function get( int $id ): ?Stepwise_Workflow {
+	public static function get( int $id ): ?Routinekit_Workflow {
 		global $wpdb;
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}stepwise_workflows WHERE id = %d LIMIT 1",
+				"SELECT * FROM {$wpdb->prefix}routinekit_workflows WHERE id = %d LIMIT 1",
 				$id
 			)
 		);
@@ -89,7 +89,7 @@ class Stepwise_Workflow {
 		if ( $status ) {
 			$rows = $wpdb->get_results(
 				$wpdb->prepare(
-					"SELECT * FROM {$wpdb->prefix}stepwise_workflows
+					"SELECT * FROM {$wpdb->prefix}routinekit_workflows
 					 WHERE status = %s
 					 ORDER BY updated_at DESC
 					 LIMIT %d OFFSET %d",
@@ -101,7 +101,7 @@ class Stepwise_Workflow {
 		} else {
 			$rows = $wpdb->get_results(
 				$wpdb->prepare(
-					"SELECT * FROM {$wpdb->prefix}stepwise_workflows
+					"SELECT * FROM {$wpdb->prefix}routinekit_workflows
 					 ORDER BY updated_at DESC
 					 LIMIT %d OFFSET %d",
 					$limit,
@@ -138,18 +138,18 @@ class Stepwise_Workflow {
 		];
 
 		if ( empty( $insert['title'] ) ) {
-			return new WP_Error( 'stepwise_invalid', __( 'Workflow title is required.', 'stepwise' ) );
+			return new WP_Error( 'routinekit_invalid', __( 'Workflow title is required.', 'routinekit' ) );
 		}
 
 		$result = $wpdb->insert(
-			$wpdb->prefix . 'stepwise_workflows',
+			$wpdb->prefix . 'routinekit_workflows',
 			$insert,
 			[ '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d' ]
 		);
 
 		if ( false === $result ) {
-			stepwise_log( 'Workflow insert failed: ' . $wpdb->last_error, 'workflow' );
-			return new WP_Error( 'stepwise_db_error', __( 'Could not create workflow.', 'stepwise' ) );
+			routinekit_log( 'Workflow insert failed: ' . $wpdb->last_error, 'workflow' );
+			return new WP_Error( 'routinekit_db_error', __( 'Could not create workflow.', 'routinekit' ) );
 		}
 
 		return static::get( (int) $wpdb->insert_id );
@@ -199,11 +199,11 @@ class Stepwise_Workflow {
 		}
 
 		if ( empty( $update ) ) {
-			return static::get( $id ) ?? new WP_Error( 'stepwise_not_found', __( 'Workflow not found.', 'stepwise' ) );
+			return static::get( $id ) ?? new WP_Error( 'routinekit_not_found', __( 'Workflow not found.', 'routinekit' ) );
 		}
 
 		$result = $wpdb->update(
-			$wpdb->prefix . 'stepwise_workflows',
+			$wpdb->prefix . 'routinekit_workflows',
 			$update,
 			[ 'id' => $id ],
 			$formats,
@@ -211,10 +211,10 @@ class Stepwise_Workflow {
 		);
 
 		if ( false === $result ) {
-			return new WP_Error( 'stepwise_db_error', __( 'Could not update workflow.', 'stepwise' ) );
+			return new WP_Error( 'routinekit_db_error', __( 'Could not update workflow.', 'routinekit' ) );
 		}
 
-		do_action( 'stepwise_workflow_saved', $id );
+		do_action( 'routinekit_workflow_saved', $id );
 
 		return static::get( $id );
 	}
@@ -229,19 +229,19 @@ class Stepwise_Workflow {
 		global $wpdb;
 
 		$execution_ids = $wpdb->get_col( $wpdb->prepare(
-			"SELECT id FROM {$wpdb->prefix}stepwise_executions WHERE workflow_id = %d",
+			"SELECT id FROM {$wpdb->prefix}routinekit_executions WHERE workflow_id = %d",
 			$id
 		) );
 
 		if ( $execution_ids ) {
 			$placeholders = implode( ',', array_fill( 0, count( $execution_ids ), '%d' ) );
-			$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->prefix}stepwise_step_completions WHERE execution_id IN ($placeholders)", $execution_ids ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+			$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->prefix}routinekit_step_completions WHERE execution_id IN ($placeholders)", $execution_ids ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 		}
 
-		$wpdb->delete( $wpdb->prefix . 'stepwise_executions',  [ 'workflow_id' => $id ], [ '%d' ] );
-		$wpdb->delete( $wpdb->prefix . 'stepwise_step_notes', [ 'workflow_id' => $id ], [ '%d' ] );
-		$wpdb->delete( $wpdb->prefix . 'stepwise_steps',      [ 'workflow_id' => $id ], [ '%d' ] );
-		$deleted = $wpdb->delete( $wpdb->prefix . 'stepwise_workflows', [ 'id' => $id ], [ '%d' ] );
+		$wpdb->delete( $wpdb->prefix . 'routinekit_executions',  [ 'workflow_id' => $id ], [ '%d' ] );
+		$wpdb->delete( $wpdb->prefix . 'routinekit_step_notes', [ 'workflow_id' => $id ], [ '%d' ] );
+		$wpdb->delete( $wpdb->prefix . 'routinekit_steps',      [ 'workflow_id' => $id ], [ '%d' ] );
+		$deleted = $wpdb->delete( $wpdb->prefix . 'routinekit_workflows', [ 'id' => $id ], [ '%d' ] );
 
 		return (bool) $deleted;
 	}
@@ -257,12 +257,12 @@ class Stepwise_Workflow {
 		if ( $status ) {
 			return (int) $wpdb->get_var(
 				$wpdb->prepare(
-					"SELECT COUNT(*) FROM {$wpdb->prefix}stepwise_workflows WHERE status = %s",
+					"SELECT COUNT(*) FROM {$wpdb->prefix}routinekit_workflows WHERE status = %s",
 					$status
 				)
 			);
 		}
-		return (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}stepwise_workflows" );
+		return (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}routinekit_workflows" );
 	}
 
 	/**
@@ -271,7 +271,7 @@ class Stepwise_Workflow {
 	 * @param object $row
 	 * @return static
 	 */
-	public static function from_row( object $row ): Stepwise_Workflow {
+	public static function from_row( object $row ): Routinekit_Workflow {
 		$instance               = new static();
 		$instance->id           = (int) $row->id;
 		$instance->title        = $row->title;
@@ -297,12 +297,12 @@ class Stepwise_Workflow {
 	/**
 	 * Serialize the workflow to an array (for REST responses and SaaS sync).
 	 *
-	 * @param Stepwise_Step[]|null $preloaded_steps Pass pre-fetched steps to avoid an extra query per workflow.
+	 * @param Routinekit_Step[]|null $preloaded_steps Pass pre-fetched steps to avoid an extra query per workflow.
 	 *                                         null triggers a single per-workflow fetch (fine for single-item responses).
 	 * @return array
 	 */
 	public function to_array( ?array $preloaded_steps = null ): array {
-		$steps = $preloaded_steps ?? Stepwise_Step::for_workflow( $this->id );
+		$steps = $preloaded_steps ?? Routinekit_Step::for_workflow( $this->id );
 		return [
 			'id'           => $this->id,
 			'title'        => $this->title,

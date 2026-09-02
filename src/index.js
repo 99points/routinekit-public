@@ -3,8 +3,8 @@ import apiFetch from '@wordpress/api-fetch';
 import './store';
 
 // Wire up the REST nonce so every apiFetch call sends X-WP-Nonce automatically.
-if ( window.stepwiseData?.nonce ) {
-	apiFetch.use( apiFetch.createNonceMiddleware( window.stepwiseData.nonce ) );
+if ( window.routinekitData?.nonce ) {
+	apiFetch.use( apiFetch.createNonceMiddleware( window.routinekitData.nonce ) );
 }
 
 // Debug log — stores every apiFetch request/response for the on-page panel.
@@ -40,13 +40,13 @@ apiFetch.use( ( options, next ) => {
 	);
 } );
 
-const rootEl = document.getElementById( 'stepwise-root' );
+const rootEl = document.getElementById( 'routinekit-root' );
 
 if ( rootEl ) {
-	const page       = rootEl.dataset.page ?? window.stepwiseData?.currentPage ?? 'workflows';
+	const page       = rootEl.dataset.page ?? window.routinekitData?.currentPage ?? 'workflows';
 	const workflowId = rootEl.dataset.workflowId
 		? parseInt( rootEl.dataset.workflowId, 10 )
-		: ( window.stepwiseData?.workflowId ?? null );
+		: ( window.routinekitData?.workflowId ?? null );
 
 	const mount = ( App ) => render( <App />, rootEl );
 

@@ -9,13 +9,13 @@ const {
 	isConnected   = false,
 	saasPlan      = 'free',
 	currentUserId = 0,
-} = window.stepwiseData ?? {};
+} = window.routinekitData ?? {};
 
 const canShare = isConnected && [ 'agency', 'agency_pro' ].includes( saasPlan );
 
 const ALLOWED_TYPES = [ 'image/jpeg', 'image/png', 'image/gif', 'image/webp' ];
 const MAX_MB        = 10;
-const SHARE_TOOLTIP = __( 'By default, notes are private to this site — only users here can see them. Turn this on to broadcast the note (and any screenshot) to all connected sites that share this workflow via Stepwise Cloud.', 'stepwise' );
+const SHARE_TOOLTIP = __( 'By default, notes are private to this site — only users here can see them. Turn this on to broadcast the note (and any screenshot) to all connected sites that share this workflow via RoutineKit Cloud.', 'routinekit' );
 
 // ── Image modal ───────────────────────────────────────────────────────────────
 const ImageModal = ( { src, onClose } ) => {
@@ -27,10 +27,10 @@ const ImageModal = ( { src, onClose } ) => {
 
 	return createPortal(
 		<div className="ap-img-modal" role="dialog" aria-modal="true" onClick={ onClose }>
-			<button type="button" className="ap-img-modal__close" onClick={ onClose } aria-label={ __( 'Close', 'stepwise' ) }>×</button>
+			<button type="button" className="ap-img-modal__close" onClick={ onClose } aria-label={ __( 'Close', 'routinekit' ) }>×</button>
 			<img
 				src={ src }
-				alt={ __( 'Screenshot', 'stepwise' ) }
+				alt={ __( 'Screenshot', 'routinekit' ) }
 				className="ap-img-modal__img"
 				onClick={ ( e ) => e.stopPropagation() }
 			/>
@@ -52,7 +52,7 @@ const Tip = ( { text } ) => {
 				onBlur={ () => setVisible( false ) }
 				tabIndex={ 0 }
 				role="button"
-				aria-label={ __( 'More info', 'stepwise' ) }
+				aria-label={ __( 'More info', 'routinekit' ) }
 			>?</span>
 			{ visible && (
 				<span className="ap-tip__bubble" role="tooltip">{ text }</span>
@@ -72,7 +72,7 @@ const NoteRow = ( { note, stepId, onDeleted, onScreenshotChange } ) => {
 	const isMine                        = note.is_mine;
 
 	const uploadFile = async ( file ) => {
-		if ( ! ALLOWED_TYPES.includes( file.type ) ) { setUploadErr( __( 'JPEG, PNG, GIF, or WebP only.', 'stepwise' ) ); return; }
+		if ( ! ALLOWED_TYPES.includes( file.type ) ) { setUploadErr( __( 'JPEG, PNG, GIF, or WebP only.', 'routinekit' ) ); return; }
 		if ( file.size > MAX_MB * 1024 * 1024 ) { setUploadErr( `Max ${ MAX_MB }MB.` ); return; }
 		setUploadErr( null );
 		setUploading( true );
@@ -80,10 +80,10 @@ const NoteRow = ( { note, stepId, onDeleted, onScreenshotChange } ) => {
 		formData.append( 'screenshot', file );
 		try {
 			const res = await window.fetch(
-				`${ window.stepwiseData?.restUrl ?? '/wp-json/stepwise/v1/' }steps/${ stepId }/notes/${ note.id }/screenshot`,
-				{ method: 'POST', headers: { 'X-WP-Nonce': window.stepwiseData?.nonce ?? '' }, body: formData }
+				`${ window.routinekitData?.restUrl ?? '/wp-json/routinekit/v1/' }steps/${ stepId }/notes/${ note.id }/screenshot`,
+				{ method: 'POST', headers: { 'X-WP-Nonce': window.routinekitData?.nonce ?? '' }, body: formData }
 			);
-			if ( ! res.ok ) throw new Error( ( await res.json().catch( () => ( {} ) ) ).message ?? __( 'Upload failed.', 'stepwise' ) );
+			if ( ! res.ok ) throw new Error( ( await res.json().catch( () => ( {} ) ) ).message ?? __( 'Upload failed.', 'routinekit' ) );
 			const data = await res.json();
 			setScreenshot( data.screenshot_url );
 			onScreenshotChange?.( note.id, data.screenshot_url );
@@ -98,17 +98,17 @@ const NoteRow = ( { note, stepId, onDeleted, onScreenshotChange } ) => {
 	const handleDeleteScreenshot = async () => {
 		setUploading( true );
 		try {
-			await apiFetch( { path: `/stepwise/v1/steps/${ stepId }/notes/${ note.id }/screenshot`, method: 'DELETE' } );
+			await apiFetch( { path: `/routinekit/v1/steps/${ stepId }/notes/${ note.id }/screenshot`, method: 'DELETE' } );
 			setScreenshot( null );
 			onScreenshotChange?.( note.id, null );
 		} catch { /* silent */ } finally { setUploading( false ); }
 	};
 
 	const handleDeleteNote = async () => {
-		if ( ! window.confirm( __( 'Delete this note?', 'stepwise' ) ) ) return;
+		if ( ! window.confirm( __( 'Delete this note?', 'routinekit' ) ) ) return;
 		setDeleting( true );
 		try {
-			await apiFetch( { path: `/stepwise/v1/steps/${ stepId }/notes/${ note.id }`, method: 'DELETE' } );
+			await apiFetch( { path: `/routinekit/v1/steps/${ stepId }/notes/${ note.id }`, method: 'DELETE' } );
 			onDeleted( note.id );
 		} catch { setDeleting( false ); }
 	};
@@ -129,14 +129,14 @@ const NoteRow = ( { note, stepId, onDeleted, onScreenshotChange } ) => {
 					<span className="ap-note__site-badge">{ note.source_site_label }</span>
 				) }
 				{ note.shared && ! note.is_sideloaded && (
-					<span className="ap-note__shared-badge">{ __( 'shared', 'stepwise' ) }</span>
+					<span className="ap-note__shared-badge">{ __( 'shared', 'routinekit' ) }</span>
 				) }
 				{ ! note.shared && ! note.is_sideloaded && (
-					<span className="ap-note__private-badge">{ __( 'private', 'stepwise' ) }</span>
+					<span className="ap-note__private-badge">{ __( 'private', 'routinekit' ) }</span>
 				) }
 				<span className="ap-note__time">{ formatTime( note.created_at ) }</span>
 				{ isMine && (
-					<button type="button" className="ap-note__delete" onClick={ handleDeleteNote } disabled={ deleting } title={ __( 'Delete note', 'stepwise' ) }>
+					<button type="button" className="ap-note__delete" onClick={ handleDeleteNote } disabled={ deleting } title={ __( 'Delete note', 'routinekit' ) }>
 						{ deleting ? '…' : '×' }
 					</button>
 				) }
@@ -149,15 +149,15 @@ const NoteRow = ( { note, stepId, onDeleted, onScreenshotChange } ) => {
 				<div className="ap-note__screenshot">
 					<img
 						src={ screenshot }
-						alt={ __( 'Screenshot', 'stepwise' ) }
+						alt={ __( 'Screenshot', 'routinekit' ) }
 						className="ap-note__screenshot-img ap-note__screenshot-img--clickable"
 						onClick={ () => setModalOpen( true ) }
-						title={ __( 'Click to expand', 'stepwise' ) }
+						title={ __( 'Click to expand', 'routinekit' ) }
 					/>
-					<span className="ap-note__screenshot-badge">{ __( '1 of 1', 'stepwise' ) }</span>
+					<span className="ap-note__screenshot-badge">{ __( '1 of 1', 'routinekit' ) }</span>
 					{ isMine && (
 						<button type="button" className="ap-note__screenshot-remove" onClick={ handleDeleteScreenshot } disabled={ uploading }>
-							{ uploading ? '…' : __( 'Remove', 'stepwise' ) }
+							{ uploading ? '…' : __( 'Remove', 'routinekit' ) }
 						</button>
 					) }
 					{ modalOpen && <ImageModal src={ screenshot } onClose={ () => setModalOpen( false ) } /> }
@@ -168,7 +168,7 @@ const NoteRow = ( { note, stepId, onDeleted, onScreenshotChange } ) => {
 					<label className="ap-note__upload-label">
 						<input ref={ inputRef } type="file" accept={ ALLOWED_TYPES.join( ',' ) } onChange={ ( e ) => { const f = e.target.files?.[0]; if ( f ) uploadFile( f ); } } disabled={ uploading } className="ap-note__upload-input" />
 						<span className="ap-note__upload-btn">
-							{ uploading ? __( 'Uploading…', 'stepwise' ) : __( '+ Add screenshot', 'stepwise' ) }
+							{ uploading ? __( 'Uploading…', 'routinekit' ) : __( '+ Add screenshot', 'routinekit' ) }
 						</span>
 					</label>
 				</div>
@@ -190,7 +190,7 @@ const Compose = ( { stepId, onPosted, isSaas } ) => {
 	const toggleId                        = `ap-share-${ stepId }`;
 
 	const applyFile = ( file ) => {
-		if ( ! ALLOWED_TYPES.includes( file.type ) ) { setPostErr( __( 'JPEG, PNG, GIF, or WebP only.', 'stepwise' ) ); return; }
+		if ( ! ALLOWED_TYPES.includes( file.type ) ) { setPostErr( __( 'JPEG, PNG, GIF, or WebP only.', 'routinekit' ) ); return; }
 		if ( file.size > MAX_MB * 1024 * 1024 ) { setPostErr( `Max ${ MAX_MB }MB.` ); return; }
 		setFile( file );
 		setPreview( URL.createObjectURL( file ) );
@@ -245,13 +245,13 @@ const Compose = ( { stepId, onPosted, isSaas } ) => {
 					applyFile( new File( [ blob ], 'screenshot.png', { type: 'image/png' } ) );
 				} else {
 					console.error( '[AP screenshot] toBlob returned null' );
-					setPostErr( __( 'Capture failed. Try pasting a screenshot instead.', 'stepwise' ) );
+					setPostErr( __( 'Capture failed. Try pasting a screenshot instead.', 'routinekit' ) );
 				}
 				setCapturing( false );
 			}, 'image/png' );
 		} catch ( err ) {
 			console.error( '[AP screenshot]', err );
-			setPostErr( __( 'Capture failed. Try pasting a screenshot instead.', 'stepwise' ) );
+			setPostErr( __( 'Capture failed. Try pasting a screenshot instead.', 'routinekit' ) );
 			setCapturing( false );
 		} finally {
 			// Re-insert in reverse of deletion order (deletion was high→low, restore low→high).
@@ -277,7 +277,7 @@ const Compose = ( { stepId, onPosted, isSaas } ) => {
 		setPostErr( null );
 		try {
 			const note = await apiFetch( {
-				path:   `/stepwise/v1/steps/${ stepId }/notes`,
+				path:   `/routinekit/v1/steps/${ stepId }/notes`,
 				method: 'POST',
 				data:   { body: body.trim(), shared },
 			} );
@@ -286,8 +286,8 @@ const Compose = ( { stepId, onPosted, isSaas } ) => {
 				const formData = new FormData();
 				formData.append( 'screenshot', screenshotFile );
 				const res = await window.fetch(
-					`${ window.stepwiseData?.restUrl ?? '/wp-json/stepwise/v1/' }steps/${ stepId }/notes/${ note.id }/screenshot`,
-					{ method: 'POST', headers: { 'X-WP-Nonce': window.stepwiseData?.nonce ?? '' }, body: formData }
+					`${ window.routinekitData?.restUrl ?? '/wp-json/routinekit/v1/' }steps/${ stepId }/notes/${ note.id }/screenshot`,
+					{ method: 'POST', headers: { 'X-WP-Nonce': window.routinekitData?.nonce ?? '' }, body: formData }
 				);
 				if ( res.ok ) {
 					const data = await res.json();
@@ -300,7 +300,7 @@ const Compose = ( { stepId, onPosted, isSaas } ) => {
 			setShared( false );
 			clearFile();
 		} catch ( err ) {
-			setPostErr( err.message ?? __( 'Could not post note.', 'stepwise' ) );
+			setPostErr( err.message ?? __( 'Could not post note.', 'routinekit' ) );
 		} finally {
 			setPosting( false );
 		}
@@ -314,7 +314,7 @@ const Compose = ( { stepId, onPosted, isSaas } ) => {
 					className="ap-notes__input"
 					value={ body }
 					onChange={ ( e ) => setBody( e.target.value ) }
-					placeholder={ __( 'Add a note…', 'stepwise' ) }
+					placeholder={ __( 'Add a note…', 'routinekit' ) }
 					rows={ 3 }
 					onKeyDown={ ( e ) => { if ( e.key === 'Enter' && ( e.ctrlKey || e.metaKey ) ) handlePost(); } }
 					onPaste={ handlePaste }
@@ -325,12 +325,12 @@ const Compose = ( { stepId, onPosted, isSaas } ) => {
 					{ screenshotPreview ? (
 						<div className="ap-notes__preview">
 							<img src={ screenshotPreview } alt="" className="ap-notes__preview-img" />
-							<button type="button" className="ap-notes__preview-remove" onClick={ clearFile } title={ __( 'Remove screenshot', 'stepwise' ) }>×</button>
+							<button type="button" className="ap-notes__preview-remove" onClick={ clearFile } title={ __( 'Remove screenshot', 'routinekit' ) }>×</button>
 						</div>
 					) : (
 						<>
 							{ /* File picker */ }
-							<label className="ap-notes__ss-pick" title={ __( 'Attach image', 'stepwise' ) }>
+							<label className="ap-notes__ss-pick" title={ __( 'Attach image', 'routinekit' ) }>
 								<input ref={ fileRef } type="file" accept={ ALLOWED_TYPES.join( ',' ) } onChange={ handleFileSelect } className="ap-note__upload-input" />
 								<span className="ap-notes__ss-icon" aria-hidden="true">
 									<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -344,7 +344,7 @@ const Compose = ( { stepId, onPosted, isSaas } ) => {
 							<button
 								type="button"
 								className="ap-notes__ss-pick ap-notes__ss-capture"
-								title={ __( 'Capture page screenshot', 'stepwise' ) }
+								title={ __( 'Capture page screenshot', 'routinekit' ) }
 								onClick={ handleCapture }
 								disabled={ capturing }
 							>
@@ -366,7 +366,7 @@ const Compose = ( { stepId, onPosted, isSaas } ) => {
 					<span className="ap-notes__compose-spacer" />
 
 					<button type="button" className="ap-notes__post-btn" onClick={ handlePost } disabled={ posting || ! canPost }>
-						{ posting ? __( 'Posting…', 'stepwise' ) : __( 'Post', 'stepwise' ) }
+						{ posting ? __( 'Posting…', 'routinekit' ) : __( 'Post', 'routinekit' ) }
 					</button>
 				</div>
 			</div>
@@ -377,7 +377,7 @@ const Compose = ( { stepId, onPosted, isSaas } ) => {
 			{ canShare && ! isSaas && (
 				<div className="ap-notes__share-row">
 					<label className="ap-notes__share-label" htmlFor={ toggleId }>
-						{ __( 'Share to all sites', 'stepwise' ) }
+						{ __( 'Share to all sites', 'routinekit' ) }
 						<Tip text={ SHARE_TOOLTIP } />
 					</label>
 					<input
@@ -402,7 +402,7 @@ const RunnerNotes = ( { stepId, isSaas } ) => {
 	useEffect( () => {
 		let cancelled = false;
 		setLoading( true );
-		apiFetch( { path: `/stepwise/v1/steps/${ stepId }/notes` } )
+		apiFetch( { path: `/routinekit/v1/steps/${ stepId }/notes` } )
 			.then( ( data ) => { if ( ! cancelled ) setNotes( data ); } )
 			.catch( () => {} )
 			.finally( () => { if ( ! cancelled ) setLoading( false ); } );
@@ -415,10 +415,10 @@ const RunnerNotes = ( { stepId, isSaas } ) => {
 
 	return (
 		<div className="ap-notes">
-			<span className="ap-notes__label">{ __( 'Notes', 'stepwise' ) }</span>
+			<span className="ap-notes__label">{ __( 'Notes', 'routinekit' ) }</span>
 
 			{ loading ? (
-				<p className="ap-notes__loading">{ __( 'Loading…', 'stepwise' ) }</p>
+				<p className="ap-notes__loading">{ __( 'Loading…', 'routinekit' ) }</p>
 			) : notes.length > 0 ? (
 				<div className="ap-notes__thread">
 					{ notes.map( ( note ) => (
@@ -432,7 +432,7 @@ const RunnerNotes = ( { stepId, isSaas } ) => {
 					) ) }
 				</div>
 			) : (
-				<p className="ap-notes__empty">{ __( 'No notes yet.', 'stepwise' ) }</p>
+				<p className="ap-notes__empty">{ __( 'No notes yet.', 'routinekit' ) }</p>
 			) }
 
 			<Compose stepId={ stepId } onPosted={ handlePosted } isSaas={ isSaas } />
@@ -453,7 +453,7 @@ function formatTime( dateStr ) {
 	if ( ! dateStr ) return '';
 	const d    = new Date( dateStr );
 	const diff = ( Date.now() - d.getTime() ) / 1000;
-	if ( diff < 60 )    return __( 'just now', 'stepwise' );
+	if ( diff < 60 )    return __( 'just now', 'routinekit' );
 	if ( diff < 3600 )  return `${ Math.floor( diff / 60 ) }m ago`;
 	if ( diff < 86400 ) return `${ Math.floor( diff / 3600 ) }h ago`;
 	return d.toLocaleDateString();

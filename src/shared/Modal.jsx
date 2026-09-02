@@ -16,32 +16,32 @@ const Modal = ( { title, children, onClose, footer, size = 'md' } ) => {
 
 	// Trap focus inside modal
 	useEffect( () => {
-		overlayRef.current?.querySelector( '.stepwise-modal' )?.focus();
+		overlayRef.current?.querySelector( '.routinekit-modal' )?.focus();
 	}, [] );
 
 	return (
 		<div
 			ref={ overlayRef }
-			className="stepwise-modal-overlay"
+			className="routinekit-modal-overlay"
 			role="dialog"
 			aria-modal="true"
 			aria-label={ title }
 			onClick={ ( e ) => { if ( e.target === overlayRef.current ) onClose(); } }
 		>
-			<div className={ `stepwise-modal stepwise-modal--${ size }` } tabIndex="-1">
-				<div className="stepwise-modal__header">
-					<h2 className="stepwise-modal__title">{ title }</h2>
-					<button className="stepwise-modal__close" onClick={ onClose } aria-label="Close modal">
+			<div className={ `routinekit-modal routinekit-modal--${ size }` } tabIndex="-1">
+				<div className="routinekit-modal__header">
+					<h2 className="routinekit-modal__title">{ title }</h2>
+					<button className="routinekit-modal__close" onClick={ onClose } aria-label="Close modal">
 						&times;
 					</button>
 				</div>
 
-				<div className="stepwise-modal__body">
+				<div className="routinekit-modal__body">
 					{ children }
 				</div>
 
 				{ footer && (
-					<div className="stepwise-modal__footer">
+					<div className="routinekit-modal__footer">
 						{ footer }
 					</div>
 				) }

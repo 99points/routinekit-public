@@ -7,9 +7,9 @@ const CapturedStepsPanel = ( { workflowId } ) => {
 	const [ open, setOpen ]     = useState( true );
 	const [ adding, setAdding ] = useState( null );
 
-	const { fetchPendingCaptures, addToWorkflow } = useDispatch( 'stepwise/capture' );
-	const { addStep, fetchSteps }                 = useDispatch( 'stepwise/steps' );
-	const pendingChanges = useSelect( ( select ) => select( 'stepwise/capture' ).getPendingChanges() );
+	const { fetchPendingCaptures, addToWorkflow } = useDispatch( 'routinekit/capture' );
+	const { addStep, fetchSteps }                 = useDispatch( 'routinekit/steps' );
+	const pendingChanges = useSelect( ( select ) => select( 'routinekit/capture' ).getPendingChanges() );
 
 	useEffect( () => {
 		fetchPendingCaptures();
@@ -30,7 +30,7 @@ const CapturedStepsPanel = ( { workflowId } ) => {
 		setAdding( null );
 	};
 
-	const captureUrl = `${ window.stepwiseData?.adminUrl ?? '' }admin.php?page=stepwise-capture`;
+	const captureUrl = `${ window.routinekitData?.adminUrl ?? '' }admin.php?page=routinekit-capture`;
 
 	return (
 		<div className="ap-sidebar-panel">
@@ -41,7 +41,7 @@ const CapturedStepsPanel = ( { workflowId } ) => {
 			>
 				<span className="ap-sidebar-panel__title">
 					<span className={ `ap-capture-dot ${ pendingChanges.length > 0 ? 'ap-capture-dot--active' : '' }` } />
-					{ __( 'WordPress Changes', 'stepwise' ) }
+					{ __( 'WordPress Changes', 'routinekit' ) }
 				</span>
 				<span className="ap-sidebar-panel__chevron">{ open ? '∧' : '∨' }</span>
 			</button>
@@ -51,16 +51,16 @@ const CapturedStepsPanel = ( { workflowId } ) => {
 					{ pendingChanges.length === 0 ? (
 						<>
 							<p className="ap-sidebar-panel__empty">
-								{ __( 'No pending WordPress option changes detected.', 'stepwise' ) }
+								{ __( 'No pending WordPress option changes detected.', 'routinekit' ) }
 							</p>
 							<p className="ap-sidebar-panel__help" style={ { marginTop: 4 } }>
-								{ __( 'To add steps manually, use the ⊕ Capture Step button on any admin page.', 'stepwise' ) }
+								{ __( 'To add steps manually, use the ⊕ Capture Step button on any admin page.', 'routinekit' ) }
 							</p>
 						</>
 					) : (
 						<>
 							<p className="ap-sidebar-panel__help">
-								{ __( 'WordPress detected these setting changes — add them as steps:', 'stepwise' ) }
+								{ __( 'WordPress detected these setting changes — add them as steps:', 'routinekit' ) }
 							</p>
 							<ul className="ap-captured-list">
 								{ preview.map( ( change ) => {
@@ -79,11 +79,11 @@ const CapturedStepsPanel = ( { workflowId } ) => {
 												) }
 											</div>
 											<button
-												className="stepwise-btn stepwise-btn--primary stepwise-btn--sm"
+												className="routinekit-btn routinekit-btn--primary routinekit-btn--sm"
 												onClick={ () => handleAdd( change ) }
 												disabled={ adding === change.id }
 											>
-												{ adding === change.id ? '…' : __( '+ Add', 'stepwise' ) }
+												{ adding === change.id ? '…' : __( '+ Add', 'routinekit' ) }
 											</button>
 										</li>
 									);
@@ -92,7 +92,7 @@ const CapturedStepsPanel = ( { workflowId } ) => {
 
 							{ remaining > 0 && (
 								<a href={ captureUrl } className="ap-captured-viewall">
-									{ __( `View all ${ pendingChanges.length } captured changes →`, 'stepwise' ) }
+									{ __( `View all ${ pendingChanges.length } captured changes →`, 'routinekit' ) }
 								</a>
 							) }
 						</>

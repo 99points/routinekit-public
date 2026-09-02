@@ -4,11 +4,11 @@ import { __ } from '@wordpress/i18n';
 import AuditTrail from '../runner/AuditTrail';
 
 const STATUS_LABEL = {
-	completed:   __( 'Completed', 'stepwise' ),
-	in_progress: __( 'In Progress', 'stepwise' ),
-	paused:      __( 'Paused', 'stepwise' ),
-	abandoned:   __( 'Abandoned', 'stepwise' ),
-	pending:     __( 'Pending', 'stepwise' ),
+	completed:   __( 'Completed', 'routinekit' ),
+	in_progress: __( 'In Progress', 'routinekit' ),
+	paused:      __( 'Paused', 'routinekit' ),
+	abandoned:   __( 'Abandoned', 'routinekit' ),
+	pending:     __( 'Pending', 'routinekit' ),
 };
 
 const STATUS_CLASS = {
@@ -32,7 +32,7 @@ const RunHistory = ( { workflowId, workflowTitle } ) => {
 	const [ expandedId, setExpandedId ] = useState( null );
 
 	useEffect( () => {
-		apiFetch( { path: `/stepwise/v1/executions?workflow_id=${ workflowId }` } )
+		apiFetch( { path: `/routinekit/v1/executions?workflow_id=${ workflowId }` } )
 			.then( ( data ) => setExecutions( Array.isArray( data ) ? data : [] ) )
 			.catch( () => setExecutions( [] ) )
 			.finally( () => setLoading( false ) );
@@ -45,7 +45,7 @@ const RunHistory = ( { workflowId, workflowTitle } ) => {
 			<div className="ap-run-history">
 				<div className="ap-loading">
 					<span className="spinner is-active" />
-					{ __( 'Loading run history…', 'stepwise' ) }
+					{ __( 'Loading run history…', 'routinekit' ) }
 				</div>
 			</div>
 		);
@@ -55,9 +55,9 @@ const RunHistory = ( { workflowId, workflowTitle } ) => {
 		return (
 			<div className="ap-run-history">
 				<div className="ap-run-history__empty">
-					<p>{ __( 'No runs yet.', 'stepwise' ) }</p>
+					<p>{ __( 'No runs yet.', 'routinekit' ) }</p>
 					<p className="ap-run-history__empty-sub">
-						{ __( 'Use the Run button on the Workflows list to start a run.', 'stepwise' ) }
+						{ __( 'Use the Run button on the Workflows list to start a run.', 'routinekit' ) }
 					</p>
 				</div>
 			</div>
@@ -70,18 +70,18 @@ const RunHistory = ( { workflowId, workflowTitle } ) => {
 				<span className="ap-run-history__count">
 					{ executions.length }{ ' ' }
 					{ executions.length === 1
-						? __( 'run', 'stepwise' )
-						: __( 'runs', 'stepwise' ) }
+						? __( 'run', 'routinekit' )
+						: __( 'runs', 'routinekit' ) }
 				</span>
 			</div>
 
-			<table className="stepwise-table ap-run-history__table">
+			<table className="routinekit-table ap-run-history__table">
 				<thead>
 					<tr>
-						<th>{ __( 'Status', 'stepwise' ) }</th>
-						<th>{ __( 'Started', 'stepwise' ) }</th>
-						<th>{ __( 'Completed / Paused', 'stepwise' ) }</th>
-						<th>{ __( 'Run by', 'stepwise' ) }</th>
+						<th>{ __( 'Status', 'routinekit' ) }</th>
+						<th>{ __( 'Started', 'routinekit' ) }</th>
+						<th>{ __( 'Completed / Paused', 'routinekit' ) }</th>
+						<th>{ __( 'Run by', 'routinekit' ) }</th>
 						<th></th>
 					</tr>
 				</thead>
@@ -92,7 +92,7 @@ const RunHistory = ( { workflowId, workflowTitle } ) => {
 								className={ `ap-run-history__row ${ expandedId === ex.id ? 'ap-run-history__row--expanded' : '' }` }
 							>
 								<td>
-									<span className={ `stepwise-badge stepwise-badge--${ STATUS_CLASS[ ex.status ] ?? 'draft' }` }>
+									<span className={ `routinekit-badge routinekit-badge--${ STATUS_CLASS[ ex.status ] ?? 'draft' }` }>
 										{ STATUS_LABEL[ ex.status ] ?? ex.status }
 									</span>
 								</td>
@@ -104,7 +104,7 @@ const RunHistory = ( { workflowId, workflowTitle } ) => {
 									{ ex.started_by }
 									{ ex.status === 'paused' && ex.paused_by && (
 										<span className="ap-run-history__paused-by">
-											{ ' · ' }{ __( 'paused by', 'stepwise' ) }{ ' ' }{ ex.paused_by }
+											{ ' · ' }{ __( 'paused by', 'routinekit' ) }{ ' ' }{ ex.paused_by }
 										</span>
 									) }
 								</td>
@@ -116,8 +116,8 @@ const RunHistory = ( { workflowId, workflowTitle } ) => {
 											onClick={ () => toggleAudit( ex.id ) }
 										>
 											{ expandedId === ex.id
-												? __( 'Hide audit trail ▲', 'stepwise' )
-												: __( 'View audit trail ▼', 'stepwise' ) }
+												? __( 'Hide audit trail ▲', 'routinekit' )
+												: __( 'View audit trail ▼', 'routinekit' ) }
 										</button>
 									) }
 								</td>

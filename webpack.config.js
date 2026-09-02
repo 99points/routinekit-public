@@ -47,9 +47,9 @@ module.exports = {
 	},
 	entry: {
 		// Main admin bundle — Workflow Manager, Step Builder, Settings
-		'stepwise-admin': path.resolve( __dirname, 'src/index.js' ),
+		'routinekit-admin': path.resolve( __dirname, 'src/index.js' ),
 		// Lightweight capture + runner bundle — loaded on every wp-admin page
-		'stepwise-capture': path.resolve( __dirname, 'src/capture-entry.js' ),
+		'routinekit-capture': path.resolve( __dirname, 'src/capture-entry.js' ),
 	},
 	output: {
 		...defaultConfig.output,
@@ -62,7 +62,7 @@ module.exports = {
 		publicPath: 'auto',
 		// Unique global so this plugin's chunks don't collide with other
 		// wp-scripts builds (or with each other when both bundles are loaded).
-		chunkLoadingGlobal: 'webpackChunkStepwise',
+		chunkLoadingGlobal: 'webpackChunkRoutinekit',
 	},
 	optimization: {
 		...defaultConfig.optimization,

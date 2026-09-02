@@ -25,24 +25,24 @@ const {
 	saasConnected = false,
 	isPro         = false,
 	upgradeUrl    = '#',
-} = window.stepwiseData ?? {};
+} = window.routinekitData ?? {};
 
 // ── SaaS Connect CTA (shown in sidebar when not connected) ───────────────────
 const SaasConnectCta = () => {
-	const settingsUrl = ( window.stepwiseData?.adminUrl ?? '' ) + 'admin.php?page=stepwise-settings#cloud';
+	const settingsUrl = ( window.routinekitData?.adminUrl ?? '' ) + 'admin.php?page=routinekit-settings#cloud';
 
 	return (
 		<div className="ap-saas-cta">
 			<div className="ap-saas-cta__icon">⚡</div>
 			<div className="ap-saas-cta__body">
 				<strong className="ap-saas-cta__heading">
-					{ __( 'Run this on multiple sites', 'stepwise' ) }
+					{ __( 'Run this on multiple sites', 'routinekit' ) }
 				</strong>
 				<p className="ap-saas-cta__text">
-					{ __( 'Connect your free Stepwise account to push this workflow to client sites, track completions, and manage everything from one dashboard — no re-building required.', 'stepwise' ) }
+					{ __( 'Connect your free RoutineKit account to push this workflow to client sites, track completions, and manage everything from one dashboard — no re-building required.', 'routinekit' ) }
 				</p>
 				<a href={ settingsUrl } className="ap-saas-cta__btn">
-					{ __( 'Connect free →', 'stepwise' ) }
+					{ __( 'Connect free →', 'routinekit' ) }
 				</a>
 			</div>
 		</div>
@@ -52,7 +52,7 @@ const SaasConnectCta = () => {
 // ── Workflow Setup Checklist ─────────────────────────────────────────────────
 const WorkflowChecklist = ( { workflow, steps } ) => {
 	const [ dismissed, setDismissed ] = useState(
-		() => !! localStorage.getItem( `stepwise_checklist_dismissed_${ workflow.id }` )
+		() => !! localStorage.getItem( `routinekit_checklist_dismissed_${ workflow.id }` )
 	);
 
 	if ( dismissed ) return null;
@@ -65,47 +65,47 @@ const WorkflowChecklist = ( { workflow, steps } ) => {
 
 	const proItems = [
 		{
-			label:  __( 'Activate the workflow', 'stepwise' ),
-			detail: __( 'Set status to Active so it can be run.', 'stepwise' ),
+			label:  __( 'Activate the workflow', 'routinekit' ),
+			detail: __( 'Set status to Active so it can be run.', 'routinekit' ),
 			done:   isActive,
 		},
 		{
-			label:  __( 'Run the workflow', 'stepwise' ),
-			detail: __( 'Hit Run — the runner appears on every admin page while it\'s active.', 'stepwise' ),
+			label:  __( 'Run the workflow', 'routinekit' ),
+			detail: __( 'Hit Run — the runner appears on every admin page while it\'s active.', 'routinekit' ),
 			done:   hasRunBefore,
 		},
 		{
-			label:  __( 'Add steps as you go', 'stepwise' ),
-			detail: __( 'Document each task from the runner. Steps stay editable until you push to cloud.', 'stepwise' ),
+			label:  __( 'Add steps as you go', 'routinekit' ),
+			detail: __( 'Document each task from the runner. Steps stay editable until you push to cloud.', 'routinekit' ),
 			done:   hasSteps,
 		},
 		{
-			label:  __( 'Push to Cloud', 'stepwise' ),
-			detail: __( 'When steps are finalised — locks them and uploads to your cloud.', 'stepwise' ),
+			label:  __( 'Push to Cloud', 'routinekit' ),
+			detail: __( 'When steps are finalised — locks them and uploads to your cloud.', 'routinekit' ),
 			done:   isPushed,
 			divider: true,
 		},
 		{
-			label:  __( 'Assign to a group', 'stepwise' ),
-			detail: __( 'Distribute to all sites in a group.', 'stepwise' ),
+			label:  __( 'Assign to a group', 'routinekit' ),
+			detail: __( 'Distribute to all sites in a group.', 'routinekit' ),
 			done:   isAssigned,
 		},
 	];
 
 	const freeItems = [
 		{
-			label:  __( 'Activate the workflow', 'stepwise' ),
-			detail: __( 'Set status to Active so it can be run.', 'stepwise' ),
+			label:  __( 'Activate the workflow', 'routinekit' ),
+			detail: __( 'Set status to Active so it can be run.', 'routinekit' ),
 			done:   isActive,
 		},
 		{
-			label:  __( 'Run the workflow', 'stepwise' ),
-			detail: __( 'Hit Run — the runner appears on every admin page while it\'s active.', 'stepwise' ),
+			label:  __( 'Run the workflow', 'routinekit' ),
+			detail: __( 'Hit Run — the runner appears on every admin page while it\'s active.', 'routinekit' ),
 			done:   hasRunBefore,
 		},
 		{
-			label:  __( 'Add steps as you go', 'stepwise' ),
-			detail: __( 'Document each task from the runner sidebar.', 'stepwise' ),
+			label:  __( 'Add steps as you go', 'routinekit' ),
+			detail: __( 'Document each task from the runner sidebar.', 'routinekit' ),
 			done:   hasSteps,
 		},
 	];
@@ -115,7 +115,7 @@ const WorkflowChecklist = ( { workflow, steps } ) => {
 	const allDone     = doneCount === items.length;
 
 	const handleDismiss = () => {
-		localStorage.setItem( `stepwise_checklist_dismissed_${ workflow.id }`, '1' );
+		localStorage.setItem( `routinekit_checklist_dismissed_${ workflow.id }`, '1' );
 		setDismissed( true );
 	};
 
@@ -125,16 +125,16 @@ const WorkflowChecklist = ( { workflow, steps } ) => {
 				<div className="ap-wf-checklist__head-left">
 					<span className="ap-wf-checklist__eyebrow">
 						{ allDone
-							? __( 'Workflow ready', 'stepwise' )
-							: sprintf( __( '%1$d of %2$d complete', 'stepwise' ), doneCount, items.length ) }
+							? __( 'Workflow ready', 'routinekit' )
+							: sprintf( __( '%1$d of %2$d complete', 'routinekit' ), doneCount, items.length ) }
 					</span>
 					<h3 className="ap-wf-checklist__title">
 						{ allDone
-							? __( 'You\'re all set — this workflow is live.', 'stepwise' )
-							: __( 'Get this workflow ready to run', 'stepwise' ) }
+							? __( 'You\'re all set — this workflow is live.', 'routinekit' )
+							: __( 'Get this workflow ready to run', 'routinekit' ) }
 					</h3>
 				</div>
-				<button className="ap-wf-checklist__dismiss" onClick={ handleDismiss } aria-label={ __( 'Dismiss', 'stepwise' ) }>
+				<button className="ap-wf-checklist__dismiss" onClick={ handleDismiss } aria-label={ __( 'Dismiss', 'routinekit' ) }>
 					✕
 				</button>
 			</div>
@@ -170,12 +170,12 @@ const GroupAssignPanel = ( { workflowId, pushedGroupIds = [], category = '' } ) 
 	const [ assignedIds, setAssignedIds ] = useState( pushedGroupIds.map( Number ) );
 	const [ error, setError ]             = useState( null );
 
-	const { fetchWorkflows } = useDispatch( 'stepwise/workflows' );
+	const { fetchWorkflows } = useDispatch( 'routinekit/workflows' );
 
 	useEffect( () => {
-		apiFetch( { path: '/stepwise/v1/saas/groups' } )
+		apiFetch( { path: '/routinekit/v1/saas/groups' } )
 			.then( ( res ) => setGroups( res.groups ?? [] ) )
-			.catch( () => setError( __( 'Could not load groups.', 'stepwise' ) ) )
+			.catch( () => setError( __( 'Could not load groups.', 'routinekit' ) ) )
 			.finally( () => setLoading( false ) );
 	}, [] );
 
@@ -185,14 +185,14 @@ const GroupAssignPanel = ( { workflowId, pushedGroupIds = [], category = '' } ) 
 		try {
 			const next = [ ...assignedIds, Number( groupId ) ];
 			await apiFetch( {
-				path:   `/stepwise/v1/workflows/${ workflowId }/assign-groups`,
+				path:   `/routinekit/v1/workflows/${ workflowId }/assign-groups`,
 				method: 'POST',
 				data:   { group_ids: next },
 			} );
 			setAssignedIds( next );
 			await fetchWorkflows();
 		} catch ( e ) {
-			setError( e.message ?? __( 'Could not save group assignment.', 'stepwise' ) );
+			setError( e.message ?? __( 'Could not save group assignment.', 'routinekit' ) );
 		} finally {
 			setPushing( null );
 		}
@@ -204,14 +204,14 @@ const GroupAssignPanel = ( { workflowId, pushedGroupIds = [], category = '' } ) 
 		try {
 			const next = assignedIds.filter( ( id ) => id !== Number( groupId ) );
 			await apiFetch( {
-				path:   `/stepwise/v1/workflows/${ workflowId }/assign-groups`,
+				path:   `/routinekit/v1/workflows/${ workflowId }/assign-groups`,
 				method: 'POST',
 				data:   { group_ids: next },
 			} );
 			setAssignedIds( next );
 			await fetchWorkflows();
 		} catch ( e ) {
-			setError( e.message ?? __( 'Could not remove group assignment.', 'stepwise' ) );
+			setError( e.message ?? __( 'Could not remove group assignment.', 'routinekit' ) );
 		} finally {
 			setPushing( null );
 		}
@@ -222,7 +222,7 @@ const GroupAssignPanel = ( { workflowId, pushedGroupIds = [], category = '' } ) 
 		<div className="ap-sidebar-panel">
 			<div className="ap-sidebar-panel__body">
 				<p className="ap-sidebar-panel__empty" style={ { fontSize: '12px', color: '#888' } }>
-					{ __( 'This site has not been added to any groups yet. Groups are created and managed from your Stepwise Cloud dashboard — add this site to a group there first.', 'stepwise' ) }
+					{ __( 'This site has not been added to any groups yet. Groups are created and managed from your RoutineKit Cloud dashboard — add this site to a group there first.', 'routinekit' ) }
 				</p>
 			</div>
 		</div>
@@ -231,11 +231,11 @@ const GroupAssignPanel = ( { workflowId, pushedGroupIds = [], category = '' } ) 
 	return (
 		<div className="ap-sidebar-panel">
 			<div className="ap-sidebar-panel__toggle" style={ { cursor: 'default' } }>
-				<span className="ap-sidebar-panel__title">{ __( 'Assign to Group', 'stepwise' ) }</span>
+				<span className="ap-sidebar-panel__title">{ __( 'Assign to Group', 'routinekit' ) }</span>
 			</div>
 			<div className="ap-sidebar-panel__body">
 				<p style={ { fontSize: '12px', color: '#666', marginBottom: '8px' } }>
-					{ __( 'Push this workflow to every site in a group. Groups are created and managed from your Stepwise Cloud dashboard.', 'stepwise' ) }
+					{ __( 'Push this workflow to every site in a group. Groups are created and managed from your RoutineKit Cloud dashboard.', 'routinekit' ) }
 				</p>
 				{ error && <p style={ { fontSize: '12px', color: '#dc2626', marginBottom: '8px' } }>{ error }</p> }
 				{ groups.map( ( group ) => {
@@ -251,7 +251,7 @@ const GroupAssignPanel = ( { workflowId, pushedGroupIds = [], category = '' } ) 
 									onClick={ () => handleUnassign( group.id ) }
 									disabled={ isBusy || pushing !== null }
 								>
-									{ isBusy ? __( 'Removing…', 'stepwise' ) : __( 'Remove', 'stepwise' ) }
+									{ isBusy ? __( 'Removing…', 'routinekit' ) : __( 'Remove', 'routinekit' ) }
 								</Button>
 							) : (
 								<Button
@@ -260,7 +260,7 @@ const GroupAssignPanel = ( { workflowId, pushedGroupIds = [], category = '' } ) 
 									onClick={ () => handleAssign( group.id ) }
 									disabled={ isBusy || pushing !== null }
 								>
-									{ isBusy ? __( 'Assigning…', 'stepwise' ) : __( 'Assign', 'stepwise' ) }
+									{ isBusy ? __( 'Assigning…', 'routinekit' ) : __( 'Assign', 'routinekit' ) }
 								</Button>
 							) }
 						</div>
@@ -274,15 +274,15 @@ const GroupAssignPanel = ( { workflowId, pushedGroupIds = [], category = '' } ) 
 const PlaybookSettingsPanel = ( { workflow, workflowId } ) => {
 	const [ open, setOpen ]             = useState( true );
 	const [ status, setStatus ]         = useState( workflow.status === 'active' );
-	const [ category, setCategory ]     = useState( workflow.category || window.stepwiseData?.defaultCategory || '' );
+	const [ category, setCategory ]     = useState( workflow.category || window.routinekitData?.defaultCategory || '' );
 	const [ saving, setSaving ]         = useState( false );
 	const [ showConfirm, setShowConfirm ] = useState( false );
 
-	const { saveWorkflow } = useDispatch( 'stepwise/workflows' );
+	const { saveWorkflow } = useDispatch( 'routinekit/workflows' );
 
 	// Auto-save the default category on mount if the workflow has none yet.
 	useEffect( () => {
-		const def = window.stepwiseData?.defaultCategory;
+		const def = window.routinekitData?.defaultCategory;
 		if ( ! workflow.category && def ) {
 			saveWorkflow( workflowId, { category: def } ).catch( () => {} );
 		}
@@ -313,7 +313,7 @@ const PlaybookSettingsPanel = ( { workflow, workflowId } ) => {
 	};
 
 	const fmt = ( dateStr ) => {
-		if ( ! dateStr ) return __( '—', 'stepwise' );
+		if ( ! dateStr ) return __( '—', 'routinekit' );
 		return new Date( dateStr ).toLocaleDateString( undefined, { year: 'numeric', month: 'long', day: 'numeric' } );
 	};
 
@@ -324,66 +324,66 @@ const PlaybookSettingsPanel = ( { workflow, workflowId } ) => {
 				onClick={ () => setOpen( o => ! o ) }
 				aria-expanded={ open }
 			>
-				<span className="ap-sidebar-panel__title">{ __( 'Playbook Settings', 'stepwise' ) }</span>
+				<span className="ap-sidebar-panel__title">{ __( 'Playbook Settings', 'routinekit' ) }</span>
 				<span className="ap-sidebar-panel__chevron">{ open ? '∧' : '∨' }</span>
 			</button>
 
 			{ open && (
 				<div className="ap-sidebar-panel__body">
 					<div className="ap-sidebar-panel__row">
-						<span className="ap-sidebar-panel__label">{ __( 'STATUS', 'stepwise' ) }</span>
+						<span className="ap-sidebar-panel__label">{ __( 'STATUS', 'routinekit' ) }</span>
 						{ canEdit ? (
 							<Toggle
 								id={ `workflow-status-${ workflowId }` }
 								checked={ status }
 								onChange={ handleStatusToggle }
-								label={ status ? __( 'Active', 'stepwise' ) : __( 'Draft', 'stepwise' ) }
+								label={ status ? __( 'Active', 'routinekit' ) : __( 'Draft', 'routinekit' ) }
 							/>
 						) : (
-							<span className={ `stepwise-badge stepwise-badge--${ status ? 'active' : 'draft' }` }>
-								{ status ? __( 'Active', 'stepwise' ) : __( 'Draft', 'stepwise' ) }
+							<span className={ `routinekit-badge routinekit-badge--${ status ? 'active' : 'draft' }` }>
+								{ status ? __( 'Active', 'routinekit' ) : __( 'Draft', 'routinekit' ) }
 							</span>
 						) }
 					</div>
 
 					<div className="ap-sidebar-panel__row ap-sidebar-panel__row--stack">
-						<span className="ap-sidebar-panel__label">{ __( 'CATEGORY', 'stepwise' ) }</span>
+						<span className="ap-sidebar-panel__label">{ __( 'CATEGORY', 'routinekit' ) }</span>
 						{ canEdit ? (
 							<select
-								className="stepwise-select"
+								className="routinekit-select"
 								value={ category }
 								onChange={ ( e ) => handleCategoryChange( e.target.value ) }
 								disabled={ saving }
 							>
 								{ CATEGORIES.map( ( c ) => (
-									<option key={ c } value={ c }>{ c || __( '— None —', 'stepwise' ) }</option>
+									<option key={ c } value={ c }>{ c || __( '— None —', 'routinekit' ) }</option>
 								) ) }
 							</select>
 						) : (
-							<span className="ap-sidebar-panel__value">{ category || __( '— None —', 'stepwise' ) }</span>
+							<span className="ap-sidebar-panel__value">{ category || __( '— None —', 'routinekit' ) }</span>
 						) }
 					</div>
 
 					<div className="ap-sidebar-panel__row ap-sidebar-panel__row--stack">
-						<span className="ap-sidebar-panel__label">{ __( 'CREATED', 'stepwise' ) }</span>
+						<span className="ap-sidebar-panel__label">{ __( 'CREATED', 'routinekit' ) }</span>
 						<span className="ap-sidebar-panel__value">{ fmt( workflow.created_at ) }</span>
 					</div>
 
 					<div className="ap-sidebar-panel__row ap-sidebar-panel__row--stack">
-						<span className="ap-sidebar-panel__label">{ __( 'LAST MODIFIED', 'stepwise' ) }</span>
+						<span className="ap-sidebar-panel__label">{ __( 'LAST MODIFIED', 'routinekit' ) }</span>
 						<span className="ap-sidebar-panel__value">{ fmt( workflow.updated_at ) }</span>
 					</div>
 
 					<div className="ap-sidebar-panel__row ap-sidebar-panel__row--stack">
-						<span className="ap-sidebar-panel__label">{ __( 'TIMES RUN', 'stepwise' ) }</span>
+						<span className="ap-sidebar-panel__label">{ __( 'TIMES RUN', 'routinekit' ) }</span>
 						<span className="ap-sidebar-panel__value">
 							{ workflow.run_count > 0
 								? sprintf(
 									/* translators: %d: number of times run */
-									__( '%d times', 'stepwise' ),
+									__( '%d times', 'routinekit' ),
 									workflow.run_count
 								)
-								: __( 'Never', 'stepwise' )
+								: __( 'Never', 'routinekit' )
 							}
 						</span>
 					</div>
@@ -392,25 +392,25 @@ const PlaybookSettingsPanel = ( { workflow, workflowId } ) => {
 
 			{ showConfirm && (
 				<Modal
-					title={ __( 'Deactivate Workflow?', 'stepwise' ) }
+					title={ __( 'Deactivate Workflow?', 'routinekit' ) }
 					onClose={ () => setShowConfirm( false ) }
 					size="sm"
 					footer={
 						<>
 							<Button variant="ghost" onClick={ () => setShowConfirm( false ) }>
-								{ __( 'Cancel', 'stepwise' ) }
+								{ __( 'Cancel', 'routinekit' ) }
 							</Button>
 							<Button variant="danger" onClick={ () => confirmStatusChange( false ) }>
-								{ __( 'Yes, Deactivate', 'stepwise' ) }
+								{ __( 'Yes, Deactivate', 'routinekit' ) }
 							</Button>
 						</>
 					}
 				>
-					<p>{ __( 'Setting this workflow to Draft will:', 'stepwise' ) }</p>
+					<p>{ __( 'Setting this workflow to Draft will:', 'routinekit' ) }</p>
 					<ul className="ap-confirm-list">
-						<li>{ __( 'Hide it from the Run Workflow list', 'stepwise' ) }</li>
-						<li>{ __( 'Prevent anyone from starting a new run', 'stepwise' ) }</li>
-						<li>{ __( 'Any run currently in progress will be allowed to finish', 'stepwise' ) }</li>
+						<li>{ __( 'Hide it from the Run Workflow list', 'routinekit' ) }</li>
+						<li>{ __( 'Prevent anyone from starting a new run', 'routinekit' ) }</li>
+						<li>{ __( 'Any run currently in progress will be allowed to finish', 'routinekit' ) }</li>
 					</ul>
 				</Modal>
 			) }
@@ -425,12 +425,12 @@ const StepBuilder = ( { workflowId } ) => {
 	const [ activeTab, setActiveTab ]             = useState( 'steps' );
 	const [ showPushModal, setShowPushModal ]     = useState( false );
 
-	const { fetchWorkflows, saveWorkflow } = useDispatch( 'stepwise/workflows' );
-	const { fetchSteps }                   = useDispatch( 'stepwise/steps' );
+	const { fetchWorkflows, saveWorkflow } = useDispatch( 'routinekit/workflows' );
+	const { fetchSteps }                   = useDispatch( 'routinekit/steps' );
 
-	const workflow = useSelect( ( select ) => select( 'stepwise/workflows' ).getWorkflow( workflowId ) );
-	const steps    = useSelect( ( select ) => select( 'stepwise/steps' ).getSteps( workflowId ) );
-	const isSaving = useSelect( ( select ) => select( 'stepwise/workflows' ).isSaving() );
+	const workflow = useSelect( ( select ) => select( 'routinekit/workflows' ).getWorkflow( workflowId ) );
+	const steps    = useSelect( ( select ) => select( 'routinekit/steps' ).getSteps( workflowId ) );
+	const isSaving = useSelect( ( select ) => select( 'routinekit/workflows' ).isSaving() );
 
 	useEffect( () => {
 		fetchWorkflows();
@@ -454,7 +454,7 @@ const StepBuilder = ( { workflowId } ) => {
 	const handleOpenPushModal = () => {
 		if ( ! workflow.category ) {
 			// eslint-disable-next-line no-alert
-			alert( __( 'Please select a category in Playbook Settings before pushing to the cloud.', 'stepwise' ) );
+			alert( __( 'Please select a category in Playbook Settings before pushing to the cloud.', 'routinekit' ) );
 			return;
 		}
 		setShowPushModal( true );
@@ -465,13 +465,13 @@ const StepBuilder = ( { workflowId } ) => {
 		setEditingWorkflow( false );
 	};
 
-	const backUrl = `${ window.stepwiseData?.adminUrl ?? '' }admin.php?page=stepwise`;
+	const backUrl = `${ window.routinekitData?.adminUrl ?? '' }admin.php?page=routinekit`;
 
 	return (
 		<div className="ap-step-builder">
 			<div className="ap-step-builder__header">
 				<a href={ backUrl } className="ap-back-link">
-					← { __( 'All Workflows', 'stepwise' ) }
+					← { __( 'All Workflows', 'routinekit' ) }
 				</a>
 
 				<div className="ap-step-builder__title-row">
@@ -479,24 +479,24 @@ const StepBuilder = ( { workflowId } ) => {
 						<div className="ap-step-builder__title-edit">
 							<input
 								type="text"
-								className="stepwise-input stepwise-input--title"
+								className="routinekit-input routinekit-input--title"
 								value={ titleDraft }
 								onChange={ ( e ) => setTitleDraft( e.target.value ) }
 								autoFocus
 							/>
 							<textarea
-								className="stepwise-input ap-textarea"
+								className="routinekit-input ap-textarea"
 								value={ descDraft }
 								onChange={ ( e ) => setDescDraft( e.target.value ) }
-								placeholder={ __( 'Description (optional)', 'stepwise' ) }
+								placeholder={ __( 'Description (optional)', 'routinekit' ) }
 								rows={ 2 }
 							/>
 							<div className="ap-step-builder__title-actions">
 								<Button variant="primary" size="sm" onClick={ handleSaveWorkflow } disabled={ isSaving }>
-									{ isSaving ? __( 'Saving…', 'stepwise' ) : __( 'Save', 'stepwise' ) }
+									{ isSaving ? __( 'Saving…', 'routinekit' ) : __( 'Save', 'routinekit' ) }
 								</Button>
 								<Button variant="ghost" size="sm" onClick={ () => setEditingWorkflow( false ) }>
-									{ __( 'Cancel', 'stepwise' ) }
+									{ __( 'Cancel', 'routinekit' ) }
 								</Button>
 							</div>
 						</div>
@@ -512,17 +512,17 @@ const StepBuilder = ( { workflowId } ) => {
 								<Badge variant={ workflow.status }>{ workflow.status }</Badge>
 								{ isPushed && (
 									<span className="ap-pushed-badge">
-										{ __( '✓ Pushed to Cloud', 'stepwise' ) }
+										{ __( '✓ Pushed to Cloud', 'routinekit' ) }
 									</span>
 								) }
 								{ canEdit && saasConnected && (
 									<Button variant={ isPushed ? 'secondary' : 'primary' } size="sm" onClick={ handleOpenPushModal }>
-										{ isPushed ? __( 'Assign to Group', 'stepwise' ) : __( 'Push to Cloud', 'stepwise' ) }
+										{ isPushed ? __( 'Assign to Group', 'routinekit' ) : __( 'Push to Cloud', 'routinekit' ) }
 									</Button>
 								) }
 								{ canEdit && (
 									<Button variant="ghost" size="sm" onClick={ () => setEditingWorkflow( true ) }>
-										{ __( 'Edit', 'stepwise' ) }
+										{ __( 'Edit', 'routinekit' ) }
 									</Button>
 								) }
 							</div>
@@ -535,7 +535,7 @@ const StepBuilder = ( { workflowId } ) => {
 						className={ `ap-workflow-tab ${ activeTab === 'steps' ? 'is-active' : '' }` }
 						onClick={ () => setActiveTab( 'steps' ) }
 					>
-						{ __( 'Steps', 'stepwise' ) }
+						{ __( 'Steps', 'routinekit' ) }
 						<span className="ap-workflow-tab__count">{ steps.length }</span>
 					</button>
 					{ canEdit && (
@@ -543,7 +543,7 @@ const StepBuilder = ( { workflowId } ) => {
 							className={ `ap-workflow-tab ${ activeTab === 'history' ? 'is-active' : '' }` }
 							onClick={ () => setActiveTab( 'history' ) }
 						>
-							{ __( 'Run History', 'stepwise' ) }
+							{ __( 'Run History', 'routinekit' ) }
 						</button>
 					) }
 				</div>
@@ -556,17 +556,17 @@ const StepBuilder = ( { workflowId } ) => {
 						<WorkflowChecklist workflow={ workflow } steps={ steps } />
 					) }
 						<div className="ap-step-builder__steps-header">
-							<h2>{ __( 'Steps', 'stepwise' ) }</h2>
+							<h2>{ __( 'Steps', 'routinekit' ) }</h2>
 							<span className="ap-step-count">
 								{ steps.length } { steps.length === 1
-									? __( 'step', 'stepwise' )
-									: __( 'steps', 'stepwise' ) }
+									? __( 'step', 'routinekit' )
+									: __( 'steps', 'routinekit' ) }
 							</span>
 						</div>
 
 						{ stepsLocked && (
 							<div className="ap-steps-locked-notice">
-								{ __( 'Steps are locked — this workflow has been pushed to the cloud.', 'stepwise' ) }
+								{ __( 'Steps are locked — this workflow has been pushed to the cloud.', 'routinekit' ) }
 							</div>
 						) }
 						<StepList workflowId={ workflowId } steps={ steps } canEdit={ canEdit && ! stepsLocked } />

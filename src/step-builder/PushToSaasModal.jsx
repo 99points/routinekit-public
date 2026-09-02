@@ -11,14 +11,14 @@ const PushToSaasModal = ( { workflowId, pushedGroupIds = [], onClose, onPushed }
 	const [ error, setError ]         = useState( null );
 	const [ allGroups, setAllGroups ] = useState( [] );
 
-	const { fetchWorkflows } = useDispatch( 'stepwise/workflows' );
+	const { fetchWorkflows } = useDispatch( 'routinekit/workflows' );
 
 	const groupIds  = pushedGroupIds.map( Number );
 	const hasGroups = groupIds.length > 0;
 
 	useEffect( () => {
 		if ( ! hasGroups ) return;
-		apiFetch( { path: '/stepwise/v1/saas/groups' } )
+		apiFetch( { path: '/routinekit/v1/saas/groups' } )
 			.then( ( res ) => setAllGroups( res.groups ?? [] ) )
 			.catch( () => {} );
 	}, [] );
@@ -29,7 +29,7 @@ const PushToSaasModal = ( { workflowId, pushedGroupIds = [], onClose, onPushed }
 		try {
 			for ( const groupId of groupIds ) {
 				await apiFetch( {
-					path:   `/stepwise/v1/saas/groups/${ groupId }/assign`,
+					path:   `/routinekit/v1/saas/groups/${ groupId }/assign`,
 					method: 'POST',
 					data:   { workflow_id: workflowId },
 				} );
@@ -38,7 +38,7 @@ const PushToSaasModal = ( { workflowId, pushedGroupIds = [], onClose, onPushed }
 			onPushed();
 			onClose();
 		} catch ( err ) {
-			setError( err.message ?? __( 'Push failed.', 'stepwise' ) );
+			setError( err.message ?? __( 'Push failed.', 'routinekit' ) );
 			setPushing( false );
 		}
 	};
@@ -47,20 +47,20 @@ const PushToSaasModal = ( { workflowId, pushedGroupIds = [], onClose, onPushed }
 	if ( ! hasGroups ) {
 		return (
 			<Modal
-				title={ __( 'Push to Cloud', 'stepwise' ) }
+				title={ __( 'Push to Cloud', 'routinekit' ) }
 				onClose={ onClose }
 				size="sm"
 				footer={
 					<Button variant="ghost" onClick={ onClose }>
-						{ __( 'Close', 'stepwise' ) }
+						{ __( 'Close', 'routinekit' ) }
 					</Button>
 				}
 			>
 				<p style={ { marginBottom: '10px' } }>
-					{ __( 'No groups assigned to this workflow yet.', 'stepwise' ) }
+					{ __( 'No groups assigned to this workflow yet.', 'routinekit' ) }
 				</p>
 				<p style={ { fontSize: '13px', color: '#555' } }>
-					{ __( 'Open the workflow in the step builder, use the "Assign to Group" panel to tag which groups should receive it, then come back and push.', 'stepwise' ) }
+					{ __( 'Open the workflow in the step builder, use the "Assign to Group" panel to tag which groups should receive it, then come back and push.', 'routinekit' ) }
 				</p>
 			</Modal>
 		);
@@ -68,32 +68,32 @@ const PushToSaasModal = ( { workflowId, pushedGroupIds = [], onClose, onPushed }
 
 	return (
 		<Modal
-			title={ __( 'Before you push…', 'stepwise' ) }
+			title={ __( 'Before you push…', 'routinekit' ) }
 			onClose={ onClose }
 			size="sm"
 			footer={
 				<>
 					<Button variant="ghost" onClick={ onClose } disabled={ pushing }>
-						{ __( 'Cancel', 'stepwise' ) }
+						{ __( 'Cancel', 'routinekit' ) }
 					</Button>
 					<Button variant="primary" onClick={ doPush } disabled={ pushing }>
-						{ pushing ? __( 'Pushing…', 'stepwise' ) : __( 'Yes, push it', 'stepwise' ) }
+						{ pushing ? __( 'Pushing…', 'routinekit' ) : __( 'Yes, push it', 'routinekit' ) }
 					</Button>
 				</>
 			}
 		>
 			<p style={ { marginBottom: '12px' } }>
-				{ __( 'Make sure your workflow is finalised before pushing. Once pushed to the cloud:', 'stepwise' ) }
+				{ __( 'Make sure your workflow is finalised before pushing. Once pushed to the cloud:', 'routinekit' ) }
 			</p>
 			<ul style={ { paddingLeft: '20px', marginBottom: '12px', lineHeight: 1.7 } }>
-				<li>{ __( 'You cannot add, remove, or reorder steps', 'stepwise' ) }</li>
-				<li>{ __( 'Step titles and settings are locked', 'stepwise' ) }</li>
+				<li>{ __( 'You cannot add, remove, or reorder steps', 'routinekit' ) }</li>
+				<li>{ __( 'Step titles and settings are locked', 'routinekit' ) }</li>
 			</ul>
 			<p style={ { color: '#16a34a', fontSize: '13px', marginBottom: '16px' } }>
-				{ __( '✓ You can still run the workflow, complete steps, and add notes normally.', 'stepwise' ) }
+				{ __( '✓ You can still run the workflow, complete steps, and add notes normally.', 'routinekit' ) }
 			</p>
 			<p style={ { fontSize: '13px', color: '#555', marginBottom: '6px' } }>
-				{ __( 'Will be pushed to:', 'stepwise' ) }
+				{ __( 'Will be pushed to:', 'routinekit' ) }
 			</p>
 			<ul style={ { paddingLeft: '20px', lineHeight: 1.8, fontSize: '13px' } }>
 				{ groupIds.map( ( id ) => {

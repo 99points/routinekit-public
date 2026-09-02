@@ -1,15 +1,15 @@
 /*!
- * Stepwise — Auto-Capture watcher (vanilla JS, no jQuery/React)
- * Plugin:  Stepwise — Reusable Configuration Checklists
+ * RoutineKit — Auto-Capture watcher (vanilla JS, no jQuery/React)
+ * Plugin:  RoutineKit — Reusable Configuration Checklists
  * Version: 1.0.0
  * Author:  Zeeshan Rasool <https://profiles.wordpress.org/codeleftover/>
  * License: GPLv2 or later <https://www.gnu.org/licenses/gpl-2.0.html>
- * Source:  https://github.com/99points/stepwise-public
+ * Source:  https://github.com/99points/routinekit-public
  */
 ( function () {
 	'use strict';
 
-	var cfg = window.stepwiseCapture || {};
+	var cfg = window.routinekitCapture || {};
 	if ( ! cfg.restUrl || ! cfg.nonce ) return;
 
 	/* ─── Snapshot ─────────────────────────────────────────────────── */
@@ -79,7 +79,7 @@
 
 	function getActiveWorkflowId() {
 		try {
-			var exec = window.wp && window.wp.data && window.wp.data.select( 'stepwise/execution' ) && window.wp.data.select( 'stepwise/execution' ).getActiveExecution();
+			var exec = window.wp && window.wp.data && window.wp.data.select( 'routinekit/execution' ) && window.wp.data.select( 'routinekit/execution' ).getActiveExecution();
 			if ( exec && exec.status === 'in_progress' && exec.workflow_id ) return String( exec.workflow_id );
 		} catch ( e ) {}
 		return '';

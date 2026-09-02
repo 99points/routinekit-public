@@ -2,11 +2,11 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * REST controller for stepwise/v1/workflows/:id/steps
+ * REST controller for routinekit/v1/workflows/:id/steps
  */
-class Stepwise_REST_Steps extends WP_REST_Controller {
+class Routinekit_REST_Steps extends WP_REST_Controller {
 
-	protected $namespace = STEPWISE_REST_NAMESPACE;
+	protected $namespace = ROUTINEKIT_REST_NAMESPACE;
 
 	/**
 	 * Register all routes.
@@ -76,11 +76,11 @@ class Stepwise_REST_Steps extends WP_REST_Controller {
 	 */
 	public function get_items( $request ) {
 		$workflow_id = (int) $request['workflow_id'];
-		if ( ! Stepwise_Workflow::get( $workflow_id ) ) {
-			return new WP_Error( 'stepwise_not_found', __( 'Workflow not found.', 'stepwise' ), [ 'status' => 404 ] );
+		if ( ! Routinekit_Workflow::get( $workflow_id ) ) {
+			return new WP_Error( 'routinekit_not_found', __( 'Workflow not found.', 'routinekit' ), [ 'status' => 404 ] );
 		}
 
-		$steps = Stepwise_Step::for_workflow( $workflow_id );
+		$steps = Routinekit_Step::for_workflow( $workflow_id );
 		return rest_ensure_response( array_map( fn( $s ) => $s->to_array(), $steps ) );
 	}
 
@@ -91,9 +91,9 @@ class Stepwise_REST_Steps extends WP_REST_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function get_item( $request ) {
-		$step = Stepwise_Step::get( (int) $request['id'] );
+		$step = Routinekit_Step::get( (int) $request['id'] );
 		if ( ! $step || $step->workflow_id !== (int) $request['workflow_id'] ) {
-			return new WP_Error( 'stepwise_not_found', __( 'Step not found.', 'stepwise' ), [ 'status' => 404 ] );
+			return new WP_Error( 'routinekit_not_found', __( 'Step not found.', 'routinekit' ), [ 'status' => 404 ] );
 		}
 		return rest_ensure_response( $step->to_array() );
 	}
@@ -106,14 +106,14 @@ class Stepwise_REST_Steps extends WP_REST_Controller {
 	 */
 	public function create_item( $request ) {
 		$workflow_id = (int) $request['workflow_id'];
-		if ( ! Stepwise_Workflow::get( $workflow_id ) ) {
-			return new WP_Error( 'stepwise_not_found', __( 'Workflow not found.', 'stepwise' ), [ 'status' => 404 ] );
+		if ( ! Routinekit_Workflow::get( $workflow_id ) ) {
+			return new WP_Error( 'routinekit_not_found', __( 'Workflow not found.', 'routinekit' ), [ 'status' => 404 ] );
 		}
-		if ( stepwise_workflow_steps_locked( $workflow_id ) ) {
-			return new WP_Error( 'stepwise_locked', __( 'Steps cannot be added after a workflow has been pushed to the cloud.', 'stepwise' ), [ 'status' => 403 ] );
+		if ( routinekit_workflow_steps_locked( $workflow_id ) ) {
+			return new WP_Error( 'routinekit_locked', __( 'Steps cannot be added after a workflow has been pushed to the cloud.', 'routinekit' ), [ 'status' => 403 ] );
 		}
 
-		$step = Stepwise_Step::create( [
+		$step = Routinekit_Step::create( [
 			'workflow_id'       => $workflow_id,
 			'title'             => $request->get_param( 'title' ),
 			'description'       => $request->get_param( 'description' ) ?? '',
@@ -141,13 +141,13 @@ class Stepwise_REST_Steps extends WP_REST_Controller {
 	 */
 	public function update_item( $request ) {
 		$id   = (int) $request['id'];
-		$step = Stepwise_Step::get( $id );
+		$step = Routinekit_Step::get( $id );
 
 		if ( ! $step || $step->workflow_id !== (int) $request['workflow_id'] ) {
-			return new WP_Error( 'stepwise_not_found', __( 'Step not found.', 'stepwise' ), [ 'status' => 404 ] );
+			return new WP_Error( 'routinekit_not_found', __( 'Step not found.', 'routinekit' ), [ 'status' => 404 ] );
 		}
-		if ( stepwise_workflow_steps_locked( $step->workflow_id ) ) {
-			return new WP_Error( 'stepwise_locked', __( 'Steps cannot be edited after a workflow has been pushed to the cloud.', 'stepwise' ), [ 'status' => 403 ] );
+		if ( routinekit_workflow_steps_locked( $step->workflow_id ) ) {
+			return new WP_Error( 'routinekit_locked', __( 'Steps cannot be edited after a workflow has been pushed to the cloud.', 'routinekit' ), [ 'status' => 403 ] );
 		}
 
 		$data = array_filter( [
@@ -160,7 +160,7 @@ class Stepwise_REST_Steps extends WP_REST_Controller {
 			'sort_order'        => $request->get_param( 'sort_order' ),
 		], fn( $v ) => null !== $v );
 
-		$updated = Stepwise_Step::update( $id, $data );
+		$updated = Routinekit_Step::update( $id, $data );
 		if ( is_wp_error( $updated ) ) {
 			return $updated;
 		}
@@ -176,16 +176,16 @@ class Stepwise_REST_Steps extends WP_REST_Controller {
 	 */
 	public function delete_item( $request ) {
 		$id   = (int) $request['id'];
-		$step = Stepwise_Step::get( $id );
+		$step = Routinekit_Step::get( $id );
 
 		if ( ! $step || $step->workflow_id !== (int) $request['workflow_id'] ) {
-			return new WP_Error( 'stepwise_not_found', __( 'Step not found.', 'stepwise' ), [ 'status' => 404 ] );
+			return new WP_Error( 'routinekit_not_found', __( 'Step not found.', 'routinekit' ), [ 'status' => 404 ] );
 		}
-		if ( stepwise_workflow_steps_locked( $step->workflow_id ) ) {
-			return new WP_Error( 'stepwise_locked', __( 'Steps cannot be deleted after a workflow has been pushed to the cloud.', 'stepwise' ), [ 'status' => 403 ] );
+		if ( routinekit_workflow_steps_locked( $step->workflow_id ) ) {
+			return new WP_Error( 'routinekit_locked', __( 'Steps cannot be deleted after a workflow has been pushed to the cloud.', 'routinekit' ), [ 'status' => 403 ] );
 		}
 
-		Stepwise_Step::delete( $id );
+		Routinekit_Step::delete( $id );
 		return rest_ensure_response( [ 'deleted' => true, 'id' => $id ] );
 	}
 
@@ -197,32 +197,32 @@ class Stepwise_REST_Steps extends WP_REST_Controller {
 	 */
 	public function reorder_items( $request ) {
 		$workflow_id = (int) $request['workflow_id'];
-		if ( ! Stepwise_Workflow::get( $workflow_id ) ) {
-			return new WP_Error( 'stepwise_not_found', __( 'Workflow not found.', 'stepwise' ), [ 'status' => 404 ] );
+		if ( ! Routinekit_Workflow::get( $workflow_id ) ) {
+			return new WP_Error( 'routinekit_not_found', __( 'Workflow not found.', 'routinekit' ), [ 'status' => 404 ] );
 		}
-		if ( stepwise_workflow_steps_locked( $workflow_id ) ) {
-			return new WP_Error( 'stepwise_locked', __( 'Steps cannot be reordered after a workflow has been pushed to the cloud.', 'stepwise' ), [ 'status' => 403 ] );
+		if ( routinekit_workflow_steps_locked( $workflow_id ) ) {
+			return new WP_Error( 'routinekit_locked', __( 'Steps cannot be reordered after a workflow has been pushed to the cloud.', 'routinekit' ), [ 'status' => 403 ] );
 		}
 
 		$order = $request->get_param( 'order' );
 		if ( ! is_array( $order ) ) {
-			return new WP_Error( 'stepwise_invalid', __( 'order must be an array of {id, sort_order} objects.', 'stepwise' ), [ 'status' => 400 ] );
+			return new WP_Error( 'routinekit_invalid', __( 'order must be an array of {id, sort_order} objects.', 'routinekit' ), [ 'status' => 400 ] );
 		}
 
 		// Verify every step in the payload belongs to this workflow.
 		$workflow_step_ids = array_map(
 			fn( $s ) => (int) $s->id,
-			Stepwise_Step::for_workflow( $workflow_id )
+			Routinekit_Step::for_workflow( $workflow_id )
 		);
 		foreach ( $order as $item ) {
 			if ( ! in_array( (int) ( $item['id'] ?? 0 ), $workflow_step_ids, true ) ) {
-				return new WP_Error( 'stepwise_forbidden', __( 'One or more steps do not belong to this workflow.', 'stepwise' ), [ 'status' => 403 ] );
+				return new WP_Error( 'routinekit_forbidden', __( 'One or more steps do not belong to this workflow.', 'routinekit' ), [ 'status' => 403 ] );
 			}
 		}
 
-		Stepwise_Step::reorder( $order );
+		Routinekit_Step::reorder( $order );
 
-		$steps = Stepwise_Step::for_workflow( $workflow_id );
+		$steps = Routinekit_Step::for_workflow( $workflow_id );
 		return rest_ensure_response( array_map( fn( $s ) => $s->to_array(), $steps ) );
 	}
 
@@ -233,10 +233,10 @@ class Stepwise_REST_Steps extends WP_REST_Controller {
 	 * @return bool|WP_Error
 	 */
 	public function permissions_check( WP_REST_Request $request ) {
-		if ( stepwise_current_user_can_edit() ) {
+		if ( routinekit_current_user_can_edit() ) {
 			return true;
 		}
-		return new WP_Error( 'stepwise_forbidden', __( 'You do not have permission to access this resource.', 'stepwise' ), [ 'status' => 403 ] );
+		return new WP_Error( 'routinekit_forbidden', __( 'You do not have permission to access this resource.', 'routinekit' ), [ 'status' => 403 ] );
 	}
 
 	/**

@@ -14,13 +14,13 @@ const TemplatePickerModal = ( { onClose } ) => {
 	const [ error, setError ]         = useState( null );
 	const [ filter, setFilter ]       = useState( '' );
 
-	const { fetchWorkflows } = useDispatch( 'stepwise/workflows' );
+	const { fetchWorkflows } = useDispatch( 'routinekit/workflows' );
 
 	useEffect( () => {
-		apiFetch( { path: '/stepwise/v1/saas/templates' } )
+		apiFetch( { path: '/routinekit/v1/saas/templates' } )
 			.then( ( res ) => setTemplates( res.templates ?? [] ) )
 			.catch( ( err ) => {
-				setError( err.message ?? __( 'Could not load templates.', 'stepwise' ) );
+				setError( err.message ?? __( 'Could not load templates.', 'routinekit' ) );
 				setTemplates( [] );
 			} )
 			.finally( () => setLoading( false ) );
@@ -38,7 +38,7 @@ const TemplatePickerModal = ( { onClose } ) => {
 		setError( null );
 		try {
 			const workflow = await apiFetch( {
-				path:   '/stepwise/v1/workflows/import',
+				path:   '/routinekit/v1/workflows/import',
 				method: 'POST',
 				data:   {
 					title:       selected.title,
@@ -50,26 +50,26 @@ const TemplatePickerModal = ( { onClose } ) => {
 			await fetchWorkflows();
 			onClose();
 			if ( workflow?.id ) {
-				const editUrl = `${ window.stepwiseData?.adminUrl ?? '' }admin.php?page=stepwise&workflow_id=${ workflow.id }`;
+				const editUrl = `${ window.routinekitData?.adminUrl ?? '' }admin.php?page=routinekit&workflow_id=${ workflow.id }`;
 				window.location.href = editUrl;
 			}
 		} catch ( err ) {
-			setError( err.message ?? __( 'Failed to import template.', 'stepwise' ) );
+			setError( err.message ?? __( 'Failed to import template.', 'routinekit' ) );
 			setSaving( false );
 		}
 	};
 
 	return (
 		<Modal
-			title={ __( 'Choose a Template', 'stepwise' ) }
+			title={ __( 'Choose a Template', 'routinekit' ) }
 			onClose={ onClose }
 			footer={
 				<>
 					<Button variant="ghost" onClick={ onClose } disabled={ saving }>
-						{ __( 'Cancel', 'stepwise' ) }
+						{ __( 'Cancel', 'routinekit' ) }
 					</Button>
 					<Button variant="primary" onClick={ handleImport } disabled={ ! selected || saving }>
-						{ saving ? __( 'Importing…', 'stepwise' ) : __( 'Import Template', 'stepwise' ) }
+						{ saving ? __( 'Importing…', 'routinekit' ) : __( 'Import Template', 'routinekit' ) }
 					</Button>
 				</>
 			}
@@ -80,7 +80,7 @@ const TemplatePickerModal = ( { onClose } ) => {
 				<div className="ap-loading"><span className="spinner is-active" /></div>
 			) : templates.length === 0 ? (
 				<p style={ { color: '#888', fontSize: '13px' } }>
-					{ __( 'No templates available.', 'stepwise' ) }
+					{ __( 'No templates available.', 'routinekit' ) }
 				</p>
 			) : (
 				<div style={ { display: 'flex', flexDirection: 'column', gap: '12px' } }>
@@ -96,7 +96,7 @@ const TemplatePickerModal = ( { onClose } ) => {
 									cursor: 'pointer',
 								} }
 							>
-								{ __( 'All', 'stepwise' ) }
+								{ __( 'All', 'routinekit' ) }
 							</button>
 							{ categories.map( ( cat ) => (
 								<button
@@ -134,7 +134,7 @@ const TemplatePickerModal = ( { onClose } ) => {
 									<div style={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between' } }>
 										<span style={ { fontSize: '13px', fontWeight: 600, color: '#111' } }>{ tpl.title }</span>
 										<span style={ { fontSize: '11px', color: '#9ca3af' } }>
-											{ tpl.steps.length } { __( 'steps', 'stepwise' ) }
+											{ tpl.steps.length } { __( 'steps', 'routinekit' ) }
 										</span>
 									</div>
 									{ tpl.description && (

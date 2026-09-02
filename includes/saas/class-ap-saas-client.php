@@ -5,7 +5,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * HTTP client for all SaaS API communication.
  */
-class Stepwise_SaaS_Client {
+class Routinekit_SaaS_Client {
 
 	/** @var string */
 	private string $base_url;
@@ -17,8 +17,8 @@ class Stepwise_SaaS_Client {
 	private int $timeout = 15;
 
 	public function __construct() {
-		$this->base_url = rtrim( get_option( 'stepwise_saas_url', STEPWISE_SAAS_DEFAULT_URL ), '/' );
-		$this->api_key  = get_option( 'stepwise_site_api_key', '' );
+		$this->base_url = rtrim( get_option( 'routinekit_saas_url', ROUTINEKIT_SAAS_DEFAULT_URL ), '/' );
+		$this->api_key  = get_option( 'routinekit_site_api_key', '' );
 	}
 
 	/**
@@ -34,7 +34,7 @@ class Stepwise_SaaS_Client {
 			'site_url'       => get_site_url(),
 			'site_name'      => get_bloginfo( 'name' ),
 			'wp_version'     => get_bloginfo( 'version' ),
-			'plugin_version' => STEPWISE_VERSION,
+			'plugin_version' => ROUTINEKIT_VERSION,
 		] );
 	}
 
@@ -115,7 +115,7 @@ class Stepwise_SaaS_Client {
 	public function heartbeat() {
 		return $this->post( '/api/site/heartbeat', [
 			'wp_version'     => get_bloginfo( 'version' ),
-			'plugin_version' => STEPWISE_VERSION,
+			'plugin_version' => ROUTINEKIT_VERSION,
 			'site_url'       => get_site_url(),
 		] );
 	}
@@ -144,7 +144,7 @@ class Stepwise_SaaS_Client {
 		if ( ! is_wp_error( $result ) && ! empty( $result['saas_note_id'] ) && ! empty( $note_data['local_note_id'] ) ) {
 			global $wpdb;
 			$wpdb->update(
-				$wpdb->prefix . 'stepwise_step_notes',
+				$wpdb->prefix . 'routinekit_step_notes',
 				[ 'saas_note_id' => $result['saas_note_id'] ],
 				[ 'id' => (int) $note_data['local_note_id'] ],
 				[ '%s' ],
@@ -228,7 +228,7 @@ class Stepwise_SaaS_Client {
 
 	private function get_headers() {
 		return [
-			'X-Stepwise-Key' => $this->api_key,
+			'X-RoutineKit-Key' => $this->api_key,
 			'Content-Type'     => 'application/json',
 			'Accept'           => 'application/json',
 		];
@@ -246,7 +246,7 @@ class Stepwise_SaaS_Client {
 		// return it as a normal array so send_heartbeat() can read the status field.
 		if ( $code >= 400 && 409 !== $code ) {
 			$message = $body['error'] ?? $body['message'] ?? "SaaS error: HTTP {$code}";
-			return new WP_Error( 'stepwise_saas_error', $message, [ 'status' => $code ] );
+			return new WP_Error( 'routinekit_saas_error', $message, [ 'status' => $code ] );
 		}
 
 		return $body ?? [];

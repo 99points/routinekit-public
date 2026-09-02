@@ -22,7 +22,7 @@ const actions = {
 		dispatch( actions.setLoading( true ) );
 		dispatch( actions.setError( null ) );
 		try {
-			const workflows = await apiFetch( { path: '/stepwise/v1/workflows?per_page=100' } );
+			const workflows = await apiFetch( { path: '/routinekit/v1/workflows?per_page=100' } );
 			dispatch( actions.setWorkflows( workflows ) );
 		} catch ( error ) {
 			dispatch( actions.setError( error.message ) );
@@ -36,7 +36,7 @@ const actions = {
 		dispatch( actions.setError( null ) );
 		try {
 			const workflow = await apiFetch( {
-				path: '/stepwise/v1/workflows',
+				path: '/routinekit/v1/workflows',
 				method: 'POST',
 				data,
 			} );
@@ -55,7 +55,7 @@ const actions = {
 		dispatch( actions.setError( null ) );
 		try {
 			const workflow = await apiFetch( {
-				path: `/stepwise/v1/workflows/${ id }`,
+				path: `/routinekit/v1/workflows/${ id }`,
 				method: 'PATCH',
 				data,
 			} );
@@ -72,7 +72,7 @@ const actions = {
 	deleteWorkflow: ( id ) => async ( { dispatch } ) => {
 		try {
 			await apiFetch( {
-				path: `/stepwise/v1/workflows/${ id }`,
+				path: `/routinekit/v1/workflows/${ id }`,
 				method: 'DELETE',
 			} );
 			dispatch( actions.removeWorkflow( id ) );
@@ -121,7 +121,7 @@ const selectors = {
 	getWorkflow:   ( state, id ) => state.workflows.find( ( w ) => w.id === id ) ?? null,
 };
 
-const store = createReduxStore( 'stepwise/workflows', { reducer, actions, selectors } );
+const store = createReduxStore( 'routinekit/workflows', { reducer, actions, selectors } );
 register( store );
 
 export default store;

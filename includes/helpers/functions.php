@@ -2,12 +2,12 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Check if the current site has an active Stepwise Pro license.
+ * Check if the current site has an active RoutineKit Pro license.
  *
  * @return bool
  */
-function stepwise_is_pro(): bool {
-	return in_array( get_option( 'stepwise_license_plan' ), STEPWISE_PRO_PLANS, true );
+function routinekit_is_pro(): bool {
+	return in_array( get_option( 'routinekit_license_plan' ), ROUTINEKIT_PRO_PLANS, true );
 }
 
 /**
@@ -23,7 +23,7 @@ function stepwise_is_pro(): bool {
  *
  * @return bool
  */
-function stepwise_is_staging_env(): bool {
+function routinekit_is_staging_env(): bool {
 	$env_type = function_exists( 'wp_get_environment_type' ) ? wp_get_environment_type() : 'production';
 	if ( in_array( $env_type, [ 'staging', 'local' ], true ) ) {
 		return true;
@@ -59,8 +59,8 @@ function stepwise_is_staging_env(): bool {
  *
  * @return bool
  */
-function stepwise_staging_mode_active(): bool {
-	return (bool) get_option( 'stepwise_staging_mode', false );
+function routinekit_staging_mode_active(): bool {
+	return (bool) get_option( 'routinekit_staging_mode', false );
 }
 
 /**
@@ -69,10 +69,10 @@ function stepwise_staging_mode_active(): bool {
  *
  * @return int
  */
-function stepwise_get_active_workflow_count(): int {
+function routinekit_get_active_workflow_count(): int {
 	global $wpdb;
 	return (int) $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- custom table, count changes frequently
-		"SELECT COUNT(*) FROM {$wpdb->prefix}stepwise_workflows WHERE status != 'archived'"
+		"SELECT COUNT(*) FROM {$wpdb->prefix}routinekit_workflows WHERE status != 'archived'"
 	);
 }
 
@@ -82,34 +82,34 @@ function stepwise_get_active_workflow_count(): int {
  *
  * @return bool
  */
-function stepwise_at_workflow_limit(): bool {
+function routinekit_at_workflow_limit(): bool {
 	return false;
 }
 
 /**
  * Return the singleton SaaS client (any connected site, free or Pro).
  *
- * @return Stepwise_SaaS_Client|null
+ * @return Routinekit_SaaS_Client|null
  */
-function stepwise_saas(): ?Stepwise_SaaS_Client {
-	if ( ! Stepwise_SaaS_Auth::is_connected() ) {
+function routinekit_saas(): ?Routinekit_SaaS_Client {
+	if ( ! Routinekit_SaaS_Auth::is_connected() ) {
 		return null;
 	}
 	static $client = null;
 	if ( null === $client ) {
-		$client = new Stepwise_SaaS_Client();
+		$client = new Routinekit_SaaS_Client();
 	}
 	return $client;
 }
 
 /**
- * Check if the current user has permission to edit Stepwise workflows.
- * Reads the saved stepwise_roles_edit option and compares against user roles.
+ * Check if the current user has permission to edit RoutineKit workflows.
+ * Reads the saved routinekit_roles_edit option and compares against user roles.
  *
  * @return bool
  */
-function stepwise_current_user_can_edit(): bool {
-	$allowed_roles = get_option( 'stepwise_roles_edit', [ 'administrator' ] );
+function routinekit_current_user_can_edit(): bool {
+	$allowed_roles = get_option( 'routinekit_roles_edit', [ 'administrator' ] );
 	$user          = wp_get_current_user();
 	if ( ! $user || ! $user->ID ) {
 		return false;
@@ -118,13 +118,13 @@ function stepwise_current_user_can_edit(): bool {
 }
 
 /**
- * Check if the current user has permission to run Stepwise workflows.
- * Reads the saved stepwise_roles_run option and compares against user roles.
+ * Check if the current user has permission to run RoutineKit workflows.
+ * Reads the saved routinekit_roles_run option and compares against user roles.
  *
  * @return bool
  */
-function stepwise_current_user_can_run(): bool {
-	$allowed_roles = get_option( 'stepwise_roles_run', [ 'administrator' ] );
+function routinekit_current_user_can_run(): bool {
+	$allowed_roles = get_option( 'routinekit_roles_run', [ 'administrator' ] );
 	$user          = wp_get_current_user();
 	if ( ! $user || ! $user->ID ) {
 		return false;
@@ -139,8 +139,8 @@ function stepwise_current_user_can_run(): bool {
  * @param int $workflow_id
  * @return bool
  */
-function stepwise_workflow_steps_locked( int $workflow_id ): bool {
-	$workflow = Stepwise_Workflow::get( $workflow_id );
+function routinekit_workflow_steps_locked( int $workflow_id ): bool {
+	$workflow = Routinekit_Workflow::get( $workflow_id );
 	if ( ! $workflow ) {
 		return false;
 	}
@@ -156,16 +156,16 @@ function stepwise_workflow_steps_locked( int $workflow_id ): bool {
  * @param int $workflow_id
  * @return bool
  */
-function stepwise_workflow_can_delete( int $workflow_id ): bool {
-	return ! stepwise_workflow_steps_locked( $workflow_id );
+function routinekit_workflow_can_delete( int $workflow_id ): bool {
+	return ! routinekit_workflow_steps_locked( $workflow_id );
 }
 
 /**
  * Flush all page caches after a license change.
- * Hooked onto 'stepwise_cache_flush'. Covers every major cache plugin
+ * Hooked onto 'routinekit_cache_flush'. Covers every major cache plugin
  * via their own canonical purge APIs — no need to enumerate them at call sites.
  */
-function stepwise_flush_all_caches(): void {
+function routinekit_flush_all_caches(): void {
 	// WP object cache
 	wp_cache_flush();
 
@@ -191,7 +191,7 @@ function stepwise_flush_all_caches(): void {
 		autoptimizeCache::clearall();
 	}
 }
-add_action( 'stepwise_cache_flush', 'stepwise_flush_all_caches' );
+add_action( 'routinekit_cache_flush', 'routinekit_flush_all_caches' );
 
 /**
  * Log debug messages when WP_DEBUG is enabled.
@@ -199,7 +199,7 @@ add_action( 'stepwise_cache_flush', 'stepwise_flush_all_caches' );
  * @param mixed  $message
  * @param string $context
  */
-function stepwise_log( $message, string $context = 'general' ): void {
+function routinekit_log( $message, string $context = 'general' ): void {
 	if ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) {
 		return;
 	}
@@ -208,5 +208,5 @@ function stepwise_log( $message, string $context = 'general' ): void {
 		$message = print_r( $message, true );
 	}
 	// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- debug only, guarded by WP_DEBUG check above
-	error_log( "[Stepwise:{$context}] {$message}" );
+	error_log( "[RoutineKit:{$context}] {$message}" );
 }

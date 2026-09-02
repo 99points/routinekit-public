@@ -8,7 +8,7 @@ defined( 'ABSPATH' ) || exit;
  * Detects meaningful wp_options changes during settings form submissions
  * and buffers them so the user can add them to a workflow.
  */
-class Stepwise_Capture {
+class Routinekit_Capture {
 
 	/**
 	 * Substrings that, if present in an option name, mean it should be ignored.
@@ -97,17 +97,17 @@ class Stepwise_Capture {
 
 	/**
 	 * Delete capture buffer rows older than the configured retention period.
-	 * Hooked onto the stepwise_cleanup_capture_buffer cron event.
+	 * Hooked onto the routinekit_cleanup_capture_buffer cron event.
 	 */
 	public function cleanup_buffer(): void {
 		global $wpdb;
-		$days = (int) get_option( 'stepwise_capture_retention', 30 );
+		$days = (int) get_option( 'routinekit_capture_retention', 30 );
 		if ( $days < 1 ) {
 			return;
 		}
 		$wpdb->query(
 			$wpdb->prepare(
-				"DELETE FROM {$wpdb->prefix}stepwise_capture_buffer
+				"DELETE FROM {$wpdb->prefix}routinekit_capture_buffer
 				 WHERE captured_at < DATE_SUB( NOW(), INTERVAL %d DAY )",
 				$days
 			)
@@ -118,7 +118,7 @@ class Stepwise_Capture {
 	 * Register hooks. Called via admin_init.
 	 */
 	public function init(): void {
-		if ( ! get_option( 'stepwise_capture_enabled', true ) ) {
+		if ( ! get_option( 'routinekit_capture_enabled', true ) ) {
 			return;
 		}
 		if ( ! current_user_can( 'manage_options' ) ) {
@@ -220,13 +220,13 @@ class Stepwise_Capture {
 			return;
 		}
 
-		$min = (int) get_option( 'stepwise_capture_min_changes', 1 );
+		$min = (int) get_option( 'routinekit_capture_min_changes', 1 );
 		if ( count( $this->session_buffer ) < $min ) {
 			return;
 		}
 
 		global $wpdb;
-		$table = $wpdb->prefix . 'stepwise_capture_buffer';
+		$table = $wpdb->prefix . 'routinekit_capture_buffer';
 
 		foreach ( $this->session_buffer as $change ) {
 			$wpdb->insert(
@@ -246,7 +246,7 @@ class Stepwise_Capture {
 
 		// Signal the React capture toast via a short-lived transient
 		set_transient(
-			'stepwise_pending_captures_' . get_current_user_id(),
+			'routinekit_pending_captures_' . get_current_user_id(),
 			count( $this->session_buffer ),
 			300
 		);
@@ -267,7 +267,7 @@ class Stepwise_Capture {
 				return true;
 			}
 		}
-		$raw = get_option( 'stepwise_capture_exclude', '' );
+		$raw = get_option( 'routinekit_capture_exclude', '' );
 		if ( is_array( $raw ) ) {
 			$exclusions = $raw;
 		} else {

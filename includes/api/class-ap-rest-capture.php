@@ -3,14 +3,14 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * REST controller for stepwise/v1/capture
+ * REST controller for routinekit/v1/capture
  *
  * Serves pending captures to the React toast component, and handles
  * adding captured changes to a workflow as steps.
  */
-class Stepwise_REST_Capture extends WP_REST_Controller {
+class Routinekit_REST_Capture extends WP_REST_Controller {
 
-	protected $namespace = STEPWISE_REST_NAMESPACE;
+	protected $namespace = ROUTINEKIT_REST_NAMESPACE;
 
 	/**
 	 * Register routes.
@@ -109,7 +109,7 @@ class Stepwise_REST_Capture extends WP_REST_Controller {
 	 */
 	public function get_pending( $request ): WP_REST_Response {
 		$user_id     = get_current_user_id();
-		$transient   = get_transient( 'stepwise_pending_captures_' . $user_id );
+		$transient   = get_transient( 'routinekit_pending_captures_' . $user_id );
 
 		// No signal — return empty early
 		if ( false === $transient ) {
@@ -120,7 +120,7 @@ class Stepwise_REST_Capture extends WP_REST_Controller {
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT id, option_name, option_label, old_value, new_value, page_url, captured_at
-				 FROM {$wpdb->prefix}stepwise_capture_buffer
+				 FROM {$wpdb->prefix}routinekit_capture_buffer
 				 WHERE captured_by = %d AND status = 'pending'
 				 ORDER BY captured_at DESC
 				 LIMIT 50",
@@ -130,7 +130,7 @@ class Stepwise_REST_Capture extends WP_REST_Controller {
 		);
 
 		// Consume the transient so it doesn't fire again this page cycle
-		delete_transient( 'stepwise_pending_captures_' . $user_id );
+		delete_transient( 'routinekit_pending_captures_' . $user_id );
 
 		return rest_ensure_response( [
 			'changes' => $rows,
@@ -152,27 +152,27 @@ class Stepwise_REST_Capture extends WP_REST_Controller {
 		$step_title  = $request->get_param( 'step_title' );
 		$user_id     = get_current_user_id();
 
-		$workflow = Stepwise_Workflow::get( $workflow_id );
+		$workflow = Routinekit_Workflow::get( $workflow_id );
 		if ( ! $workflow ) {
-			return new WP_Error( 'stepwise_not_found', __( 'Workflow not found.', 'stepwise' ), [ 'status' => 404 ] );
+			return new WP_Error( 'routinekit_not_found', __( 'Workflow not found.', 'routinekit' ), [ 'status' => 404 ] );
 		}
 
 		if ( empty( $capture_ids ) ) {
-			return new WP_Error( 'stepwise_invalid', __( 'capture_ids cannot be empty.', 'stepwise' ), [ 'status' => 400 ] );
+			return new WP_Error( 'routinekit_invalid', __( 'capture_ids cannot be empty.', 'routinekit' ), [ 'status' => 400 ] );
 		}
 
 		// Fetch the captures
 		$placeholders = implode( ',', array_fill( 0, count( $capture_ids ), '%d' ) );
 		$rows         = $wpdb->get_results( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}stepwise_capture_buffer WHERE id IN ($placeholders) AND captured_by = %d", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+				"SELECT * FROM {$wpdb->prefix}routinekit_capture_buffer WHERE id IN ($placeholders) AND captured_by = %d", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 				array_merge( $capture_ids, [ $user_id ] )
 			),
 			ARRAY_A
 		);
 
 		if ( empty( $rows ) ) {
-			return new WP_Error( 'stepwise_not_found', __( 'No matching captures found.', 'stepwise' ), [ 'status' => 404 ] );
+			return new WP_Error( 'routinekit_not_found', __( 'No matching captures found.', 'routinekit' ), [ 'status' => 404 ] );
 		}
 
 		// Build a snapshot of captured options for the step
@@ -192,22 +192,16 @@ class Stepwise_REST_Capture extends WP_REST_Controller {
 			if ( count( $rows ) > 1 ) {
 				$step_title .= ' ' . sprintf(
 					/* translators: %d: number of additional captured option changes */
-					__( '(+%d more)', 'stepwise' ),
+					__( '(+%d more)', 'routinekit' ),
 					count( $rows ) - 1
 				);
 			}
 		}
 
 		// Deep-link defaults to the page where the changes were made.
-		$page_url  = $rows[0]['page_url'] ?? '';
-		$deep_link = '';
-		if ( $page_url ) {
-			$path  = wp_parse_url( $page_url, PHP_URL_PATH ) ?? '';
-			$query = wp_parse_url( $page_url, PHP_URL_QUERY );
-			$deep_link = ltrim( $path . ( $query ? '?' . $query : '' ), '/' );
-		}
+		$deep_link = $this->to_admin_relative_deeplink( (string) ( $rows[0]['page_url'] ?? '' ) );
 
-		$step = Stepwise_Step::create( [
+		$step = Routinekit_Step::create( [
 			'workflow_id'      => $workflow_id,
 			'title'            => $step_title,
 			'deep_link'        => $deep_link,
@@ -221,7 +215,7 @@ class Stepwise_REST_Capture extends WP_REST_Controller {
 		// Mark captures as added
 		$wpdb->query( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			$wpdb->prepare(
-				"UPDATE {$wpdb->prefix}stepwise_capture_buffer SET status = 'added' WHERE id IN ($placeholders)", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+				"UPDATE {$wpdb->prefix}routinekit_capture_buffer SET status = 'added' WHERE id IN ($placeholders)", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 				$capture_ids
 			)
 		);
@@ -254,7 +248,7 @@ class Stepwise_REST_Capture extends WP_REST_Controller {
 		$user_id      = get_current_user_id();
 
 		// The 'source' column is guaranteed present since the activator migration (v1.2.3).
-		$table = $wpdb->prefix . 'stepwise_capture_buffer';
+		$table = $wpdb->prefix . 'routinekit_capture_buffer';
 
 		$row = [
 			'option_name'  => sanitize_key( $field_key ) ?: '_manual_',
@@ -271,23 +265,18 @@ class Stepwise_REST_Capture extends WP_REST_Controller {
 		$inserted = $wpdb->insert( $table, $row, $formats );
 
 		if ( false === $inserted ) {
-			return new WP_Error( 'stepwise_db_error', __( 'Could not save capture.', 'stepwise' ), [ 'status' => 500 ] );
+			return new WP_Error( 'routinekit_db_error', __( 'Could not save capture.', 'routinekit' ), [ 'status' => 500 ] );
 		}
 
 		$capture_id = $wpdb->insert_id;
 
 		// If a workflow was selected, immediately create a step from this capture.
 		if ( $workflow_id > 0 ) {
-			$workflow = Stepwise_Workflow::get( $workflow_id );
+			$workflow = Routinekit_Workflow::get( $workflow_id );
 			if ( $workflow ) {
-				$deep_link = '';
-				if ( $page_url ) {
-					$path      = wp_parse_url( $page_url, PHP_URL_PATH ) ?? '';
-					$query     = wp_parse_url( $page_url, PHP_URL_QUERY );
-					$deep_link = ltrim( $path . ( $query ? '?' . $query : '' ), '/' );
-				}
+				$deep_link = $this->to_admin_relative_deeplink( (string) $page_url );
 
-				$step = Stepwise_Step::create( [
+				$step = Routinekit_Step::create( [
 					'workflow_id'      => $workflow_id,
 					'title'            => $label,
 					'deep_link'        => $deep_link,
@@ -316,7 +305,7 @@ class Stepwise_REST_Capture extends WP_REST_Controller {
 		}
 
 		// No workflow selected — queue to buffer for later review.
-		set_transient( 'stepwise_pending_captures_' . $user_id, true, 5 * MINUTE_IN_SECONDS );
+		set_transient( 'routinekit_pending_captures_' . $user_id, true, 5 * MINUTE_IN_SECONDS );
 
 		return rest_ensure_response( [ 'success' => true, 'id' => $capture_id ] );
 	}
@@ -342,7 +331,7 @@ class Stepwise_REST_Capture extends WP_REST_Controller {
 		$wpdb->query(
 			$wpdb->prepare(
 				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				"UPDATE {$wpdb->prefix}stepwise_capture_buffer SET status = 'dismissed' WHERE id IN ($placeholders) AND captured_by = %d",
+				"UPDATE {$wpdb->prefix}routinekit_capture_buffer SET status = 'dismissed' WHERE id IN ($placeholders) AND captured_by = %d",
 				array_merge( $capture_ids, [ $user_id ] )
 			)
 		);
@@ -365,7 +354,7 @@ class Stepwise_REST_Capture extends WP_REST_Controller {
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT id, option_name, option_label, old_value, new_value, page_url, captured_at
-				 FROM {$wpdb->prefix}stepwise_capture_buffer
+				 FROM {$wpdb->prefix}routinekit_capture_buffer
 				 WHERE captured_by = %d AND status = 'pending'
 				 ORDER BY captured_at DESC
 				 LIMIT 200",
@@ -393,10 +382,50 @@ class Stepwise_REST_Capture extends WP_REST_Controller {
 		global $wpdb;
 
 		$wpdb->query( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- static query, no user input
-			"DELETE FROM {$wpdb->prefix}stepwise_capture_buffer WHERE status IN ('pending', 'dismissed')"
+			"DELETE FROM {$wpdb->prefix}routinekit_capture_buffer WHERE status IN ('pending', 'dismissed')"
 		);
 
 		return rest_ensure_response( [ 'cleared' => true, 'rows_deleted' => $wpdb->rows_affected ] );
+	}
+
+	/**
+	 * Reduce a captured page URL to an admin-relative deep link.
+	 *
+	 * Deep links are stored the same way the built-in library stores them —
+	 * relative to wp-admin ("admin.php?page=x"), never root-relative. The UI
+	 * composes the href as adminUrl + deep_link, so a root-relative value like
+	 * "wordpress/wp-admin/admin.php" resolves against the wrong base and the
+	 * first path segment is mistaken for a hostname.
+	 *
+	 * @param string $page_url Absolute URL or root-relative path.
+	 * @return string Admin-relative deep link, or '' when there is nothing usable.
+	 */
+	private function to_admin_relative_deeplink( string $page_url ): string {
+		if ( '' === $page_url ) {
+			return '';
+		}
+
+		// Ignore URLs from another host — a captured referer could point anywhere,
+		// and rewriting one into an admin-relative link would silently produce a
+		// deep link to the wrong page on this site.
+		$host = wp_parse_url( $page_url, PHP_URL_HOST );
+		if ( $host && wp_parse_url( admin_url(), PHP_URL_HOST ) !== $host ) {
+			return '';
+		}
+
+		$path  = wp_parse_url( $page_url, PHP_URL_PATH ) ?? '';
+		$query = wp_parse_url( $page_url, PHP_URL_QUERY );
+
+		// Only strip the admin base when the path is actually inside wp-admin;
+		// anything else is not a settings page we can link to.
+		$admin_path = wp_parse_url( admin_url(), PHP_URL_PATH );
+		if ( ! $admin_path || 0 !== strpos( $path, $admin_path ) ) {
+			return '';
+		}
+
+		$path = substr( $path, strlen( $admin_path ) );
+
+		return $path . ( $query ? '?' . $query : '' );
 	}
 
 	/**
@@ -405,9 +434,9 @@ class Stepwise_REST_Capture extends WP_REST_Controller {
 	 * @return bool|WP_Error
 	 */
 	public function permissions_check() {
-		if ( stepwise_current_user_can_edit() ) {
+		if ( routinekit_current_user_can_edit() ) {
 			return true;
 		}
-		return new WP_Error( 'stepwise_forbidden', __( 'You do not have permission to access this resource.', 'stepwise' ), [ 'status' => 403 ] );
+		return new WP_Error( 'routinekit_forbidden', __( 'You do not have permission to access this resource.', 'routinekit' ), [ 'status' => 403 ] );
 	}
 }

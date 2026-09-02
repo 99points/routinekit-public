@@ -22,10 +22,10 @@ import RunnerLauncher from './RunnerLauncher';
 import AuditTrail from './AuditTrail';
 import '../store';
 
-const { runnerPosition = 'right' } = window.stepwiseData ?? {};
-const RUNNER_CLOSED_KEY     = 'stepwise_runner_closed_id';
-const RUNNER_DISMISSED_KEY  = 'stepwise_runner_dismissed_ids';
-const RUNNER_PINNED_KEY     = 'stepwise_runner_pinned';
+const { runnerPosition = 'right' } = window.routinekitData ?? {};
+const RUNNER_CLOSED_KEY     = 'routinekit_runner_closed_id';
+const RUNNER_DISMISSED_KEY  = 'routinekit_runner_dismissed_ids';
+const RUNNER_PINNED_KEY     = 'routinekit_runner_pinned';
 
 /**
  * Returns { panelStyle, onPointerDown } for a freely-draggable fixed panel.
@@ -101,11 +101,11 @@ const Runner = () => {
 	const [ stepError, setStepError ]       = useState( null );
 	const [ localSteps, setLocalSteps ]     = useState( null ); // optimistic order during drag
 
-	const { fetchActiveExecution, clearExecution, cancelExecution } = useDispatch( 'stepwise/execution' );
-	const { reorderSteps, deleteStep } = useDispatch( 'stepwise/steps' );
+	const { fetchActiveExecution, clearExecution, cancelExecution } = useDispatch( 'routinekit/execution' );
+	const { reorderSteps, deleteStep } = useDispatch( 'routinekit/steps' );
 
-	const activeExecution = useSelect( ( select ) => select( 'stepwise/execution' ).getActiveExecution() );
-	const isLoading       = useSelect( ( select ) => select( 'stepwise/execution' ).isLoading() );
+	const activeExecution = useSelect( ( select ) => select( 'routinekit/execution' ).getActiveExecution() );
+	const isLoading       = useSelect( ( select ) => select( 'routinekit/execution' ).isLoading() );
 
 	const sensors = useSensors( useSensor( PointerSensor, { activationConstraint: { distance: 6 } } ) );
 	const { panelStyle, onPointerDown: onHeaderPointerDown } = useDragPanel();
@@ -152,7 +152,7 @@ const Runner = () => {
 		setStepError( null );
 		try {
 			await apiFetch( {
-				path:   `/stepwise/v1/workflows/${ activeExecution.workflow_id }/steps`,
+				path:   `/routinekit/v1/workflows/${ activeExecution.workflow_id }/steps`,
 				method: 'POST',
 				data:   { title: newStepTitle.trim(), is_required: true },
 			} );
@@ -160,7 +160,7 @@ const Runner = () => {
 			setAddingStep( false );
 			await fetchActiveExecution();
 		} catch ( err ) {
-			setStepError( err.message ?? __( 'Could not add step.', 'stepwise' ) );
+			setStepError( err.message ?? __( 'Could not add step.', 'routinekit' ) );
 		} finally {
 			setSavingStep( false );
 		}
@@ -180,6 +180,10 @@ const Runner = () => {
 		try {
 			await reorderSteps( activeExecution.workflow_id, order );
 			await fetchActiveExecution();
+			// Drop the optimistic copy so the panel renders server state again.
+			// Leaving it set would shadow any later refetch — e.g. a step added
+			// from the Capture page while this run is open.
+			setLocalSteps( null );
 		} catch {
 			setLocalSteps( null );
 		}
@@ -232,7 +236,7 @@ const Runner = () => {
 		}
 	};
 	const handleAbort = () => {
-		if ( window.confirm( __( 'Abandon this workflow run? Progress will be lost.', 'stepwise' ) ) ) {
+		if ( window.confirm( __( 'Abandon this workflow run? Progress will be lost.', 'routinekit' ) ) ) {
 			localStorage.removeItem( RUNNER_CLOSED_KEY );
 			cancelExecution( id );
 		}
@@ -254,7 +258,7 @@ const Runner = () => {
 	return (
 		<>
 			{ isOpen && (
-				<div className={ `ap-runner ${ posClass }` } style={ panelStyle } role="complementary" aria-label={ __( 'Workflow Runner', 'stepwise' ) }>
+				<div className={ `ap-runner ${ posClass }` } style={ panelStyle } role="complementary" aria-label={ __( 'Workflow Runner', 'routinekit' ) }>
 
 					<div className="ap-runner__header" onPointerDown={ onHeaderPointerDown }>
 						<div className="ap-runner__header-left">
@@ -265,32 +269,34 @@ const Runner = () => {
 									<rect x="5" y="31.5" width="19" height="6.5" rx="2" fill="rgba(255,255,255,0.45)"/>
 									<path d="M26 27 32 33 43 13" stroke="rgba(255,255,255,0.9)" strokeWidth="6.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
 								</svg>
-								<span className="ap-runner__eyebrow">STEPWISE RUN</span>
+								<span className="ap-runner__eyebrow">ROUTINEKIT RUN</span>
 							</div>
 							<span className="ap-runner__title" title={ workflow_title }>{ workflow_title }</span>
 						</div>
-						<button
-							type="button"
-							className={ `ap-runner__pin${ isPinned ? ' is-pinned' : '' }` }
-							onClick={ handlePin }
-							aria-label={ isPinned ? __( 'Unpin — panel will close on navigation', 'stepwise' ) : __( 'Pin open — keep panel open on all pages', 'stepwise' ) }
-							title={ isPinned ? __( 'Pinned open (click to unpin)', 'stepwise' ) : __( 'Pin open across pages', 'stepwise' ) }
-						>
-							<svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-								<path d="M9 1L5 5l-3 1 2 2-3 4 4-3 2 2 1-3 4-4-3-3z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" fill={ isPinned ? 'currentColor' : 'none' }/>
-							</svg>
-						</button>
-						<button
-							type="button"
-							className="ap-runner__close"
-							onClick={ handleClose }
-							aria-label={ __( 'Minimise runner', 'stepwise' ) }
-							title={ __( 'Minimise', 'stepwise' ) }
-						>
-							<svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-								<rect x="1" y="9" width="12" height="2" rx="1" fill="currentColor"/>
-							</svg>
-						</button>
+						<div className="ap-runner__actions">
+							<button
+								type="button"
+								className={ `ap-runner__pin${ isPinned ? ' is-pinned' : '' }` }
+								onClick={ handlePin }
+								aria-label={ isPinned ? __( 'Unpin — panel will close on navigation', 'routinekit' ) : __( 'Pin open — keep panel open on all pages', 'routinekit' ) }
+								title={ isPinned ? __( 'Pinned open (click to unpin)', 'routinekit' ) : __( 'Pin open across pages', 'routinekit' ) }
+							>
+								<svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+									<path d="M9 1L5 5l-3 1 2 2-3 4 4-3 2 2 1-3 4-4-3-3z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" fill={ isPinned ? 'currentColor' : 'none' }/>
+								</svg>
+							</button>
+							<button
+								type="button"
+								className="ap-runner__close"
+								onClick={ handleClose }
+								aria-label={ __( 'Minimise runner', 'routinekit' ) }
+								title={ __( 'Minimise', 'routinekit' ) }
+							>
+								<svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+									<rect x="1" y="9" width="12" height="2" rx="1" fill="currentColor"/>
+								</svg>
+							</button>
+						</div>
 					</div>
 
 					{ ! isAbandoned && ! isPaused && (
@@ -301,10 +307,10 @@ const Runner = () => {
 						<div className="ap-runner__abandoned">
 							<span className="ap-runner__abandoned-icon">⚠</span>
 							<p className="ap-runner__abandoned-msg">
-								{ __( 'Your run was stopped — either you started a new run or an admin reset the workflow.', 'stepwise' ) }
+								{ __( 'Your run was stopped — either you started a new run or an admin reset the workflow.', 'routinekit' ) }
 							</p>
 							<button type="button" className="ap-runner__dismiss-btn" onClick={ handleDismiss }>
-								{ __( 'Dismiss', 'stepwise' ) }
+								{ __( 'Dismiss', 'routinekit' ) }
 							</button>
 						</div>
 
@@ -312,20 +318,20 @@ const Runner = () => {
 						<div className="ap-runner__paused">
 							<span className="ap-runner__paused-icon">⏸</span>
 							<p className="ap-runner__paused-msg">
-								{ __( 'This run is paused. Go to Workflows and click Run to resume from where you left off.', 'stepwise' ) }
+								{ __( 'This run is paused. Go to Workflows and click Run to resume from where you left off.', 'routinekit' ) }
 							</p>
 							<button type="button" className="ap-runner__dismiss-btn" onClick={ handleDismiss }>
-								{ __( 'Dismiss', 'stepwise' ) }
+								{ __( 'Dismiss', 'routinekit' ) }
 							</button>
 						</div>
 
 					) : isCompleted ? (
 						<div className="ap-runner__complete">
 							<span className="ap-runner__complete-icon">✓</span>
-							<p className="ap-runner__complete-msg">{ __( 'Workflow complete!', 'stepwise' ) }</p>
+							<p className="ap-runner__complete-msg">{ __( 'Workflow complete!', 'routinekit' ) }</p>
 							<AuditTrail executionId={ id } />
 							<button type="button" className="ap-runner__dismiss-btn" onClick={ handleDismiss }>
-								{ __( 'Dismiss', 'stepwise' ) }
+								{ __( 'Dismiss', 'routinekit' ) }
 							</button>
 						</div>
 
@@ -369,7 +375,7 @@ const Runner = () => {
 								{ ! isPushed && ! isSaas && (
 									! addingStep ? (
 										<button type="button" className="ap-runner__add-step-btn" onClick={ () => setAddingStep( true ) }>
-											+ { __( 'Add step', 'stepwise' ) }
+											+ { __( 'Add step', 'routinekit' ) }
 										</button>
 									) : (
 										<div className="ap-runner__add-step-form">
@@ -378,7 +384,7 @@ const Runner = () => {
 												className="ap-runner__add-step-input"
 												value={ newStepTitle }
 												onChange={ ( e ) => setNewStepTitle( e.target.value ) }
-												placeholder={ __( 'Step title…', 'stepwise' ) }
+												placeholder={ __( 'Step title…', 'routinekit' ) }
 												autoFocus
 												onKeyDown={ ( e ) => {
 													if ( e.key === 'Enter' ) handleAddStep();
@@ -388,10 +394,10 @@ const Runner = () => {
 											{ stepError && <p className="ap-runner__add-step-error">{ stepError }</p> }
 											<div className="ap-runner__add-step-actions">
 												<button type="button" className="ap-runner__add-step-save" onClick={ handleAddStep } disabled={ savingStep || ! newStepTitle.trim() }>
-													{ savingStep ? __( 'Adding…', 'stepwise' ) : __( 'Add', 'stepwise' ) }
+													{ savingStep ? __( 'Adding…', 'routinekit' ) : __( 'Add', 'routinekit' ) }
 												</button>
 												<button type="button" className="ap-runner__add-step-cancel" onClick={ () => { setAddingStep( false ); setNewStepTitle( '' ); setStepError( null ); } }>
-													{ __( 'Cancel', 'stepwise' ) }
+													{ __( 'Cancel', 'routinekit' ) }
 												</button>
 											</div>
 										</div>
@@ -399,7 +405,7 @@ const Runner = () => {
 								) }
 
 								<button type="button" className="ap-runner__abort" onClick={ handleAbort }>
-									{ __( 'Abandon run', 'stepwise' ) }
+									{ __( 'Abandon run', 'routinekit' ) }
 								</button>
 							</div>
 						</div>

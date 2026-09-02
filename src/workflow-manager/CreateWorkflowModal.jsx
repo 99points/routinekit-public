@@ -10,8 +10,8 @@ const CreateWorkflowModal = ( { onClose } ) => {
 	const [ description, setDesc ]  = useState( '' );
 	const [ status, setStatus ]     = useState( 'active' );
 
-	const { createWorkflow } = useDispatch( 'stepwise/workflows' );
-	const isSaving = useSelect( ( select ) => select( 'stepwise/workflows' ).isSaving() );
+	const { createWorkflow } = useDispatch( 'routinekit/workflows' );
+	const isSaving = useSelect( ( select ) => select( 'routinekit/workflows' ).isSaving() );
 
 	const handleSubmit = async ( e ) => {
 		e.preventDefault();
@@ -20,19 +20,19 @@ const CreateWorkflowModal = ( { onClose } ) => {
 		const workflow = await createWorkflow( { title: title.trim(), description, status } );
 		if ( workflow ) {
 			// Navigate to Step Builder for the new workflow
-			const editUrl = `${ window.stepwiseData?.adminUrl ?? '' }admin.php?page=stepwise&workflow_id=${ workflow.id }`;
+			const editUrl = `${ window.routinekitData?.adminUrl ?? '' }admin.php?page=routinekit&workflow_id=${ workflow.id }`;
 			window.location.href = editUrl;
 		}
 	};
 
 	return (
 		<Modal
-			title={ __( 'Create New Workflow', 'stepwise' ) }
+			title={ __( 'Create New Workflow', 'routinekit' ) }
 			onClose={ onClose }
 			footer={
 				<>
 					<Button variant="ghost" onClick={ onClose } disabled={ isSaving }>
-						{ __( 'Cancel', 'stepwise' ) }
+						{ __( 'Cancel', 'routinekit' ) }
 					</Button>
 					<Button
 						variant="primary"
@@ -40,55 +40,55 @@ const CreateWorkflowModal = ( { onClose } ) => {
 						form="ap-create-workflow-form"
 						disabled={ ! title.trim() || isSaving }
 					>
-						{ isSaving ? __( 'Creating…', 'stepwise' ) : __( 'Create Workflow', 'stepwise' ) }
+						{ isSaving ? __( 'Creating…', 'routinekit' ) : __( 'Create Workflow', 'routinekit' ) }
 					</Button>
 				</>
 			}
 		>
 			<form id="ap-create-workflow-form" onSubmit={ handleSubmit }>
 				<div className="ap-field">
-					<label className="stepwise-label" htmlFor="ap-workflow-title">
-						{ __( 'Workflow Title', 'stepwise' ) }
+					<label className="routinekit-label" htmlFor="ap-workflow-title">
+						{ __( 'Workflow Title', 'routinekit' ) }
 						<span className="ap-required" aria-hidden="true"> *</span>
 					</label>
 					<input
 						id="ap-workflow-title"
 						type="text"
-						className="stepwise-input"
+						className="routinekit-input"
 						value={ title }
 						onChange={ ( e ) => setTitle( e.target.value ) }
-						placeholder={ __( 'e.g. New Site Setup', 'stepwise' ) }
+						placeholder={ __( 'e.g. New Site Setup', 'routinekit' ) }
 						required
 						autoFocus
 					/>
 				</div>
 
 				<div className="ap-field">
-					<label className="stepwise-label" htmlFor="ap-workflow-desc">
-						{ __( 'Description', 'stepwise' ) }
+					<label className="routinekit-label" htmlFor="ap-workflow-desc">
+						{ __( 'Description', 'routinekit' ) }
 					</label>
 					<textarea
 						id="ap-workflow-desc"
-						className="stepwise-input ap-textarea"
+						className="routinekit-input ap-textarea"
 						value={ description }
 						onChange={ ( e ) => setDesc( e.target.value ) }
-						placeholder={ __( 'Optional — describe when to use this workflow.', 'stepwise' ) }
+						placeholder={ __( 'Optional — describe when to use this workflow.', 'routinekit' ) }
 						rows={ 3 }
 					/>
 				</div>
 
 				<div className="ap-field">
-					<label className="stepwise-label" htmlFor="ap-workflow-status">
-						{ __( 'Status', 'stepwise' ) }
+					<label className="routinekit-label" htmlFor="ap-workflow-status">
+						{ __( 'Status', 'routinekit' ) }
 					</label>
 					<select
 						id="ap-workflow-status"
-						className="stepwise-select"
+						className="routinekit-select"
 						value={ status }
 						onChange={ ( e ) => setStatus( e.target.value ) }
 					>
-						<option value="active">{ __( 'Active', 'stepwise' ) }</option>
-						<option value="draft">{ __( 'Draft', 'stepwise' ) }</option>
+						<option value="active">{ __( 'Active', 'routinekit' ) }</option>
+						<option value="draft">{ __( 'Draft', 'routinekit' ) }</option>
 					</select>
 				</div>
 			</form>

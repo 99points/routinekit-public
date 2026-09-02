@@ -11,7 +11,7 @@ const ImportUrlModal = ( { onClose } ) => {
 	const [ saving, setSaving ] = useState( false );
 	const [ error, setError ]   = useState( null );
 
-	const { fetchWorkflows } = useDispatch( 'stepwise/workflows' );
+	const { fetchWorkflows } = useDispatch( 'routinekit/workflows' );
 
 	const handleSubmit = async ( e ) => {
 		e.preventDefault();
@@ -21,35 +21,35 @@ const ImportUrlModal = ( { onClose } ) => {
 		try {
 			// Proxy through SaaS — plan gate enforced server-side, fetch is SSRF-safe
 			const parsed = await apiFetch( {
-				path:   '/stepwise/v1/saas/import-url',
+				path:   '/routinekit/v1/saas/import-url',
 				method: 'POST',
 				data:   { url: url.trim() },
 			} );
 			const workflow = await apiFetch( {
-				path:   '/stepwise/v1/workflows/import',
+				path:   '/routinekit/v1/workflows/import',
 				method: 'POST',
 				data:   parsed,
 			} );
 			await fetchWorkflows();
 			onClose();
 			if ( workflow?.id ) {
-				const editUrl = `${ window.stepwiseData?.adminUrl ?? '' }admin.php?page=stepwise&workflow_id=${ workflow.id }`;
+				const editUrl = `${ window.routinekitData?.adminUrl ?? '' }admin.php?page=routinekit&workflow_id=${ workflow.id }`;
 				window.location.href = editUrl;
 			}
 		} catch ( err ) {
-			setError( err.message ?? __( 'Failed to import from URL.', 'stepwise' ) );
+			setError( err.message ?? __( 'Failed to import from URL.', 'routinekit' ) );
 			setSaving( false );
 		}
 	};
 
 	return (
 		<Modal
-			title={ __( 'Import Workflow from URL', 'stepwise' ) }
+			title={ __( 'Import Workflow from URL', 'routinekit' ) }
 			onClose={ onClose }
 			footer={
 				<>
 					<Button variant="ghost" onClick={ onClose } disabled={ saving }>
-						{ __( 'Cancel', 'stepwise' ) }
+						{ __( 'Cancel', 'routinekit' ) }
 					</Button>
 					<Button
 						variant="primary"
@@ -57,7 +57,7 @@ const ImportUrlModal = ( { onClose } ) => {
 						form="ap-import-url-form"
 						disabled={ ! url.trim() || saving }
 					>
-						{ saving ? __( 'Importing…', 'stepwise' ) : __( 'Import', 'stepwise' ) }
+						{ saving ? __( 'Importing…', 'routinekit' ) : __( 'Import', 'routinekit' ) }
 					</Button>
 				</>
 			}
@@ -65,14 +65,14 @@ const ImportUrlModal = ( { onClose } ) => {
 			<form id="ap-import-url-form" onSubmit={ handleSubmit }>
 				{ error && <p className="ap-error">{ error }</p> }
 				<div className="ap-field">
-					<label className="stepwise-label" htmlFor="ap-import-url">
-						{ __( 'Workflow JSON URL', 'stepwise' ) }
+					<label className="routinekit-label" htmlFor="ap-import-url">
+						{ __( 'Workflow JSON URL', 'routinekit' ) }
 						<span className="ap-required" aria-hidden="true"> *</span>
 					</label>
 					<input
 						id="ap-import-url"
 						type="url"
-						className="stepwise-input"
+						className="routinekit-input"
 						value={ url }
 						onChange={ ( e ) => setUrl( e.target.value ) }
 						placeholder="https://example.com/workflow-export.json"
@@ -80,7 +80,7 @@ const ImportUrlModal = ( { onClose } ) => {
 						autoFocus
 					/>
 					<p className="ap-help">
-						{ __( 'Paste the URL of a workflow JSON exported from another Stepwise installation.', 'stepwise' ) }
+						{ __( 'Paste the URL of a workflow JSON exported from another RoutineKit installation.', 'routinekit' ) }
 					</p>
 				</div>
 			</form>

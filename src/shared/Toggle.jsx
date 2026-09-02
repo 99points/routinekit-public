@@ -1,18 +1,18 @@
 import PropTypes from 'prop-types';
 
 const Toggle = ( { checked, onChange, label, id } ) => (
-	<label className="stepwise-toggle" htmlFor={ id }>
-		<span className="stepwise-toggle__switch">
+	<label className="routinekit-toggle" htmlFor={ id }>
+		<span className="routinekit-toggle__switch">
 			<input
 				id={ id }
 				type="checkbox"
-				className="stepwise-toggle__input"
+				className="routinekit-toggle__input"
 				checked={ checked }
 				onChange={ ( e ) => onChange( e.target.checked ) }
 			/>
-			<span className="stepwise-toggle__track" aria-hidden="true" />
+			<span className="routinekit-toggle__track" aria-hidden="true" />
 		</span>
-		{ label && <span className="stepwise-toggle__label">{ label }</span> }
+		{ label && <span className="routinekit-toggle__label">{ label }</span> }
 	</label>
 );
 

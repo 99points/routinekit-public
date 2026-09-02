@@ -2,8 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { __ } from '@wordpress/i18n';
 
-const { runnerPosition = 'right', stepwiseCapture: captureCfg = null, adminUrl = '' } = window.stepwiseData ?? {};
-const apAdminPage = adminUrl ? adminUrl + 'admin.php?page=stepwise' : '/wp-admin/admin.php?page=stepwise';
+const { runnerPosition = 'right', routinekitCapture: captureCfg = null, adminUrl = '' } = window.routinekitData ?? {};
+const apAdminPage = adminUrl ? adminUrl + 'admin.php?page=routinekit' : '/wp-admin/admin.php?page=routinekit';
 
 // Open the capture panel from the vanilla JS capture-watcher (dispatches a custom event).
 const openCapturePanel = () => {
@@ -107,7 +107,7 @@ const RunnerLauncher = ( { hasActive, isOpen, onClick, progress, workflowTitle, 
 								<path d="M7 4v6M4 7h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
 							</svg>
 						</span>
-						<span className="ap-run-dock__row-label">{ __( 'Capture Step', 'stepwise' ) }</span>
+						<span className="ap-run-dock__row-label">{ __( 'Capture Step', 'routinekit' ) }</span>
 					</button>
 
 					<div className="ap-run-dock__divider" />
@@ -124,10 +124,10 @@ const RunnerLauncher = ( { hasActive, isOpen, onClick, progress, workflowTitle, 
 							</svg>
 						</span>
 						<span className="ap-run-dock__row-label">
-							{ __( 'Open Workflow', 'stepwise' ) }
+							{ __( 'Open Workflow', 'routinekit' ) }
 							{ hasActive && (
 								<span className="ap-run-dock__row-sub">
-									{ __( 'Running', 'stepwise' ) } · { __( 'Step', 'stepwise' ) } { currentStep } { __( 'of', 'stepwise' ) } { totalSteps }
+									{ __( 'Running', 'routinekit' ) } · { __( 'Step', 'routinekit' ) } { currentStep } { __( 'of', 'routinekit' ) } { totalSteps }
 								</span>
 							) }
 						</span>
@@ -143,8 +143,8 @@ const RunnerLauncher = ( { hasActive, isOpen, onClick, progress, workflowTitle, 
 				onMouseDown={ handlePillMouseDown }
 				onClick={ handlePillClick }
 				aria-label={ dockOpen
-					? __( 'Close dock', 'stepwise' )
-					: __( 'Stepwise Run Dock', 'stepwise' ) }
+					? __( 'Close dock', 'routinekit' )
+					: __( 'RoutineKit Run Dock', 'routinekit' ) }
 				aria-expanded={ dockOpen }
 				aria-haspopup="true"
 			>
@@ -185,11 +185,11 @@ const RunnerLauncher = ( { hasActive, isOpen, onClick, progress, workflowTitle, 
 
 				{ /* Right: brand + subtitle */ }
 				<span className="ap-run-dock__pill-text">
-					<span className="ap-run-dock__pill-brand">Stepwise</span>
+					<span className="ap-run-dock__pill-brand">RoutineKit</span>
 					<span className="ap-run-dock__pill-sub">
 						{ hasActive
-							? `${ __( 'Step', 'stepwise' ) } ${ currentStep }/${ totalSteps }`
-							: __( 'Run Dock', 'stepwise' ) }
+							? `${ __( 'Step', 'routinekit' ) } ${ currentStep }/${ totalSteps }`
+							: __( 'Run Dock', 'routinekit' ) }
 					</span>
 				</span>
 			</button>

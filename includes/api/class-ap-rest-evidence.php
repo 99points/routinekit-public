@@ -4,15 +4,15 @@ defined( 'ABSPATH' ) || exit;
 
 /**
  * REST endpoint for evidence file uploads.
- * POST /stepwise/v1/executions/:execution_id/steps/:step_id/evidence
+ * POST /routinekit/v1/executions/:execution_id/steps/:step_id/evidence
  *
  * Accepts a multipart file upload, saves it to the WP media library,
  * and stores the attachment URL on the step_completion row.
  */
-class Stepwise_REST_Evidence {
+class Routinekit_REST_Evidence {
 
 	/** @var string */
-	protected string $namespace = STEPWISE_REST_NAMESPACE;
+	protected string $namespace = ROUTINEKIT_REST_NAMESPACE;
 
 	/**
 	 * Register REST routes.
@@ -57,8 +57,8 @@ class Stepwise_REST_Evidence {
 		$completion = $this->get_completion( $execution_id, $step_id );
 		if ( ! $completion ) {
 			return new WP_Error(
-				'stepwise_not_found',
-				__( 'Step completion not found.', 'stepwise' ),
+				'routinekit_not_found',
+				__( 'Step completion not found.', 'routinekit' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -66,8 +66,8 @@ class Stepwise_REST_Evidence {
 		$files = $request->get_file_params();
 		if ( empty( $files['evidence'] ) ) {
 			return new WP_Error(
-				'stepwise_missing_file',
-				__( 'No file uploaded. Send the file as multipart/form-data with key "evidence".', 'stepwise' ),
+				'routinekit_missing_file',
+				__( 'No file uploaded. Send the file as multipart/form-data with key "evidence".', 'routinekit' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -90,8 +90,8 @@ class Stepwise_REST_Evidence {
 		);
 		if ( ! $check['type'] || ! in_array( $check['type'], $allowed_types, true ) ) {
 			return new WP_Error(
-				'stepwise_invalid_file',
-				__( 'Unsupported file type. Allowed: JPEG, PNG, GIF, WebP, PDF.', 'stepwise' ),
+				'routinekit_invalid_file',
+				__( 'Unsupported file type. Allowed: JPEG, PNG, GIF, WebP, PDF.', 'routinekit' ),
 				[ 'status' => 415 ]
 			);
 		}
@@ -99,8 +99,8 @@ class Stepwise_REST_Evidence {
 		// Size limit: 10 MB.
 		if ( $files['evidence']['size'] > 10 * MB_IN_BYTES ) {
 			return new WP_Error(
-				'stepwise_file_too_large',
-				__( 'Evidence file must be 10 MB or smaller.', 'stepwise' ),
+				'routinekit_file_too_large',
+				__( 'Evidence file must be 10 MB or smaller.', 'routinekit' ),
 				[ 'status' => 413 ]
 			);
 		}
@@ -110,7 +110,7 @@ class Stepwise_REST_Evidence {
 
 		if ( is_wp_error( $attachment_id ) ) {
 			return new WP_Error(
-				'stepwise_upload_failed',
+				'routinekit_upload_failed',
 				$attachment_id->get_error_message(),
 				[ 'status' => 500 ]
 			);
@@ -138,8 +138,8 @@ class Stepwise_REST_Evidence {
 		$completion = $this->get_completion( $execution_id, $step_id );
 		if ( ! $completion ) {
 			return new WP_Error(
-				'stepwise_not_found',
-				__( 'Step completion not found.', 'stepwise' ),
+				'routinekit_not_found',
+				__( 'Step completion not found.', 'routinekit' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -153,12 +153,12 @@ class Stepwise_REST_Evidence {
 	 * @return bool|WP_Error
 	 */
 	public function permissions_check( WP_REST_Request $request ) {
-		if ( stepwise_current_user_can_run() ) {
+		if ( routinekit_current_user_can_run() ) {
 			return true;
 		}
 		return new WP_Error(
-			'stepwise_forbidden',
-			__( 'You do not have permission to upload evidence.', 'stepwise' ),
+			'routinekit_forbidden',
+			__( 'You do not have permission to upload evidence.', 'routinekit' ),
 			[ 'status' => 403 ]
 		);
 	}
@@ -177,7 +177,7 @@ class Stepwise_REST_Evidence {
 		if ( current_user_can( 'manage_options' ) ) {
 			return $wpdb->get_row(
 				$wpdb->prepare(
-					"SELECT * FROM {$wpdb->prefix}stepwise_step_completions
+					"SELECT * FROM {$wpdb->prefix}routinekit_step_completions
 					 WHERE execution_id = %d AND step_id = %d
 					 LIMIT 1",
 					$execution_id,
@@ -188,8 +188,8 @@ class Stepwise_REST_Evidence {
 
 		return $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT sc.* FROM {$wpdb->prefix}stepwise_step_completions sc
-				 INNER JOIN {$wpdb->prefix}stepwise_executions e ON e.id = sc.execution_id
+				"SELECT sc.* FROM {$wpdb->prefix}routinekit_step_completions sc
+				 INNER JOIN {$wpdb->prefix}routinekit_executions e ON e.id = sc.execution_id
 				 WHERE sc.execution_id = %d AND sc.step_id = %d AND e.started_by = %d
 				 LIMIT 1",
 				$execution_id,
@@ -208,7 +208,7 @@ class Stepwise_REST_Evidence {
 	private function update_completion_evidence( int $completion_id, ?string $url ): void {
 		global $wpdb;
 		$wpdb->update(
-			$wpdb->prefix . 'stepwise_step_completions',
+			$wpdb->prefix . 'routinekit_step_completions',
 			[ 'evidence_url' => $url ],
 			[ 'id' => $completion_id ],
 			[ '%s' ],

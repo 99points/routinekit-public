@@ -1,1 +1,1 @@
-<?php return array('dependencies' => array(), 'version' => '06b4235548519ee5d426', 'handle' => 'undefined-runtime');
+<?php return array('dependencies' => array(), 'version' => 'e024b7df80995b69044d', 'handle' => 'undefined-runtime');

@@ -6,8 +6,8 @@ const SavedToast = () => {
 	const [ visible, setVisible ] = useState( false );
 	const timerRef = useRef( null );
 
-	const isSavingWorkflow = useSelect( ( select ) => select( 'stepwise/workflows' ).isSaving() );
-	const isSavingStep     = useSelect( ( select ) => select( 'stepwise/steps' ).isSaving() );
+	const isSavingWorkflow = useSelect( ( select ) => select( 'routinekit/workflows' ).isSaving() );
+	const isSavingStep     = useSelect( ( select ) => select( 'routinekit/steps' ).isSaving() );
 	const wasSaving = useRef( false );
 
 	useEffect( () => {
@@ -27,7 +27,7 @@ const SavedToast = () => {
 	return (
 		<div className="ap-saved-toast" role="status" aria-live="polite">
 			<span className="ap-saved-toast__icon">✓</span>
-			{ __( 'Saved', 'stepwise' ) }
+			{ __( 'Saved', 'routinekit' ) }
 		</div>
 	);
 };

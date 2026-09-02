@@ -1,0 +1,1 @@
+<?php return array('dependencies' => array('react', 'react-dom', 'wp-api-fetch', 'wp-data', 'wp-element', 'wp-i18n'), 'version' => '82cb77b5e382e2e55213', 'handle' => 'undefined-routinekit-admin');

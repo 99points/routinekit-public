@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { __ } from '@wordpress/i18n';
 
-const { deeplinks = [] } = window.stepwiseData ?? {};
+const { deeplinks = [] } = window.routinekitData ?? {};
 
 const DeepLinkInput = ( { value, onChange } ) => {
 	const [ open, setOpen ]     = useState( false );
@@ -41,7 +41,7 @@ const DeepLinkInput = ( { value, onChange } ) => {
 			<div className="ap-deeplink-input__row">
 				<input
 					type="url"
-					className="stepwise-input"
+					className="routinekit-input"
 					value={ value }
 					onChange={ handleManualChange }
 					placeholder="https://example.com/wp-admin/..."
@@ -49,11 +49,11 @@ const DeepLinkInput = ( { value, onChange } ) => {
 				{ deeplinks.length > 0 && (
 					<button
 						type="button"
-						className="stepwise-btn stepwise-btn--ghost stepwise-btn--sm ap-deeplink-input__picker"
+						className="routinekit-btn routinekit-btn--ghost routinekit-btn--sm ap-deeplink-input__picker"
 						onClick={ () => setOpen( ( o ) => ! o ) }
-						aria-label={ __( 'Browse deep-links', 'stepwise' ) }
+						aria-label={ __( 'Browse deep-links', 'routinekit' ) }
 					>
-						{ __( 'Browse', 'stepwise' ) }
+						{ __( 'Browse', 'routinekit' ) }
 					</button>
 				) }
 			</div>
@@ -62,15 +62,15 @@ const DeepLinkInput = ( { value, onChange } ) => {
 				<div className="ap-deeplink-input__dropdown">
 					<input
 						type="text"
-						className="stepwise-input ap-deeplink-input__search"
+						className="routinekit-input ap-deeplink-input__search"
 						value={ query }
 						onChange={ ( e ) => setQuery( e.target.value ) }
-						placeholder={ __( 'Search deep-links…', 'stepwise' ) }
+						placeholder={ __( 'Search deep-links…', 'routinekit' ) }
 						autoFocus
 					/>
 					<ul className="ap-deeplink-input__list">
 						{ filtered.length === 0 && (
-							<li className="ap-deeplink-input__empty">{ __( 'No results', 'stepwise' ) }</li>
+							<li className="ap-deeplink-input__empty">{ __( 'No results', 'routinekit' ) }</li>
 						) }
 						{ filtered.map( ( dl, i ) => (
 							<li key={ i }>

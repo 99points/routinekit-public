@@ -5,47 +5,47 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Pulls SaaS workflow assignments and pushes completions back.
  */
-class Stepwise_SaaS_Sync {
+class Routinekit_SaaS_Sync {
 
 	public function init(): void {
-		add_action( 'stepwise_execution_completed', [ $this, 'push_completion' ] );
-		add_action( 'stepwise_execution_completed', [ $this, 'send_completion_notification' ] );
+		add_action( 'routinekit_execution_completed', [ $this, 'push_completion' ] );
+		add_action( 'routinekit_execution_completed', [ $this, 'send_completion_notification' ] );
 		add_action( 'admin_init',                     [ $this, 'maybe_pull_assignments' ] );
-		add_action( 'stepwise_saas_heartbeat',      [ $this, 'send_heartbeat' ] );
+		add_action( 'routinekit_saas_heartbeat',      [ $this, 'send_heartbeat' ] );
 	}
 
 	/**
 	 * Pull SaaS assignments on admin_init, cached for 15 minutes.
 	 */
 	public function maybe_pull_assignments(): void {
-		if ( ! Stepwise_SaaS_Auth::is_connected() ) {
+		if ( ! Routinekit_SaaS_Auth::is_connected() ) {
 			return;
 		}
 
 		// Local URL mismatch check — catches clones before the hourly heartbeat fires.
 		// If staging mode is also set (inherited from a cloned production site), this
 		// still runs and disconnects, preventing the clone from silently using live credentials.
-		$registered_url = get_option( 'stepwise_registered_site_url', '' );
+		$registered_url = get_option( 'routinekit_registered_site_url', '' );
 		if ( $registered_url && rtrim( get_site_url(), '/' ) !== rtrim( $registered_url, '/' ) ) {
-			Stepwise_SaaS_Auth::disconnect();
-			set_transient( 'stepwise_url_mismatch_notice', 1, HOUR_IN_SECONDS );
-			stepwise_log( 'Disconnected: local URL mismatch detected on admin_init — site was cloned or migrated.', 'saas' );
+			Routinekit_SaaS_Auth::disconnect();
+			set_transient( 'routinekit_url_mismatch_notice', 1, HOUR_IN_SECONDS );
+			routinekit_log( 'Disconnected: local URL mismatch detected on admin_init — site was cloned or migrated.', 'saas' );
 			return;
 		}
 
 		// Staging mode: don't pull assignments so live data isn't polluted.
-		if ( stepwise_staging_mode_active() ) {
+		if ( routinekit_staging_mode_active() ) {
 			return;
 		}
 
-		$cache_key = 'stepwise_assignments_check';
+		$cache_key = 'routinekit_assignments_check';
 		if ( get_transient( $cache_key ) ) {
 			return;
 		}
 
 		set_transient( $cache_key, true, 15 * MINUTE_IN_SECONDS );
 
-		$client = new Stepwise_SaaS_Client();
+		$client = new Routinekit_SaaS_Client();
 		$result = $client->get_assignments();
 
 		if ( is_wp_error( $result ) || empty( $result['assignments'] ) ) {
@@ -75,7 +75,7 @@ class Stepwise_SaaS_Sync {
 		$saas_key    = "saas:{$saas_workflow_id}";
 		$existing_id = (int) $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT id FROM {$wpdb->prefix}stepwise_workflows WHERE saas_id = %s LIMIT 1",
+				"SELECT id FROM {$wpdb->prefix}routinekit_workflows WHERE saas_id = %s LIMIT 1",
 				$saas_key
 			)
 		);
@@ -85,7 +85,7 @@ class Stepwise_SaaS_Sync {
 			$user_id          = get_current_user_id() ?: 1;
 			$source_site_url  = isset( $assignment['source_site_url'] ) ? esc_url_raw( $assignment['source_site_url'] ) : null;
 			$wpdb->insert(
-				$wpdb->prefix . 'stepwise_workflows',
+				$wpdb->prefix . 'routinekit_workflows',
 				[
 					'title'           => sanitize_text_field( $assignment['workflow_title'] ),
 					'status'          => 'active',
@@ -103,12 +103,14 @@ class Stepwise_SaaS_Sync {
 			// Import steps from snapshot
 			foreach ( $steps as $i => $step ) {
 				$wpdb->insert(
-					$wpdb->prefix . 'stepwise_steps',
+					$wpdb->prefix . 'routinekit_steps',
 					[
 						'workflow_id'       => $workflow_id,
 						'title'             => sanitize_text_field( $step['title'] ?? '' ),
 						'description'       => sanitize_textarea_field( $step['description'] ?? '' ),
-						'deep_link'         => esc_url( $step['deep_link'] ?? '' ),
+						// esc_url_raw for storage — esc_url() would encode & as &#038;
+						// and corrupt multi-parameter deep links.
+						'deep_link'         => esc_url_raw( $step['deep_link'] ?? '' ),
 						'deep_link_type'    => sanitize_text_field( $step['deep_link_type'] ?? 'static' ),
 						'is_required'       => (int) ( $step['is_required'] ?? 1 ),
 						'evidence_required' => (int) ( $step['evidence_required'] ?? 0 ),
@@ -123,7 +125,7 @@ class Stepwise_SaaS_Sync {
 			// Sync category if it changed
 			if ( $category ) {
 				$wpdb->update(
-					$wpdb->prefix . 'stepwise_workflows',
+					$wpdb->prefix . 'routinekit_workflows',
 					[ 'category' => $category, 'updated_at' => current_time( 'mysql' ) ],
 					[ 'id' => $workflow_id ]
 				);
@@ -131,7 +133,7 @@ class Stepwise_SaaS_Sync {
 		}
 
 		// Record the assignment ID so we can report completion
-		update_option( "stepwise_saas_assignment_{$workflow_id}", $assignment_id );
+		update_option( "routinekit_saas_assignment_{$workflow_id}", $assignment_id );
 	}
 
 	/**
@@ -140,36 +142,36 @@ class Stepwise_SaaS_Sync {
 	 * @param object $execution
 	 */
 	public function push_completion( $execution ): void {
-		if ( ! Stepwise_SaaS_Auth::is_connected() ) {
+		if ( ! Routinekit_SaaS_Auth::is_connected() ) {
 			return;
 		}
 
 		// Staging mode: don't push completions to live SaaS data.
-		if ( stepwise_staging_mode_active() ) {
+		if ( routinekit_staging_mode_active() ) {
 			return;
 		}
 
-		$assignment_id = (int) get_option( "stepwise_saas_assignment_{$execution->workflow_id}", 0 );
+		$assignment_id = (int) get_option( "routinekit_saas_assignment_{$execution->workflow_id}", 0 );
 		if ( ! $assignment_id ) {
 			return;
 		}
 
-		$client = new Stepwise_SaaS_Client();
+		$client = new Routinekit_SaaS_Client();
 		$client->complete_assignment( $assignment_id );
 	}
 
 	/**
 	 * Send a completion notification email when a workflow execution finishes.
-	 * Respects the stepwise_notify_completed and stepwise_notify_email settings.
+	 * Respects the routinekit_notify_completed and routinekit_notify_email settings.
 	 *
 	 * @param object $execution
 	 */
 	public function send_completion_notification( $execution ): void {
-		if ( ! get_option( 'stepwise_notify_completed', true ) ) {
+		if ( ! get_option( 'routinekit_notify_completed', true ) ) {
 			return;
 		}
 
-		$to = sanitize_email( get_option( 'stepwise_notify_email', '' ) );
+		$to = sanitize_email( get_option( 'routinekit_notify_email', '' ) );
 		if ( ! $to ) {
 			$to = sanitize_email( get_option( 'admin_email', '' ) );
 		}
@@ -177,9 +179,9 @@ class Stepwise_SaaS_Sync {
 			return;
 		}
 
-		$workflow = Stepwise_Workflow::get( (int) $execution->workflow_id );
+		$workflow = Routinekit_Workflow::get( (int) $execution->workflow_id );
 		/* translators: %d: workflow ID */
-		$title    = $workflow ? esc_html( $workflow->title ) : sprintf( __( 'Workflow #%d', 'stepwise' ), $execution->workflow_id );
+		$title    = $workflow ? esc_html( $workflow->title ) : sprintf( __( 'Workflow #%d', 'routinekit' ), $execution->workflow_id );
 
 		$completed_by = '';
 		if ( ! empty( $execution->started_by ) ) {
@@ -191,18 +193,18 @@ class Stepwise_SaaS_Sync {
 		$site_url  = get_site_url();
 
 		/* translators: %1$s: workflow title, %2$s: site name */
-		$subject = sprintf( __( '[%2$s] Workflow completed: %1$s', 'stepwise' ), $title, $site_name );
+		$subject = sprintf( __( '[%2$s] Workflow completed: %1$s', 'routinekit' ), $title, $site_name );
 
 		/* translators: %s: site name */
-		$body  = sprintf( __( 'A workflow was just completed on %s.', 'stepwise' ), $site_name ) . "\n\n";
+		$body  = sprintf( __( 'A workflow was just completed on %s.', 'routinekit' ), $site_name ) . "\n\n";
 		/* translators: %s: workflow title */
-		$body .= sprintf( __( 'Workflow: %s', 'stepwise' ), $title ) . "\n";
+		$body .= sprintf( __( 'Workflow: %s', 'routinekit' ), $title ) . "\n";
 		if ( $completed_by ) {
 			/* translators: %s: user display name */
-			$body .= sprintf( __( 'Completed by: %s', 'stepwise' ), $completed_by ) . "\n";
+			$body .= sprintf( __( 'Completed by: %s', 'routinekit' ), $completed_by ) . "\n";
 		}
 		/* translators: %s: completion datetime */
-		$body .= sprintf( __( 'Completed at: %s', 'stepwise' ), $execution->completed_at ) . "\n";
+		$body .= sprintf( __( 'Completed at: %s', 'routinekit' ), $execution->completed_at ) . "\n";
 		$body .= "\n" . $site_url . "\n";
 
 		wp_mail( $to, $subject, $body );
@@ -214,16 +216,16 @@ class Stepwise_SaaS_Sync {
 	 * auto-disconnect and surface an admin notice so the admin can reconnect fresh.
 	 */
 	public function send_heartbeat(): void {
-		if ( ! Stepwise_SaaS_Auth::is_connected() ) {
+		if ( ! Routinekit_SaaS_Auth::is_connected() ) {
 			return;
 		}
 
 		// Staging mode suppresses all SaaS sync without disconnecting.
-		if ( stepwise_staging_mode_active() ) {
+		if ( routinekit_staging_mode_active() ) {
 			return;
 		}
 
-		$result = ( new Stepwise_SaaS_Client() )->heartbeat();
+		$result = ( new Routinekit_SaaS_Client() )->heartbeat();
 
 		if ( is_wp_error( $result ) ) {
 			return;
@@ -231,15 +233,15 @@ class Stepwise_SaaS_Sync {
 
 		// SaaS detected this site's URL doesn't match the registered URL — it's a clone.
 		if ( isset( $result['status'] ) && $result['status'] === 'url_mismatch' ) {
-			Stepwise_SaaS_Auth::disconnect();
-			set_transient( 'stepwise_url_mismatch_notice', 1, HOUR_IN_SECONDS );
-			stepwise_log( 'Disconnected: SaaS reported URL mismatch — site was cloned or migrated.', 'saas' );
+			Routinekit_SaaS_Auth::disconnect();
+			set_transient( 'routinekit_url_mismatch_notice', 1, HOUR_IN_SECONDS );
+			routinekit_log( 'Disconnected: SaaS reported URL mismatch — site was cloned or migrated.', 'saas' );
 			return;
 		}
 
 		if ( isset( $result['plan'] ) ) {
 			$plan = sanitize_text_field( $result['plan'] );
-			update_option( 'stepwise_license_plan', $plan );
+			update_option( 'routinekit_license_plan', $plan );
 		}
 	}
 }

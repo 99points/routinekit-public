@@ -3,7 +3,7 @@ import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
 import AddToWorkflowModal from './AddToWorkflowModal';
 
-const { adminUrl = '' } = window.stepwiseData ?? {};
+const { adminUrl = '' } = window.routinekitData ?? {};
 
 const CapturePage = () => {
 	const [ changes, setChanges ]         = useState( [] );
@@ -15,7 +15,7 @@ const CapturePage = () => {
 
 	const load = useCallback( () => {
 		setLoading( true );
-		apiFetch( { path: '/stepwise/v1/capture/all' } )
+		apiFetch( { path: '/routinekit/v1/capture/all' } )
 			.then( ( data ) => setChanges( data?.changes ?? [] ) )
 			.catch( () => setChanges( [] ) )
 			.finally( () => setLoading( false ) );
@@ -44,7 +44,7 @@ const CapturePage = () => {
 	const handleDismissSelected = () => {
 		if ( ! selected.size ) return;
 		apiFetch( {
-			path: '/stepwise/v1/capture/dismiss',
+			path: '/routinekit/v1/capture/dismiss',
 			method: 'DELETE',
 			data: { capture_ids: [ ...selected ] },
 		} ).then( () => {
@@ -54,13 +54,13 @@ const CapturePage = () => {
 	};
 
 	const handleClearAll = () => {
-		if ( ! window.confirm( __( 'Clear all captured changes? This cannot be undone.', 'stepwise' ) ) ) return;
+		if ( ! window.confirm( __( 'Clear all captured changes? This cannot be undone.', 'routinekit' ) ) ) return;
 		setClearing( true );
-		apiFetch( { path: '/stepwise/v1/capture/all', method: 'DELETE' } )
+		apiFetch( { path: '/routinekit/v1/capture/all', method: 'DELETE' } )
 			.then( () => {
 				setChanges( [] );
 				setSelected( new Set() );
-				setSuccessMsg( __( 'All captured changes cleared.', 'stepwise' ) );
+				setSuccessMsg( __( 'All captured changes cleared.', 'routinekit' ) );
 				setTimeout( () => setSuccessMsg( '' ), 3000 );
 			} )
 			.catch( () => {} )
@@ -80,13 +80,13 @@ const CapturePage = () => {
 		<div className="ap-capture-page">
 			<div className="ap-capture-page__header">
 				<div className="ap-capture-page__title-row">
-					<h1 className="ap-page-title">{ __( 'Captured Steps', 'stepwise' ) }</h1>
-					<a href={ `${ adminUrl }admin.php?page=stepwise` } className="ap-capture-page__back">
-						← { __( 'Back to Workflows', 'stepwise' ) }
+					<h1 className="ap-page-title">{ __( 'Captured Steps', 'routinekit' ) }</h1>
+					<a href={ `${ adminUrl }admin.php?page=routinekit` } className="ap-capture-page__back">
+						← { __( 'Back to Workflows', 'routinekit' ) }
 					</a>
 				</div>
 				<p className="ap-capture-page__desc">
-					{ __( 'Stepwise detected these setting changes. Select one or more to add as a workflow step, or dismiss them.', 'stepwise' ) }
+					{ __( 'RoutineKit detected these setting changes. Select one or more to add as a workflow step, or dismiss them.', 'routinekit' ) }
 				</p>
 			</div>
 
@@ -99,15 +99,15 @@ const CapturePage = () => {
 			{ loading && (
 				<div className="ap-loading">
 					<span className="spinner is-active" />
-					{ __( 'Loading…', 'stepwise' ) }
+					{ __( 'Loading…', 'routinekit' ) }
 				</div>
 			) }
 
 			{ ! loading && changes.length === 0 && (
 				<div className="ap-capture-page__empty">
-					<p>{ __( 'No pending captured changes.', 'stepwise' ) }</p>
+					<p>{ __( 'No pending captured changes.', 'routinekit' ) }</p>
 					<p className="ap-capture-page__empty-sub">
-						{ __( 'Stepwise will detect setting changes as you navigate WP admin.', 'stepwise' ) }
+						{ __( 'RoutineKit will detect setting changes as you navigate WP admin.', 'routinekit' ) }
 					</p>
 				</div>
 			) }
@@ -122,8 +122,8 @@ const CapturePage = () => {
 								onChange={ toggleAll }
 							/>
 							{ selected.size > 0
-								? `${ selected.size } ${ __( 'selected', 'stepwise' ) }`
-								: __( 'Select all', 'stepwise' ) }
+								? `${ selected.size } ${ __( 'selected', 'routinekit' ) }`
+								: __( 'Select all', 'routinekit' ) }
 						</label>
 
 						<div className="ap-capture-page__toolbar-actions">
@@ -131,28 +131,28 @@ const CapturePage = () => {
 								<>
 									<button
 										type="button"
-										className="stepwise-btn stepwise-btn--primary stepwise-btn--sm"
+										className="routinekit-btn routinekit-btn--primary routinekit-btn--sm"
 										onClick={ () => setShowModal( true ) }
 									>
-										{ __( 'Add to Workflow', 'stepwise' ) }
+										{ __( 'Add to Workflow', 'routinekit' ) }
 										{ ' ' }({ selected.size })
 									</button>
 									<button
 										type="button"
-										className="stepwise-btn stepwise-btn--ghost stepwise-btn--sm"
+										className="routinekit-btn routinekit-btn--ghost routinekit-btn--sm"
 										onClick={ handleDismissSelected }
 									>
-										{ __( 'Dismiss', 'stepwise' ) }
+										{ __( 'Dismiss', 'routinekit' ) }
 									</button>
 								</>
 							) }
 							<button
 								type="button"
-								className="stepwise-btn stepwise-btn--danger stepwise-btn--sm"
+								className="routinekit-btn routinekit-btn--danger routinekit-btn--sm"
 								onClick={ handleClearAll }
 								disabled={ clearing }
 							>
-								{ clearing ? __( 'Clearing…', 'stepwise' ) : __( 'Clear All', 'stepwise' ) }
+								{ clearing ? __( 'Clearing…', 'routinekit' ) : __( 'Clear All', 'routinekit' ) }
 							</button>
 						</div>
 					</div>
@@ -161,11 +161,11 @@ const CapturePage = () => {
 						<thead>
 							<tr>
 								<th className="ap-capture-page__col-check"></th>
-								<th>{ __( 'Page', 'stepwise' ) }</th>
-								<th>{ __( 'Setting', 'stepwise' ) }</th>
-								<th>{ __( 'Old Value', 'stepwise' ) }</th>
-								<th>{ __( 'New Value', 'stepwise' ) }</th>
-								<th>{ __( 'Captured', 'stepwise' ) }</th>
+								<th>{ __( 'Page', 'routinekit' ) }</th>
+								<th>{ __( 'Setting', 'routinekit' ) }</th>
+								<th>{ __( 'Old Value', 'routinekit' ) }</th>
+								<th>{ __( 'New Value', 'routinekit' ) }</th>
+								<th>{ __( 'Captured', 'routinekit' ) }</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -199,12 +199,12 @@ const CapturePage = () => {
 									</td>
 									<td className="ap-capture-page__val">
 										<span title={ c.old_value }>
-											{ String( c.old_value ?? '' ).slice( 0, 60 ) || <em>{ __( '(empty)', 'stepwise' ) }</em> }
+											{ String( c.old_value ?? '' ).slice( 0, 60 ) || <em>{ __( '(empty)', 'routinekit' ) }</em> }
 										</span>
 									</td>
 									<td className="ap-capture-page__val">
 										<span title={ c.new_value }>
-											{ String( c.new_value ?? '' ).slice( 0, 60 ) || <em>{ __( '(empty)', 'stepwise' ) }</em> }
+											{ String( c.new_value ?? '' ).slice( 0, 60 ) || <em>{ __( '(empty)', 'routinekit' ) }</em> }
 										</span>
 									</td>
 									<td className="ap-capture-page__date">

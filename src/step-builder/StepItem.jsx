@@ -5,6 +5,7 @@ import { __ } from '@wordpress/i18n';
 import Button from '../shared/Button';
 import DeepLinkInput from './DeepLinkInput';
 import RunnerNotes from '../runner/RunnerNotes';
+import { resolveDeepLink } from '../shared/deeplink';
 
 const StepItem = ( { step, workflowId, index, total, onMoveUp, onMoveDown, canEdit = false } ) => {
 	const [ editing, setEditing ]        = useState( false );
@@ -14,7 +15,7 @@ const StepItem = ( { step, workflowId, index, total, onMoveUp, onMoveDown, canEd
 	const [ saving, setSaving ]          = useState( false );
 	const [ deleting, setDeleting ]      = useState( false );
 
-	const { saveStep, deleteStep } = useDispatch( 'stepwise/steps' );
+	const { saveStep, deleteStep } = useDispatch( 'routinekit/steps' );
 
 	const handleSave = async () => {
 		setSaving( true );
@@ -35,7 +36,7 @@ const StepItem = ( { step, workflowId, index, total, onMoveUp, onMoveDown, canEd
 	};
 
 	const handleDelete = async () => {
-		if ( ! window.confirm( __( 'Delete this step? This cannot be undone.', 'stepwise' ) ) ) return;
+		if ( ! window.confirm( __( 'Delete this step? This cannot be undone.', 'routinekit' ) ) ) return;
 		setDeleting( true );
 		await deleteStep( workflowId, step.id );
 	};
@@ -52,10 +53,10 @@ const StepItem = ( { step, workflowId, index, total, onMoveUp, onMoveDown, canEd
 				{ editing ? (
 					<div className="ap-step-item__edit-form">
 						<div className="ap-field">
-							<label className="stepwise-label">{ __( 'Step Title', 'stepwise' ) }</label>
+							<label className="routinekit-label">{ __( 'Step Title', 'routinekit' ) }</label>
 							<input
 								type="text"
-								className="stepwise-input"
+								className="routinekit-input"
 								value={ titleDraft }
 								onChange={ ( e ) => setTitle( e.target.value ) }
 								autoFocus
@@ -63,41 +64,41 @@ const StepItem = ( { step, workflowId, index, total, onMoveUp, onMoveDown, canEd
 						</div>
 
 						<div className="ap-field">
-							<label className="stepwise-label">{ __( 'Notes', 'stepwise' ) }</label>
+							<label className="routinekit-label">{ __( 'Notes', 'routinekit' ) }</label>
 							<RunnerNotes stepId={ step.id } isSaas={ false } />
 						</div>
 
 						<div className="ap-field">
-							<label className="stepwise-label">{ __( 'Deep Link (where to perform this step)', 'stepwise' ) }</label>
+							<label className="routinekit-label">{ __( 'Deep Link (where to perform this step)', 'routinekit' ) }</label>
 							<DeepLinkInput value={ deepLinkDraft } onChange={ setDeepLink } />
 						</div>
 
 						<div className="ap-field ap-field--inline">
-							<label className="stepwise-label">
+							<label className="routinekit-label">
 								<input
 									type="checkbox"
 									checked={ required }
 									onChange={ ( e ) => setRequired( e.target.checked ) }
 								/>
-								{ ' ' }{ __( 'Required step', 'stepwise' ) }
+								{ ' ' }{ __( 'Required step', 'routinekit' ) }
 							</label>
 						</div>
 
 						<div className="ap-step-item__edit-actions">
 							<Button variant="primary" size="sm" onClick={ handleSave } disabled={ saving || ! titleDraft.trim() }>
-								{ saving ? __( 'Saving…', 'stepwise' ) : __( 'Save Step', 'stepwise' ) }
+								{ saving ? __( 'Saving…', 'routinekit' ) : __( 'Save Step', 'routinekit' ) }
 							</Button>
 							<Button variant="ghost" size="sm" onClick={ handleCancel }>
-								{ __( 'Cancel', 'stepwise' ) }
+								{ __( 'Cancel', 'routinekit' ) }
 							</Button>
 						</div>
 					</div>
 				) : (
 					<div className="ap-step-item__display">
 						<div className="ap-step-item__title">{ step.title }</div>
-						{ step.deep_link && (
+						{ !! resolveDeepLink( step.deep_link ) && (
 							<a
-								href={ step.deep_link }
+								href={ resolveDeepLink( step.deep_link ) }
 								className="ap-step-item__deeplink"
 								target="_blank"
 								rel="noopener noreferrer"
@@ -107,7 +108,7 @@ const StepItem = ( { step, workflowId, index, total, onMoveUp, onMoveDown, canEd
 						) }
 						{ step.captured_options && (
 							<span className="ap-step-item__captured-badge">
-								{ __( 'Captured', 'stepwise' ) }
+								{ __( 'Captured', 'routinekit' ) }
 							</span>
 						) }
 					</div>
@@ -117,7 +118,7 @@ const StepItem = ( { step, workflowId, index, total, onMoveUp, onMoveDown, canEd
 			{ ! editing && canEdit && (
 				<div className="ap-step-item__actions">
 					<Button variant="ghost" size="sm" onClick={ () => setEditing( true ) }>
-						{ __( 'Edit', 'stepwise' ) }
+						{ __( 'Edit', 'routinekit' ) }
 					</Button>
 					<Button variant="ghost" size="sm" onClick={ onMoveUp } disabled={ index === 0 }>
 						↑
@@ -126,7 +127,7 @@ const StepItem = ( { step, workflowId, index, total, onMoveUp, onMoveDown, canEd
 						↓
 					</Button>
 					<Button variant="danger" size="sm" onClick={ handleDelete } disabled={ deleting }>
-						{ deleting ? '…' : __( 'Delete', 'stepwise' ) }
+						{ deleting ? '…' : __( 'Delete', 'routinekit' ) }
 					</Button>
 				</div>
 			) }

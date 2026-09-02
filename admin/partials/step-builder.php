@@ -5,10 +5,10 @@ $workflow_id = isset( $_GET['workflow_id'] ) ? absint( $_GET['workflow_id'] ) : 
 ?>
 <div class="wrap">
 	<div
-		id="stepwise-root"
+		id="routinekit-root"
 		data-page="step-builder"
 		data-workflow-id="<?php echo esc_attr( $workflow_id ); ?>"
 	></div>
 </div>
-<div id="stepwise-runner-root"></div>
-<div id="stepwise-capture-root"></div>
+<div id="routinekit-runner-root"></div>
+<div id="routinekit-capture-root"></div>

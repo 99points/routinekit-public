@@ -5,7 +5,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Handles plugin deactivation cleanup.
  */
-class Stepwise_Deactivator {
+class Routinekit_Deactivator {
 
 	/**
 	 * Run on plugin deactivation.
@@ -14,13 +14,13 @@ class Stepwise_Deactivator {
 	 * Only clears scheduled events and transients.
 	 */
 	public static function deactivate(): void {
-		wp_clear_scheduled_hook( 'stepwise_cleanup_capture_buffer' );
-		wp_clear_scheduled_hook( 'stepwise_saas_heartbeat' );
+		wp_clear_scheduled_hook( 'routinekit_cleanup_capture_buffer' );
+		wp_clear_scheduled_hook( 'routinekit_saas_heartbeat' );
 
 		// Clear any pending capture transients for all users
 		global $wpdb;
 		$wpdb->query( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- static query with no user input
-			"DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_stepwise_pending_captures_%' OR option_name LIKE '_transient_timeout_stepwise_pending_captures_%'"
+			"DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_routinekit_pending_captures_%' OR option_name LIKE '_transient_timeout_routinekit_pending_captures_%'"
 		);
 	}
 }

@@ -7,7 +7,7 @@ defined( 'ABSPATH' ) || exit;
  * Provides a curated list of admin deep-links and resolves URL templates
  * to full admin URLs for the Runner sidebar.
  */
-class Stepwise_Deeplinks {
+class Routinekit_Deeplinks {
 
 	/**
 	 * Curated library of admin deep-links.
@@ -62,7 +62,7 @@ class Stepwise_Deeplinks {
 	 * @return array[]
 	 */
 	public function get_library( bool $active_only = true ): array {
-		$library = apply_filters( 'stepwise_deeplink_library', $this->library );
+		$library = apply_filters( 'routinekit_deeplink_library', $this->library );
 
 		if ( ! $active_only ) {
 			return $library;

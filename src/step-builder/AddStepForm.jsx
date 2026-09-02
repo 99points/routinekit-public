@@ -11,8 +11,8 @@ const AddStepForm = ( { workflowId } ) => {
 	const [ deepLink, setDeepLink ] = useState( '' );
 	const [ required, setRequired ] = useState( true );
 
-	const { createStep } = useDispatch( 'stepwise/steps' );
-	const isSaving = useSelect( ( select ) => select( 'stepwise/steps' ).isSaving() );
+	const { createStep } = useDispatch( 'routinekit/steps' );
+	const isSaving = useSelect( ( select ) => select( 'routinekit/steps' ).isSaving() );
 
 	const handleSubmit = async ( e ) => {
 		e.preventDefault();
@@ -34,7 +34,7 @@ const AddStepForm = ( { workflowId } ) => {
 		return (
 			<div className="ap-add-step">
 				<Button variant="secondary" onClick={ () => setOpen( true ) }>
-					+ { __( 'Add Step', 'stepwise' ) }
+					+ { __( 'Add Step', 'routinekit' ) }
 				</Button>
 			</div>
 		);
@@ -42,47 +42,47 @@ const AddStepForm = ( { workflowId } ) => {
 
 	return (
 		<div className="ap-add-step ap-add-step--open">
-			<h3 className="ap-add-step__title">{ __( 'New Step', 'stepwise' ) }</h3>
+			<h3 className="ap-add-step__title">{ __( 'New Step', 'routinekit' ) }</h3>
 			<form onSubmit={ handleSubmit }>
 				<div className="ap-field">
-					<label className="stepwise-label" htmlFor="ap-new-step-title">
-						{ __( 'Title', 'stepwise' ) }
+					<label className="routinekit-label" htmlFor="ap-new-step-title">
+						{ __( 'Title', 'routinekit' ) }
 						<span className="ap-required" aria-hidden="true"> *</span>
 					</label>
 					<input
 						id="ap-new-step-title"
 						type="text"
-						className="stepwise-input"
+						className="routinekit-input"
 						value={ title }
 						onChange={ ( e ) => setTitle( e.target.value ) }
-						placeholder={ __( 'e.g. Install security plugin', 'stepwise' ) }
+						placeholder={ __( 'e.g. Install security plugin', 'routinekit' ) }
 						autoFocus
 						required
 					/>
 				</div>
 
 				<div className="ap-field">
-					<label className="stepwise-label">{ __( 'Deep Link', 'stepwise' ) }</label>
+					<label className="routinekit-label">{ __( 'Deep Link', 'routinekit' ) }</label>
 					<DeepLinkInput value={ deepLink } onChange={ setDeepLink } />
 				</div>
 
 				<div className="ap-field ap-field--inline">
-					<label className="stepwise-label">
+					<label className="routinekit-label">
 						<input
 							type="checkbox"
 							checked={ required }
 							onChange={ ( e ) => setRequired( e.target.checked ) }
 						/>
-						{ ' ' }{ __( 'Required step', 'stepwise' ) }
+						{ ' ' }{ __( 'Required step', 'routinekit' ) }
 					</label>
 				</div>
 
 				<div className="ap-add-step__actions">
 					<Button variant="primary" type="submit" disabled={ ! title.trim() || isSaving }>
-						{ isSaving ? __( 'Adding…', 'stepwise' ) : __( 'Add Step', 'stepwise' ) }
+						{ isSaving ? __( 'Adding…', 'routinekit' ) : __( 'Add Step', 'routinekit' ) }
 					</Button>
 					<Button variant="ghost" type="button" onClick={ () => setOpen( false ) }>
-						{ __( 'Cancel', 'stepwise' ) }
+						{ __( 'Cancel', 'routinekit' ) }
 					</Button>
 				</div>
 			</form>

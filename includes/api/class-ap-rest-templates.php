@@ -4,13 +4,13 @@ defined( 'ABSPATH' ) || exit;
 /**
  * REST endpoints for bundled local starter templates.
  *
- * GET  /stepwise/v1/templates           — list available templates
- * POST /stepwise/v1/templates/:key/import — import a template as a workflow
+ * GET  /routinekit/v1/templates           — list available templates
+ * POST /routinekit/v1/templates/:key/import — import a template as a workflow
  */
-class Stepwise_REST_Templates {
+class Routinekit_REST_Templates {
 
 	/** @var string */
-	protected string $namespace = STEPWISE_REST_NAMESPACE;
+	protected string $namespace = ROUTINEKIT_REST_NAMESPACE;
 
 	/**
 	 * Register REST routes.
@@ -46,7 +46,7 @@ class Stepwise_REST_Templates {
 	 * @return WP_REST_Response
 	 */
 	public function get_items( WP_REST_Request $request ): WP_REST_Response {
-		return rest_ensure_response( Stepwise_Templates::get_available() );
+		return rest_ensure_response( Routinekit_Templates::get_available() );
 	}
 
 	/**
@@ -58,7 +58,7 @@ class Stepwise_REST_Templates {
 	public function import_item( WP_REST_Request $request ) {
 
 		$key      = sanitize_file_name( $request['key'] );
-		$workflow = Stepwise_Templates::import( $key );
+		$workflow = Routinekit_Templates::import( $key );
 
 		if ( is_wp_error( $workflow ) ) {
 			$workflow->add_data( [ 'status' => 404 ] );
@@ -79,8 +79,8 @@ class Stepwise_REST_Templates {
 			return true;
 		}
 		return new WP_Error(
-			'stepwise_forbidden',
-			__( 'You do not have permission to access this resource.', 'stepwise' ),
+			'routinekit_forbidden',
+			__( 'You do not have permission to access this resource.', 'routinekit' ),
 			[ 'status' => 403 ]
 		);
 	}

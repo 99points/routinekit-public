@@ -3,11 +3,11 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * REST controller for stepwise/v1/executions
+ * REST controller for routinekit/v1/executions
  */
-class Stepwise_REST_Executions extends WP_REST_Controller {
+class Routinekit_REST_Executions extends WP_REST_Controller {
 
-	protected $namespace = STEPWISE_REST_NAMESPACE;
+	protected $namespace = ROUTINEKIT_REST_NAMESPACE;
 	protected $rest_base = 'executions';
 
 	/**
@@ -121,7 +121,7 @@ class Stepwise_REST_Executions extends WP_REST_Controller {
 	 * @return WP_REST_Response
 	 */
 	public function get_active( $request ): WP_REST_Response {
-		$execution = Stepwise_Execution::get_active();
+		$execution = Routinekit_Execution::get_active();
 
 		if ( ! $execution ) {
 			return rest_ensure_response( [ 'active' => false ] );
@@ -138,16 +138,16 @@ class Stepwise_REST_Executions extends WP_REST_Controller {
 	 */
 	public function get_list( WP_REST_Request $request ): WP_REST_Response {
 		$workflow_id = (int) $request->get_param( 'workflow_id' );
-		$executions  = Stepwise_Execution::for_workflow( $workflow_id );
+		$executions  = Routinekit_Execution::for_workflow( $workflow_id );
 
-		$items = array_map( function ( Stepwise_Execution $e ) {
+		$items = array_map( function ( Routinekit_Execution $e ) {
 			$user        = $e->started_by ? get_userdata( $e->started_by ) : null;
 			$paused_user = $e->paused_by  ? get_userdata( $e->paused_by )  : null;
 			return [
 				'id'           => $e->id,
 				'workflow_id'  => $e->workflow_id,
 				'status'       => $e->status,
-				'started_by'   => $user        ? $user->display_name        : __( 'Unknown', 'stepwise' ),
+				'started_by'   => $user        ? $user->display_name        : __( 'Unknown', 'routinekit' ),
 				'paused_by'    => $paused_user ? $paused_user->display_name : null,
 				'started_at'   => $e->started_at,
 				'completed_at' => $e->completed_at,
@@ -166,7 +166,7 @@ class Stepwise_REST_Executions extends WP_REST_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function start_execution( $request ) {
-		$execution = Stepwise_Execution::start( (int) $request->get_param( 'workflow_id' ) );
+		$execution = Routinekit_Execution::start( (int) $request->get_param( 'workflow_id' ) );
 
 		if ( is_wp_error( $execution ) ) {
 			return $execution;
@@ -184,12 +184,12 @@ class Stepwise_REST_Executions extends WP_REST_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function get_item( $request ) {
-		$execution = Stepwise_Execution::get( (int) $request['id'] );
+		$execution = Routinekit_Execution::get( (int) $request['id'] );
 		if ( ! $execution ) {
-			return new WP_Error( 'stepwise_not_found', __( 'Execution not found.', 'stepwise' ), [ 'status' => 404 ] );
+			return new WP_Error( 'routinekit_not_found', __( 'Execution not found.', 'routinekit' ), [ 'status' => 404 ] );
 		}
 		if ( (int) $execution->started_by !== get_current_user_id() && ! current_user_can( 'manage_options' ) ) {
-			return new WP_Error( 'stepwise_forbidden', __( 'You do not have permission to view this execution.', 'stepwise' ), [ 'status' => 403 ] );
+			return new WP_Error( 'routinekit_forbidden', __( 'You do not have permission to view this execution.', 'routinekit' ), [ 'status' => 403 ] );
 		}
 		return rest_ensure_response( $this->prepare_execution( $execution ) );
 	}
@@ -202,14 +202,14 @@ class Stepwise_REST_Executions extends WP_REST_Controller {
 	 */
 	public function cancel_item( $request ) {
 		$id        = (int) $request['id'];
-		$execution = Stepwise_Execution::get( $id );
+		$execution = Routinekit_Execution::get( $id );
 		if ( ! $execution ) {
-			return new WP_Error( 'stepwise_not_found', __( 'Execution not found.', 'stepwise' ), [ 'status' => 404 ] );
+			return new WP_Error( 'routinekit_not_found', __( 'Execution not found.', 'routinekit' ), [ 'status' => 404 ] );
 		}
 		if ( (int) $execution->started_by !== get_current_user_id() ) {
-			return new WP_Error( 'stepwise_forbidden', __( 'You do not have permission to cancel this execution.', 'stepwise' ), [ 'status' => 403 ] );
+			return new WP_Error( 'routinekit_forbidden', __( 'You do not have permission to cancel this execution.', 'routinekit' ), [ 'status' => 403 ] );
 		}
-		Stepwise_Execution::cancel( $id );
+		Routinekit_Execution::cancel( $id );
 		return rest_ensure_response( [ 'cancelled' => true, 'id' => $id ] );
 	}
 
@@ -224,18 +224,18 @@ class Stepwise_REST_Executions extends WP_REST_Controller {
 		$step_id      = (int) $request['step_id'];
 		$status       = $request->get_param( 'status' ) ?? 'completed';
 
-		$execution = Stepwise_Execution::get( $execution_id );
+		$execution = Routinekit_Execution::get( $execution_id );
 		if ( ! $execution ) {
-			return new WP_Error( 'stepwise_not_found', __( 'Execution not found.', 'stepwise' ), [ 'status' => 404 ] );
+			return new WP_Error( 'routinekit_not_found', __( 'Execution not found.', 'routinekit' ), [ 'status' => 404 ] );
 		}
 		if ( (int) $execution->started_by !== get_current_user_id() && ! current_user_can( 'manage_options' ) ) {
-			return new WP_Error( 'stepwise_forbidden', __( 'You do not have permission to modify this execution.', 'stepwise' ), [ 'status' => 403 ] );
+			return new WP_Error( 'routinekit_forbidden', __( 'You do not have permission to modify this execution.', 'routinekit' ), [ 'status' => 403 ] );
 		}
 
 		// Verify step belongs to this execution's workflow.
-		$step = Stepwise_Step::get( $step_id );
+		$step = Routinekit_Step::get( $step_id );
 		if ( ! $step || (int) $step->workflow_id !== (int) $execution->workflow_id ) {
-			return new WP_Error( 'stepwise_forbidden', __( 'Step does not belong to this workflow.', 'stepwise' ), [ 'status' => 403 ] );
+			return new WP_Error( 'routinekit_forbidden', __( 'Step does not belong to this workflow.', 'routinekit' ), [ 'status' => 403 ] );
 		}
 
 		$extra = array_filter( [
@@ -254,10 +254,10 @@ class Stepwise_REST_Executions extends WP_REST_Controller {
 			$extra['after_snapshot'] = $snapshot;
 		}
 
-		Stepwise_Execution::complete_step( $execution_id, $step_id, $status, $extra );
+		Routinekit_Execution::complete_step( $execution_id, $step_id, $status, $extra );
 
 		// Reload to reflect any auto-completion of the execution
-		return rest_ensure_response( $this->prepare_execution( Stepwise_Execution::get( $execution_id ) ) );
+		return rest_ensure_response( $this->prepare_execution( Routinekit_Execution::get( $execution_id ) ) );
 	}
 
 	/**
@@ -272,21 +272,21 @@ class Stepwise_REST_Executions extends WP_REST_Controller {
 		$execution_id = (int) $request['id'];
 		$step_id      = (int) $request['step_id'];
 
-		$execution = Stepwise_Execution::get( $execution_id );
+		$execution = Routinekit_Execution::get( $execution_id );
 		if ( ! $execution ) {
-			return new WP_Error( 'stepwise_not_found', __( 'Execution not found.', 'stepwise' ), [ 'status' => 404 ] );
+			return new WP_Error( 'routinekit_not_found', __( 'Execution not found.', 'routinekit' ), [ 'status' => 404 ] );
 		}
 		if ( (int) $execution->started_by !== get_current_user_id() && ! current_user_can( 'manage_options' ) ) {
-			return new WP_Error( 'stepwise_forbidden', __( 'You do not have permission to modify this execution.', 'stepwise' ), [ 'status' => 403 ] );
+			return new WP_Error( 'routinekit_forbidden', __( 'You do not have permission to modify this execution.', 'routinekit' ), [ 'status' => 403 ] );
 		}
 		if ( 'completed' === $execution->status ) {
-			return new WP_Error( 'stepwise_locked', __( 'Cannot reopen a step on a completed execution.', 'stepwise' ), [ 'status' => 409 ] );
+			return new WP_Error( 'routinekit_locked', __( 'Cannot reopen a step on a completed execution.', 'routinekit' ), [ 'status' => 409 ] );
 		}
 
 		// Reset to pending rather than deleting — complete_step uses UPDATE so the row must exist.
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$wpdb->update(
-			$wpdb->prefix . 'stepwise_step_completions',
+			$wpdb->prefix . 'routinekit_step_completions',
 			[
 				'status'         => 'pending',
 				'completed_by'   => null,
@@ -301,7 +301,7 @@ class Stepwise_REST_Executions extends WP_REST_Controller {
 		);
 		// phpcs:enable
 
-		return rest_ensure_response( $this->prepare_execution( Stepwise_Execution::get( $execution_id ) ) );
+		return rest_ensure_response( $this->prepare_execution( Routinekit_Execution::get( $execution_id ) ) );
 	}
 
 	/**
@@ -314,13 +314,13 @@ class Stepwise_REST_Executions extends WP_REST_Controller {
 	public function get_audit( WP_REST_Request $request ) {
 		global $wpdb;
 
-		$execution = Stepwise_Execution::get( (int) $request['id'] );
+		$execution = Routinekit_Execution::get( (int) $request['id'] );
 		if ( ! $execution ) {
-			return new WP_Error( 'stepwise_not_found', __( 'Execution not found.', 'stepwise' ), [ 'status' => 404 ] );
+			return new WP_Error( 'routinekit_not_found', __( 'Execution not found.', 'routinekit' ), [ 'status' => 404 ] );
 		}
 
-		$workflow  = Stepwise_Workflow::get( $execution->workflow_id );
-		$all_steps = Stepwise_Step::for_workflow( $execution->workflow_id );
+		$workflow  = Routinekit_Workflow::get( $execution->workflow_id );
+		$all_steps = Routinekit_Step::for_workflow( $execution->workflow_id );
 		$steps_map = [];
 		foreach ( $all_steps as $s ) {
 			$steps_map[ $s->id ] = $s;
@@ -329,7 +329,7 @@ class Stepwise_REST_Executions extends WP_REST_Controller {
 		$completions = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT sc.*, u.display_name AS user_name
-				 FROM {$wpdb->prefix}stepwise_step_completions sc
+				 FROM {$wpdb->prefix}routinekit_step_completions sc
 				 LEFT JOIN {$wpdb->users} u ON sc.completed_by = u.ID
 				 WHERE sc.execution_id = %d
 				 ORDER BY sc.completed_at ASC",
@@ -345,7 +345,7 @@ class Stepwise_REST_Executions extends WP_REST_Controller {
 				'step_id'        => (int) $c['step_id'],
 				'step_title'     => $step ? $step->title : '',
 				'status'         => $c['status'],
-				'completed_by'   => $c['user_name'] ?? __( 'Unknown', 'stepwise' ),
+				'completed_by'   => $c['user_name'] ?? __( 'Unknown', 'routinekit' ),
 				'completed_at'   => $c['completed_at'],
 				'notes'          => $c['notes'],
 				'evidence_url'   => $c['evidence_url'],
@@ -370,15 +370,15 @@ class Stepwise_REST_Executions extends WP_REST_Controller {
 
 	/**
 	 * Permission check for run-level operations (start, complete steps, cancel).
-	 * Allows any role listed in stepwise_roles_run.
+	 * Allows any role listed in routinekit_roles_run.
 	 *
 	 * @return bool|WP_Error
 	 */
 	public function run_permissions_check() {
-		if ( stepwise_current_user_can_run() ) {
+		if ( routinekit_current_user_can_run() ) {
 			return true;
 		}
-		return new WP_Error( 'stepwise_forbidden', __( 'You do not have permission to run workflows.', 'stepwise' ), [ 'status' => 403 ] );
+		return new WP_Error( 'routinekit_forbidden', __( 'You do not have permission to run workflows.', 'routinekit' ), [ 'status' => 403 ] );
 	}
 
 	/**
@@ -390,27 +390,27 @@ class Stepwise_REST_Executions extends WP_REST_Controller {
 		if ( current_user_can( 'manage_options' ) ) {
 			return true;
 		}
-		return new WP_Error( 'stepwise_forbidden', __( 'You do not have permission to access this resource.', 'stepwise' ), [ 'status' => 403 ] );
+		return new WP_Error( 'routinekit_forbidden', __( 'You do not have permission to access this resource.', 'routinekit' ), [ 'status' => 403 ] );
 	}
 
 	/**
 	 * Build a rich execution response that includes workflow + step data
 	 * for the Runner sidebar.
 	 *
-	 * @param Stepwise_Execution $execution
+	 * @param Routinekit_Execution $execution
 	 * @return array
 	 */
-	private function prepare_execution( Stepwise_Execution $execution ): array {
+	private function prepare_execution( Routinekit_Execution $execution ): array {
 		global $wpdb;
 
 		$data      = $execution->to_array();
-		$workflow  = Stepwise_Workflow::get( $execution->workflow_id );
-		$all_steps = Stepwise_Step::for_workflow( $execution->workflow_id );
+		$workflow  = Routinekit_Workflow::get( $execution->workflow_id );
+		$all_steps = Routinekit_Step::for_workflow( $execution->workflow_id );
 
 		// Fetch step completion rows
 		$completions = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}stepwise_step_completions WHERE execution_id = %d",
+				"SELECT * FROM {$wpdb->prefix}routinekit_step_completions WHERE execution_id = %d",
 				$execution->id
 			),
 			ARRAY_A

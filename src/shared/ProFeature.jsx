@@ -12,7 +12,7 @@ import UpgradePrompt from './UpgradePrompt';
  *   </ProFeature>
  */
 const ProFeature = ( { children, feature, inline = false } ) => {
-	const isPro = window.stepwiseData?.isPro ?? false;
+	const isPro = window.routinekitData?.isPro ?? false;
 
 	if ( isPro ) {
 		return children;

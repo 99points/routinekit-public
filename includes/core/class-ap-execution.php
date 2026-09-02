@@ -7,7 +7,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * An execution represents one instance of a workflow being run on a site.
  */
-class Stepwise_Execution {
+class Routinekit_Execution {
 
 	/** @var int */
 	public int $id;
@@ -45,11 +45,11 @@ class Stepwise_Execution {
 	 * @param int $id
 	 * @return static|null
 	 */
-	public static function get( int $id ): ?Stepwise_Execution {
+	public static function get( int $id ): ?Routinekit_Execution {
 		global $wpdb;
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}stepwise_executions WHERE id = %d LIMIT 1",
+				"SELECT * FROM {$wpdb->prefix}routinekit_executions WHERE id = %d LIMIT 1",
 				$id
 			)
 		);
@@ -66,7 +66,7 @@ class Stepwise_Execution {
 		global $wpdb;
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}stepwise_executions
+				"SELECT * FROM {$wpdb->prefix}routinekit_executions
 				 WHERE workflow_id = %d
 				 ORDER BY created_at DESC",
 				$workflow_id
@@ -81,11 +81,11 @@ class Stepwise_Execution {
 	 *
 	 * @return static|null
 	 */
-	public static function get_active(): ?Stepwise_Execution {
+	public static function get_active(): ?Routinekit_Execution {
 		global $wpdb;
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}stepwise_executions
+				"SELECT * FROM {$wpdb->prefix}routinekit_executions
 				 WHERE started_by = %d
 				   AND (
 				     status = 'in_progress'
@@ -116,15 +116,15 @@ class Stepwise_Execution {
 	public static function start( int $workflow_id ) {
 		global $wpdb;
 
-		$workflow = Stepwise_Workflow::get( $workflow_id );
+		$workflow = Routinekit_Workflow::get( $workflow_id );
 		if ( ! $workflow ) {
-			return new WP_Error( 'stepwise_not_found', __( 'Workflow not found.', 'stepwise' ) );
+			return new WP_Error( 'routinekit_not_found', __( 'Workflow not found.', 'routinekit' ) );
 		}
 
 		if ( 'active' !== $workflow->status ) {
 			return new WP_Error(
-				'stepwise_workflow_not_active',
-				__( 'This workflow is in draft and cannot be run.', 'stepwise' ),
+				'routinekit_workflow_not_active',
+				__( 'This workflow is in draft and cannot be run.', 'routinekit' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -136,7 +136,7 @@ class Stepwise_Execution {
 		// We do NOT touch completed_at — the run isn't finished, just paused.
 		$wpdb->query(
 			$wpdb->prepare(
-				"UPDATE {$wpdb->prefix}stepwise_executions
+				"UPDATE {$wpdb->prefix}routinekit_executions
 				 SET status = 'paused', paused_by = %d, paused_at = %s
 				 WHERE status = 'in_progress'
 				   AND started_by = %d
@@ -151,7 +151,7 @@ class Stepwise_Execution {
 		// Resume a paused execution for the same workflow if one exists.
 		$paused = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}stepwise_executions
+				"SELECT * FROM {$wpdb->prefix}routinekit_executions
 				 WHERE workflow_id = %d
 				   AND started_by = %d
 				   AND status = 'paused'
@@ -164,7 +164,7 @@ class Stepwise_Execution {
 
 		if ( $paused ) {
 			$wpdb->update(
-				$wpdb->prefix . 'stepwise_executions',
+				$wpdb->prefix . 'routinekit_executions',
 				[ 'status' => 'in_progress', 'paused_by' => null, 'paused_at' => null ],
 				[ 'id' => (int) $paused->id ],
 				[ '%s', '%d', '%s' ],
@@ -175,7 +175,7 @@ class Stepwise_Execution {
 
 		// No paused run to resume — start fresh.
 		$result = $wpdb->insert(
-			$wpdb->prefix . 'stepwise_executions',
+			$wpdb->prefix . 'routinekit_executions',
 			[
 				'workflow_id' => $workflow_id,
 				'status'      => 'in_progress',
@@ -186,16 +186,16 @@ class Stepwise_Execution {
 		);
 
 		if ( false === $result ) {
-			return new WP_Error( 'stepwise_db_error', __( 'Could not start execution.', 'stepwise' ) );
+			return new WP_Error( 'routinekit_db_error', __( 'Could not start execution.', 'routinekit' ) );
 		}
 
 		$execution_id = (int) $wpdb->insert_id;
 
 		// Seed step_completions rows for every step in the workflow.
-		$steps = Stepwise_Step::for_workflow( $workflow_id );
+		$steps = Routinekit_Step::for_workflow( $workflow_id );
 		foreach ( $steps as $step ) {
 			$wpdb->insert(
-				$wpdb->prefix . 'stepwise_step_completions',
+				$wpdb->prefix . 'routinekit_step_completions',
 				[
 					'execution_id' => $execution_id,
 					'step_id'      => $step->id,
@@ -206,10 +206,10 @@ class Stepwise_Execution {
 		}
 
 		// Update workflow's last_run_at and increment run_count.
-		Stepwise_Workflow::update( $workflow_id, [ 'last_run_at' => $now ] );
+		Routinekit_Workflow::update( $workflow_id, [ 'last_run_at' => $now ] );
 		$wpdb->query(
 			$wpdb->prepare(
-				"UPDATE {$wpdb->prefix}stepwise_workflows SET run_count = run_count + 1 WHERE id = %d",
+				"UPDATE {$wpdb->prefix}routinekit_workflows SET run_count = run_count + 1 WHERE id = %d",
 				$workflow_id
 			)
 		);
@@ -226,7 +226,7 @@ class Stepwise_Execution {
 	public static function cancel( int $execution_id ): bool {
 		global $wpdb;
 		$result = $wpdb->update(
-			$wpdb->prefix . 'stepwise_executions',
+			$wpdb->prefix . 'routinekit_executions',
 			[ 'status' => 'abandoned', 'completed_at' => current_time( 'mysql' ) ],
 			[ 'id' => $execution_id ],
 			[ '%s', '%s' ],
@@ -281,7 +281,7 @@ class Stepwise_Execution {
 		}
 
 		$result = $wpdb->update(
-			$wpdb->prefix . 'stepwise_step_completions',
+			$wpdb->prefix . 'routinekit_step_completions',
 			$update,
 			[ 'execution_id' => $execution_id, 'step_id' => $step_id ],
 			$formats,
@@ -296,7 +296,7 @@ class Stepwise_Execution {
 			);
 			$insert_formats = array_merge( $formats, [ '%d', '%d' ] );
 			$result = $wpdb->insert(
-				$wpdb->prefix . 'stepwise_step_completions',
+				$wpdb->prefix . 'routinekit_step_completions',
 				$insert,
 				$insert_formats
 			);
@@ -318,8 +318,8 @@ class Stepwise_Execution {
 
 		$pending = (int) $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT COUNT(*) FROM {$wpdb->prefix}stepwise_step_completions sc
-				 JOIN {$wpdb->prefix}stepwise_steps s ON sc.step_id = s.id
+				"SELECT COUNT(*) FROM {$wpdb->prefix}routinekit_step_completions sc
+				 JOIN {$wpdb->prefix}routinekit_steps s ON sc.step_id = s.id
 				 WHERE sc.execution_id = %d
 				   AND sc.status = 'pending'
 				   AND s.is_required = 1",
@@ -329,7 +329,7 @@ class Stepwise_Execution {
 
 		if ( 0 === $pending ) {
 			$wpdb->update(
-				$wpdb->prefix . 'stepwise_executions',
+				$wpdb->prefix . 'routinekit_executions',
 				[
 					'status'       => 'completed',
 					'completed_at' => current_time( 'mysql' ),
@@ -341,7 +341,7 @@ class Stepwise_Execution {
 
 			$execution = static::get( $execution_id );
 			if ( $execution ) {
-				do_action( 'stepwise_execution_completed', $execution );
+				do_action( 'routinekit_execution_completed', $execution );
 			}
 		}
 	}
@@ -359,13 +359,13 @@ class Stepwise_Execution {
 		$saas_assignment_id = sanitize_text_field( $assignment['id'] ?? '' );
 
 		if ( ! $workflow_id || ! $saas_assignment_id ) {
-			return new WP_Error( 'stepwise_invalid', __( 'Invalid SaaS assignment payload.', 'stepwise' ) );
+			return new WP_Error( 'routinekit_invalid', __( 'Invalid SaaS assignment payload.', 'routinekit' ) );
 		}
 
 		// Don't duplicate if already received
 		$exists = $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT id FROM {$wpdb->prefix}stepwise_executions WHERE saas_assignment_id = %s LIMIT 1",
+				"SELECT id FROM {$wpdb->prefix}routinekit_executions WHERE saas_assignment_id = %s LIMIT 1",
 				$saas_assignment_id
 			)
 		);
@@ -374,7 +374,7 @@ class Stepwise_Execution {
 		}
 
 		$result = $wpdb->insert(
-			$wpdb->prefix . 'stepwise_executions',
+			$wpdb->prefix . 'routinekit_executions',
 			[
 				'workflow_id'        => $workflow_id,
 				'saas_assignment_id' => $saas_assignment_id,
@@ -384,7 +384,7 @@ class Stepwise_Execution {
 		);
 
 		if ( false === $result ) {
-			return new WP_Error( 'stepwise_db_error', __( 'Could not create execution from assignment.', 'stepwise' ) );
+			return new WP_Error( 'routinekit_db_error', __( 'Could not create execution from assignment.', 'routinekit' ) );
 		}
 
 		return static::get( (int) $wpdb->insert_id );
@@ -396,7 +396,7 @@ class Stepwise_Execution {
 	 * @param object $row
 	 * @return static
 	 */
-	public static function from_row( object $row ): Stepwise_Execution {
+	public static function from_row( object $row ): Routinekit_Execution {
 		$instance                     = new static();
 		$instance->id                 = (int) $row->id;
 		$instance->workflow_id        = (int) $row->workflow_id;

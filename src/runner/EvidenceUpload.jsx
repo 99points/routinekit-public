@@ -18,11 +18,11 @@ const EvidenceUpload = ( { executionId, stepId, existingUrl, required, onUploade
 		setError( null );
 
 		if ( ! ALLOWED_TYPES.includes( file.type ) ) {
-			setError( __( 'Unsupported file type. Use JPEG, PNG, GIF, WebP, or PDF.', 'stepwise' ) );
+			setError( __( 'Unsupported file type. Use JPEG, PNG, GIF, WebP, or PDF.', 'routinekit' ) );
 			return;
 		}
 		if ( file.size > MAX_MB * 1024 * 1024 ) {
-			setError( `${ __( 'File must be', 'stepwise' ) } ${ MAX_MB }MB ${ __( 'or smaller.', 'stepwise' ) }` );
+			setError( `${ __( 'File must be', 'routinekit' ) } ${ MAX_MB }MB ${ __( 'or smaller.', 'routinekit' ) }` );
 			return;
 		}
 
@@ -32,16 +32,16 @@ const EvidenceUpload = ( { executionId, stepId, existingUrl, required, onUploade
 
 		try {
 			const res = await window.fetch(
-				`${ window.stepwiseData?.restUrl ?? '/wp-json/stepwise/v1/' }executions/${ executionId }/steps/${ stepId }/evidence`,
+				`${ window.routinekitData?.restUrl ?? '/wp-json/routinekit/v1/' }executions/${ executionId }/steps/${ stepId }/evidence`,
 				{
 					method:  'POST',
-					headers: { 'X-WP-Nonce': window.stepwiseData?.nonce ?? '' },
+					headers: { 'X-WP-Nonce': window.routinekitData?.nonce ?? '' },
 					body:    formData,
 				}
 			);
 			if ( ! res.ok ) {
 				const data = await res.json().catch( () => ( {} ) );
-				throw new Error( data.message ?? __( 'Upload failed.', 'stepwise' ) );
+				throw new Error( data.message ?? __( 'Upload failed.', 'routinekit' ) );
 			}
 			const data = await res.json();
 			setPreview( data.evidence_url );
@@ -58,16 +58,16 @@ const EvidenceUpload = ( { executionId, stepId, existingUrl, required, onUploade
 		setUploading( true );
 		try {
 			await window.fetch(
-				`${ window.stepwiseData?.restUrl ?? '/wp-json/stepwise/v1/' }executions/${ executionId }/steps/${ stepId }/evidence`,
+				`${ window.routinekitData?.restUrl ?? '/wp-json/routinekit/v1/' }executions/${ executionId }/steps/${ stepId }/evidence`,
 				{
 					method:  'DELETE',
-					headers: { 'X-WP-Nonce': window.stepwiseData?.nonce ?? '' },
+					headers: { 'X-WP-Nonce': window.routinekitData?.nonce ?? '' },
 				}
 			);
 			setPreview( null );
 			onUploaded?.( null );
 		} catch {
-			setError( __( 'Could not remove evidence.', 'stepwise' ) );
+			setError( __( 'Could not remove evidence.', 'routinekit' ) );
 		} finally {
 			setUploading( false );
 		}
@@ -76,7 +76,7 @@ const EvidenceUpload = ( { executionId, stepId, existingUrl, required, onUploade
 	return (
 		<div className="ap-evidence-upload">
 			<span className="ap-evidence-upload__label">
-				{ __( 'Attachment', 'stepwise' ) }
+				{ __( 'Attachment', 'routinekit' ) }
 				{ required && <span className="ap-evidence-upload__required"> *</span> }
 			</span>
 
@@ -85,19 +85,19 @@ const EvidenceUpload = ( { executionId, stepId, existingUrl, required, onUploade
 			{ preview ? (
 				<div className="ap-evidence-upload__preview">
 					{ /\.(jpg|jpeg|png|gif|webp)$/i.test( preview ) ? (
-						<img src={ preview } alt={ __( 'Evidence', 'stepwise' ) } className="ap-evidence-upload__img" />
+						<img src={ preview } alt={ __( 'Evidence', 'routinekit' ) } className="ap-evidence-upload__img" />
 					) : (
 						<a href={ preview } target="_blank" rel="noopener noreferrer" className="ap-evidence-upload__file-link">
-							{ __( 'View uploaded evidence', 'stepwise' ) }
+							{ __( 'View uploaded evidence', 'routinekit' ) }
 						</a>
 					) }
 					<button
 						type="button"
-						className="stepwise-btn stepwise-btn--ghost stepwise-btn--sm ap-evidence-upload__remove"
+						className="routinekit-btn routinekit-btn--ghost routinekit-btn--sm ap-evidence-upload__remove"
 						onClick={ handleRemove }
 						disabled={ uploading }
 					>
-						{ __( 'Remove', 'stepwise' ) }
+						{ __( 'Remove', 'routinekit' ) }
 					</button>
 				</div>
 			) : (
@@ -110,8 +110,8 @@ const EvidenceUpload = ( { executionId, stepId, existingUrl, required, onUploade
 						disabled={ uploading }
 						className="ap-evidence-upload__input"
 					/>
-					<span className="stepwise-btn stepwise-btn--secondary stepwise-btn--sm">
-						{ uploading ? __( 'Uploading…', 'stepwise' ) : __( 'Upload screenshot or PDF', 'stepwise' ) }
+					<span className="routinekit-btn routinekit-btn--secondary routinekit-btn--sm">
+						{ uploading ? __( 'Uploading…', 'routinekit' ) : __( 'Upload screenshot or PDF', 'routinekit' ) }
 					</span>
 				</label>
 			) }

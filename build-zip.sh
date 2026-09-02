@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-PLUGIN_SLUG="stepwise"
+PLUGIN_SLUG="routinekit"
 PLUGIN_DIR="$(cd "$(dirname "$0")" && pwd)"
 DIST_DIR="$(dirname "$PLUGIN_DIR")/dist"
 ZIP_NAME="${PLUGIN_SLUG}.zip"
@@ -40,7 +40,7 @@ rsync -a --exclude='node_modules' --exclude='.git' --exclude='src' --exclude='_d
 # Swap the local dev SaaS URL for the production URL in the temp copy
 CONSTANTS_FILE="$TMP_PLUGIN/includes/helpers/constants.php"
 sed -i '' \
-  "s|define( 'STEPWISE_SAAS_DEFAULT_URL',.*);|define( 'STEPWISE_SAAS_DEFAULT_URL', '${PROD_SAAS_URL}' );|" \
+  "s|define( 'ROUTINEKIT_SAAS_DEFAULT_URL',.*);|define( 'ROUTINEKIT_SAAS_DEFAULT_URL', '${PROD_SAAS_URL}' );|" \
   "$CONSTANTS_FILE"
 
 # Verify the replacement landed

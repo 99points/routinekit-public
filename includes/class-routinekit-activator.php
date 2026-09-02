@@ -5,7 +5,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Handles plugin activation: creates all DB tables and seeds default options.
  */
-class Stepwise_Activator {
+class Routinekit_Activator {
 
 	/**
 	 * Run on plugin activation.
@@ -14,8 +14,8 @@ class Stepwise_Activator {
 		self::create_tables();
 		self::set_default_options();
 		self::schedule_cron_events();
-		update_option( 'stepwise_version',    STEPWISE_VERSION );
-		update_option( 'stepwise_db_version', STEPWISE_DB_VERSION );
+		update_option( 'routinekit_version',    ROUTINEKIT_VERSION );
+		update_option( 'routinekit_db_version', ROUTINEKIT_DB_VERSION );
 	}
 
 	/**
@@ -24,26 +24,26 @@ class Stepwise_Activator {
 	 * The DESC query is cheap; the ALTER only fires when the column is absent.
 	 */
 	public static function maybe_run_migrations(): void {
-		// Transient key is versioned — bumping STEPWISE_DB_VERSION auto-invalidates the cache.
-		$transient = 'stepwise_migrations_' . STEPWISE_DB_VERSION;
+		// Transient key is versioned — bumping ROUTINEKIT_DB_VERSION auto-invalidates the cache.
+		$transient = 'routinekit_migrations_' . ROUTINEKIT_DB_VERSION;
 		if ( get_transient( $transient ) ) {
 			return;
 		}
 		global $wpdb;
-		$cols = $wpdb->get_col( "DESC {$wpdb->prefix}stepwise_workflows", 0 );
+		$cols = $wpdb->get_col( "DESC {$wpdb->prefix}routinekit_workflows", 0 );
 		if ( ! in_array( 'pushed_at', $cols, true ) ) {
-			$wpdb->query( "ALTER TABLE {$wpdb->prefix}stepwise_workflows ADD COLUMN pushed_at DATETIME DEFAULT NULL" );
+			$wpdb->query( "ALTER TABLE {$wpdb->prefix}routinekit_workflows ADD COLUMN pushed_at DATETIME DEFAULT NULL" );
 		}
 		if ( ! in_array( 'pushed_group_ids', $cols, true ) ) {
-			$wpdb->query( "ALTER TABLE {$wpdb->prefix}stepwise_workflows ADD COLUMN pushed_group_ids TEXT DEFAULT NULL" );
+			$wpdb->query( "ALTER TABLE {$wpdb->prefix}routinekit_workflows ADD COLUMN pushed_group_ids TEXT DEFAULT NULL" );
 		}
-		$exec_keys = $wpdb->get_col( "SHOW INDEX FROM {$wpdb->prefix}stepwise_executions", 2 );
+		$exec_keys = $wpdb->get_col( "SHOW INDEX FROM {$wpdb->prefix}routinekit_executions", 2 );
 		if ( ! in_array( 'started_by_status', $exec_keys, true ) ) {
-			$wpdb->query( "ALTER TABLE {$wpdb->prefix}stepwise_executions ADD INDEX started_by_status (started_by, status)" );
+			$wpdb->query( "ALTER TABLE {$wpdb->prefix}routinekit_executions ADD INDEX started_by_status (started_by, status)" );
 		}
 
 		// v1.2.0 — step notes table for existing installs.
-		$notes_table = $wpdb->prefix . 'stepwise_step_notes';
+		$notes_table = $wpdb->prefix . 'routinekit_step_notes';
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- table name built from $wpdb->prefix, not user input
 		$table_exists = $wpdb->get_var( "SHOW TABLES LIKE '{$notes_table}'" );
 		if ( $table_exists !== $notes_table ) {
@@ -75,40 +75,57 @@ class Stepwise_Activator {
 		}
 
 		// v1.2.3 — add source column to capture buffer to distinguish manual vs option_hook captures.
-		$buf_cols = $wpdb->get_col( "DESC {$wpdb->prefix}stepwise_capture_buffer", 0 );
+		$buf_cols = $wpdb->get_col( "DESC {$wpdb->prefix}routinekit_capture_buffer", 0 );
 		if ( $buf_cols && ! in_array( 'source', $buf_cols, true ) ) {
-			$wpdb->query( "ALTER TABLE {$wpdb->prefix}stepwise_capture_buffer ADD COLUMN source VARCHAR(20) NOT NULL DEFAULT 'option_hook' AFTER status" );
+			$wpdb->query( "ALTER TABLE {$wpdb->prefix}routinekit_capture_buffer ADD COLUMN source VARCHAR(20) NOT NULL DEFAULT 'option_hook' AFTER status" );
 		}
 
 		// v1.2.2 — add source_site_url to workflows for assigned workflow origin display.
-		$wf_cols = $wpdb->get_col( "DESC {$wpdb->prefix}stepwise_workflows", 0 );
+		$wf_cols = $wpdb->get_col( "DESC {$wpdb->prefix}routinekit_workflows", 0 );
 		if ( $wf_cols && ! in_array( 'source_site_url', $wf_cols, true ) ) {
-			$wpdb->query( "ALTER TABLE {$wpdb->prefix}stepwise_workflows ADD COLUMN source_site_url VARCHAR(500) DEFAULT NULL" );
+			$wpdb->query( "ALTER TABLE {$wpdb->prefix}routinekit_workflows ADD COLUMN source_site_url VARCHAR(500) DEFAULT NULL" );
 		}
 
 		// v1.2.1 — add source_site_url to step notes for domain display.
-		$notes_cols = $wpdb->get_col( "DESC {$wpdb->prefix}stepwise_step_notes", 0 );
+		$notes_cols = $wpdb->get_col( "DESC {$wpdb->prefix}routinekit_step_notes", 0 );
 		if ( $notes_cols && ! in_array( 'source_site_url', $notes_cols, true ) ) {
-			$wpdb->query( "ALTER TABLE {$wpdb->prefix}stepwise_step_notes ADD COLUMN source_site_url VARCHAR(500) DEFAULT NULL AFTER source_site_label" );
+			$wpdb->query( "ALTER TABLE {$wpdb->prefix}routinekit_step_notes ADD COLUMN source_site_url VARCHAR(500) DEFAULT NULL AFTER source_site_label" );
 		}
 
 		// v1.2.4 — upgrade steps.description to LONGTEXT so base64 screenshots fit.
-		$step_col_types = $wpdb->get_results( "DESC {$wpdb->prefix}stepwise_steps", ARRAY_A );
+		$step_col_types = $wpdb->get_results( "DESC {$wpdb->prefix}routinekit_steps", ARRAY_A );
 		foreach ( $step_col_types as $col ) {
 			if ( $col['Field'] === 'description' && strtolower( $col['Type'] ) === 'text' ) {
-				$wpdb->query( "ALTER TABLE {$wpdb->prefix}stepwise_steps MODIFY COLUMN description LONGTEXT" );
+				$wpdb->query( "ALTER TABLE {$wpdb->prefix}routinekit_steps MODIFY COLUMN description LONGTEXT" );
 				break;
 			}
 		}
 
 		// v1.2.5 — add paused_by and paused_at columns to executions for pause/resume support.
-		$exec_cols = $wpdb->get_col( "DESC {$wpdb->prefix}stepwise_executions", 0 );
+		$exec_cols = $wpdb->get_col( "DESC {$wpdb->prefix}routinekit_executions", 0 );
 		if ( $exec_cols && ! in_array( 'paused_by', $exec_cols, true ) ) {
-			$wpdb->query( "ALTER TABLE {$wpdb->prefix}stepwise_executions ADD COLUMN paused_by BIGINT(20) UNSIGNED DEFAULT NULL AFTER completed_at" );
+			$wpdb->query( "ALTER TABLE {$wpdb->prefix}routinekit_executions ADD COLUMN paused_by BIGINT(20) UNSIGNED DEFAULT NULL AFTER completed_at" );
 		}
 		if ( $exec_cols && ! in_array( 'paused_at', $exec_cols, true ) ) {
-			$wpdb->query( "ALTER TABLE {$wpdb->prefix}stepwise_executions ADD COLUMN paused_at DATETIME DEFAULT NULL AFTER paused_by" );
+			$wpdb->query( "ALTER TABLE {$wpdb->prefix}routinekit_executions ADD COLUMN paused_at DATETIME DEFAULT NULL AFTER paused_by" );
 		}
+
+		// v1.2.6 — repair deep links corrupted by esc_url() on write. esc_url() is
+		// an output escaper and encodes & as &#038;, so a stored link like
+		// "admin.php?page=wc-settings&tab=email" became "…&#038;tab=email" — the
+		// second parameter was then literally named "#038;tab", and WordPress
+		// rejected the page with "Sorry, you are not allowed to access this page."
+		// Writes now use esc_url_raw(); this repairs rows written before the fix.
+		$wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- one-off data repair on a custom table
+			"UPDATE {$wpdb->prefix}routinekit_steps
+			    SET deep_link = REPLACE( deep_link, '&#038;', '&' )
+			  WHERE deep_link LIKE '%&#038;%'"
+		);
+		$wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- one-off data repair on a custom table
+			"UPDATE {$wpdb->prefix}routinekit_steps
+			    SET deep_link = REPLACE( deep_link, '&amp;', '&' )
+			  WHERE deep_link LIKE '%&amp;%'"
+		);
 
 		set_transient( $transient, true, DAY_IN_SECONDS );
 	}
@@ -117,8 +134,8 @@ class Stepwise_Activator {
 	 * Schedule recurring cron events (idempotent — checks before scheduling).
 	 */
 	private static function schedule_cron_events(): void {
-		if ( ! wp_next_scheduled( 'stepwise_cleanup_capture_buffer' ) ) {
-			wp_schedule_event( time(), 'daily', 'stepwise_cleanup_capture_buffer' );
+		if ( ! wp_next_scheduled( 'routinekit_cleanup_capture_buffer' ) ) {
+			wp_schedule_event( time(), 'daily', 'routinekit_cleanup_capture_buffer' );
 		}
 	}
 
@@ -132,7 +149,7 @@ class Stepwise_Activator {
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
 		// 1. Workflows
-		dbDelta( "CREATE TABLE {$wpdb->prefix}stepwise_workflows (
+		dbDelta( "CREATE TABLE {$wpdb->prefix}routinekit_workflows (
 			id               BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 			title            VARCHAR(255) NOT NULL,
 			description      TEXT,
@@ -156,24 +173,24 @@ class Stepwise_Activator {
 		) $c;" );
 
 		// Runtime migrations: add columns/indexes to existing installs where they're missing.
-		$cols = $wpdb->get_col( "DESC {$wpdb->prefix}stepwise_workflows", 0 );
+		$cols = $wpdb->get_col( "DESC {$wpdb->prefix}routinekit_workflows", 0 );
 		if ( ! in_array( 'pushed_at', $cols, true ) ) {
-			$wpdb->query( "ALTER TABLE {$wpdb->prefix}stepwise_workflows ADD COLUMN pushed_at DATETIME DEFAULT NULL" );
+			$wpdb->query( "ALTER TABLE {$wpdb->prefix}routinekit_workflows ADD COLUMN pushed_at DATETIME DEFAULT NULL" );
 		}
 		if ( ! in_array( 'pushed_group_ids', $cols, true ) ) {
-			$wpdb->query( "ALTER TABLE {$wpdb->prefix}stepwise_workflows ADD COLUMN pushed_group_ids TEXT DEFAULT NULL" );
+			$wpdb->query( "ALTER TABLE {$wpdb->prefix}routinekit_workflows ADD COLUMN pushed_group_ids TEXT DEFAULT NULL" );
 		}
 
 		// Add UNIQUE index on saas_id to prevent duplicate imports from concurrent admin_init calls.
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$existing_keys = $wpdb->get_col( "SHOW INDEX FROM {$wpdb->prefix}stepwise_workflows WHERE Key_name = 'saas_id'", 2 );
+		$existing_keys = $wpdb->get_col( "SHOW INDEX FROM {$wpdb->prefix}routinekit_workflows WHERE Key_name = 'saas_id'", 2 );
 		if ( empty( $existing_keys ) ) {
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-			$wpdb->query( "ALTER TABLE {$wpdb->prefix}stepwise_workflows ADD UNIQUE KEY saas_id (saas_id)" );
+			$wpdb->query( "ALTER TABLE {$wpdb->prefix}routinekit_workflows ADD UNIQUE KEY saas_id (saas_id)" );
 		}
 
 		// 2. Steps
-		dbDelta( "CREATE TABLE {$wpdb->prefix}stepwise_steps (
+		dbDelta( "CREATE TABLE {$wpdb->prefix}routinekit_steps (
 			id                BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 			workflow_id       BIGINT(20) UNSIGNED NOT NULL,
 			title             VARCHAR(255) NOT NULL,
@@ -190,7 +207,7 @@ class Stepwise_Activator {
 		) $c;" );
 
 		// 3. Executions
-		dbDelta( "CREATE TABLE {$wpdb->prefix}stepwise_executions (
+		dbDelta( "CREATE TABLE {$wpdb->prefix}routinekit_executions (
 			id                    BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 			workflow_id           BIGINT(20) UNSIGNED NOT NULL,
 			saas_assignment_id    VARCHAR(100) DEFAULT NULL,
@@ -209,13 +226,13 @@ class Stepwise_Activator {
 		) $c;" );
 
 		// Runtime migration: add the composite index to existing installs.
-		$existing_keys = $wpdb->get_col( "SHOW INDEX FROM {$wpdb->prefix}stepwise_executions", 2 );
+		$existing_keys = $wpdb->get_col( "SHOW INDEX FROM {$wpdb->prefix}routinekit_executions", 2 );
 		if ( ! in_array( 'started_by_status', $existing_keys, true ) ) {
-			$wpdb->query( "ALTER TABLE {$wpdb->prefix}stepwise_executions ADD INDEX started_by_status (started_by, status)" );
+			$wpdb->query( "ALTER TABLE {$wpdb->prefix}routinekit_executions ADD INDEX started_by_status (started_by, status)" );
 		}
 
 		// 4. Step completions
-		dbDelta( "CREATE TABLE {$wpdb->prefix}stepwise_step_completions (
+		dbDelta( "CREATE TABLE {$wpdb->prefix}routinekit_step_completions (
 			id               BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 			execution_id     BIGINT(20) UNSIGNED NOT NULL,
 			step_id          BIGINT(20) UNSIGNED NOT NULL,
@@ -233,7 +250,7 @@ class Stepwise_Activator {
 		) $c;" );
 
 		// 5. Auto-capture buffer
-		dbDelta( "CREATE TABLE {$wpdb->prefix}stepwise_capture_buffer (
+		dbDelta( "CREATE TABLE {$wpdb->prefix}routinekit_capture_buffer (
 			id             BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 			option_name    VARCHAR(191) NOT NULL,
 			option_label   VARCHAR(255) DEFAULT NULL,
@@ -250,7 +267,7 @@ class Stepwise_Activator {
 		) $c;" );
 
 		// 6. Step notes (threaded, per-step, optionally shared cross-site)
-		dbDelta( "CREATE TABLE {$wpdb->prefix}stepwise_step_notes (
+		dbDelta( "CREATE TABLE {$wpdb->prefix}routinekit_step_notes (
 			id                      BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 			saas_note_id            VARCHAR(100) DEFAULT NULL,
 			workflow_id             BIGINT(20) UNSIGNED NOT NULL,
@@ -274,7 +291,7 @@ class Stepwise_Activator {
 		) $c;" );
 
 		if ( $wpdb->last_error ) {
-			stepwise_log( 'DB table creation error: ' . $wpdb->last_error, 'activator' );
+			routinekit_log( 'DB table creation error: ' . $wpdb->last_error, 'activator' );
 		}
 	}
 
@@ -283,15 +300,15 @@ class Stepwise_Activator {
 	 */
 	private static function set_default_options(): void {
 		$defaults = [
-			'stepwise_capture_enabled'      => '1',
-			'stepwise_capture_scope'        => 'all_changes',
-			'stepwise_capture_exclude'      => '[]',
-			'stepwise_capture_retention'    => '30',
-			'stepwise_capture_min_changes'  => '1',
-			'stepwise_runner_position'      => 'right',
-			'stepwise_launcher_enabled'     => '1',
-			'stepwise_toast_enabled'        => '1',
-			'stepwise_toast_autodismiss'    => '8',
+			'routinekit_capture_enabled'      => '1',
+			'routinekit_capture_scope'        => 'all_changes',
+			'routinekit_capture_exclude'      => '[]',
+			'routinekit_capture_retention'    => '30',
+			'routinekit_capture_min_changes'  => '1',
+			'routinekit_runner_position'      => 'right',
+			'routinekit_launcher_enabled'     => '1',
+			'routinekit_toast_enabled'        => '1',
+			'routinekit_toast_autodismiss'    => '8',
 		];
 
 		foreach ( $defaults as $key => $value ) {

@@ -5,8 +5,7 @@ import { __ } from '@wordpress/i18n';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import RunnerNotes from './RunnerNotes';
-
-const isSafeUrl = ( url ) => /^https?:\/\//i.test( url );
+import { resolveDeepLink } from '../shared/deeplink';
 
 const RunnerStep = ( { step, executionId, completion, isCurrent, isExpanded, isPushed, isSaas, onToggle, onCompleted, onDelete } ) => {
 	const [ skipReason, setSkipReason ]   = useState( '' );
@@ -16,10 +15,10 @@ const RunnerStep = ( { step, executionId, completion, isCurrent, isExpanded, isP
 	const [ reopening, setReopening ]     = useState( false );
 	const [ deleting, setDeleting ]       = useState( false );
 
-	const { completeStep, skipStep, uncompleteStep } = useDispatch( 'stepwise/execution' );
+	const { completeStep, skipStep, uncompleteStep } = useDispatch( 'routinekit/execution' );
 
 	const handleDelete = async () => {
-		if ( ! window.confirm( __( 'Delete this step? This cannot be undone.', 'stepwise' ) ) ) return;
+		if ( ! window.confirm( __( 'Delete this step? This cannot be undone.', 'routinekit' ) ) ) return;
 		setDeleting( true );
 		await onDelete();
 	};
@@ -79,7 +78,7 @@ const RunnerStep = ( { step, executionId, completion, isCurrent, isExpanded, isP
 						className="ap-runner-step__drag"
 						{ ...attributes }
 						{ ...listeners }
-						title={ __( 'Drag to reorder', 'stepwise' ) }
+						title={ __( 'Drag to reorder', 'routinekit' ) }
 						onClick={ ( e ) => e.stopPropagation() }
 					>
 						⋮⋮
@@ -93,8 +92,8 @@ const RunnerStep = ( { step, executionId, completion, isCurrent, isExpanded, isP
 						className={ `ap-runner-step__check${ isCompleted ? ' is-done' : '' }${ completing ? ' is-completing' : '' }` }
 						onClick={ ( e ) => { e.stopPropagation(); isCompleted ? handleReopen() : handleComplete(); } }
 						disabled={ completing || reopening }
-						title={ isCompleted ? __( 'Reopen step', 'stepwise' ) : __( 'Mark complete', 'stepwise' ) }
-						aria-label={ isCompleted ? __( 'Reopen step', 'stepwise' ) : __( 'Mark complete', 'stepwise' ) }
+						title={ isCompleted ? __( 'Reopen step', 'routinekit' ) : __( 'Mark complete', 'routinekit' ) }
+						aria-label={ isCompleted ? __( 'Reopen step', 'routinekit' ) : __( 'Mark complete', 'routinekit' ) }
 					>
 						<svg width="10" height="10" viewBox="0 0 10 10" fill="none">
 							<path d="M2 5l2.5 2.5L8 3" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"/>
@@ -102,7 +101,7 @@ const RunnerStep = ( { step, executionId, completion, isCurrent, isExpanded, isP
 					</button>
 				) }
 				{ isSkipped && (
-					<span className="ap-runner-step__check is-skipped" aria-label={ __( 'Skipped', 'stepwise' ) }>–</span>
+					<span className="ap-runner-step__check is-skipped" aria-label={ __( 'Skipped', 'routinekit' ) }>–</span>
 				) }
 
 				<span className="ap-runner-step__title">{ step.title }</span>
@@ -121,9 +120,9 @@ const RunnerStep = ( { step, executionId, completion, isCurrent, isExpanded, isP
 			{ /* Expanded body */ }
 			{ isExpanded && (
 				<div className="ap-runner-step__body">
-					{ step.deep_link && isSafeUrl( step.deep_link ) && ! isDone && (
-						<a href={ step.deep_link } className="ap-runner-step__deeplink" target="_blank" rel="noopener noreferrer">
-							{ __( 'Go to settings →', 'stepwise' ) }
+					{ !! resolveDeepLink( step.deep_link ) && ! isDone && (
+						<a href={ resolveDeepLink( step.deep_link ) } className="ap-runner-step__deeplink" target="_blank" rel="noopener noreferrer">
+							{ __( 'Go to settings →', 'routinekit' ) }
 						</a>
 					) }
 
@@ -136,13 +135,13 @@ const RunnerStep = ( { step, executionId, completion, isCurrent, isExpanded, isP
 							onClick={ handleDelete }
 							disabled={ deleting }
 						>
-							{ deleting ? __( 'Deleting…', 'stepwise' ) : __( 'Delete step', 'stepwise' ) }
+							{ deleting ? __( 'Deleting…', 'routinekit' ) : __( 'Delete step', 'routinekit' ) }
 						</button>
 					) }
 
 					{ isSkipped && completion?.skipped_reason && (
 						<p className="ap-runner-step__skipped-reason">
-							{ __( 'Skipped:', 'stepwise' ) } { completion.skipped_reason }
+							{ __( 'Skipped:', 'routinekit' ) } { completion.skipped_reason }
 						</p>
 					) }
 
@@ -152,7 +151,7 @@ const RunnerStep = ( { step, executionId, completion, isCurrent, isExpanded, isP
 								! step.is_required && (
 									<div className="ap-runner-step__actions">
 										<button type="button" className="ap-runner-step__skip-btn" onClick={ () => setShowSkip( true ) }>
-											{ __( 'Skip', 'stepwise' ) }
+											{ __( 'Skip', 'routinekit' ) }
 										</button>
 									</div>
 								)
@@ -163,15 +162,15 @@ const RunnerStep = ( { step, executionId, completion, isCurrent, isExpanded, isP
 										className="ap-runner-step__skip-input"
 										value={ skipReason }
 										onChange={ ( e ) => setSkipReason( e.target.value ) }
-										placeholder={ __( 'Reason for skipping (optional)…', 'stepwise' ) }
+										placeholder={ __( 'Reason for skipping (optional)…', 'routinekit' ) }
 										autoFocus
 									/>
 									<div className="ap-runner-step__skip-actions">
 										<button type="button" className="ap-runner-step__skip-confirm" onClick={ handleSkip } disabled={ skipping }>
-											{ skipping ? __( 'Skipping…', 'stepwise' ) : __( 'Confirm skip', 'stepwise' ) }
+											{ skipping ? __( 'Skipping…', 'routinekit' ) : __( 'Confirm skip', 'routinekit' ) }
 										</button>
 										<button type="button" className="ap-runner-step__skip-cancel" onClick={ () => setShowSkip( false ) }>
-											{ __( 'Cancel', 'stepwise' ) }
+											{ __( 'Cancel', 'routinekit' ) }
 										</button>
 									</div>
 								</div>

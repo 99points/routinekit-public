@@ -1,16 +1,16 @@
 import PropTypes from 'prop-types';
 
 const VARIANTS = {
-	primary:   'stepwise-btn stepwise-btn--primary',
-	secondary: 'stepwise-btn stepwise-btn--secondary',
-	ghost:     'stepwise-btn stepwise-btn--ghost',
-	danger:    'stepwise-btn stepwise-btn--danger',
+	primary:   'routinekit-btn routinekit-btn--primary',
+	secondary: 'routinekit-btn routinekit-btn--secondary',
+	ghost:     'routinekit-btn routinekit-btn--ghost',
+	danger:    'routinekit-btn routinekit-btn--danger',
 };
 
 const Button = ( { children, variant = 'primary', size = '', disabled = false, onClick, type = 'button', className = '', ...rest } ) => {
 	const cls = [
 		VARIANTS[ variant ] ?? VARIANTS.primary,
-		size ? `stepwise-btn--${ size }` : '',
+		size ? `routinekit-btn--${ size }` : '',
 		className,
 	].filter( Boolean ).join( ' ' );
 

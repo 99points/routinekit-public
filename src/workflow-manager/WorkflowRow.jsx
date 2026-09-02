@@ -8,8 +8,8 @@ import Modal from '../shared/Modal';
 import Button from '../shared/Button';
 import PushToSaasModal from '../step-builder/PushToSaasModal';
 
-const { adminUrl = '', isPro = false, saasConnected = false, canEdit = false, canRun = false } = window.stepwiseData ?? {};
-const currentUserId = parseInt( window.stepwiseData?.currentUserId ?? 0, 10 );
+const { adminUrl = '', isPro = false, saasConnected = false, canEdit = false, canRun = false } = window.routinekitData ?? {};
+const currentUserId = parseInt( window.routinekitData?.currentUserId ?? 0, 10 );
 
 const parseHostname = ( url ) => {
 	try { return new URL( url ).hostname; } catch { return null; }
@@ -20,10 +20,10 @@ const timeAgo = ( dateStr ) => {
 	const diff = Date.now() - new Date( dateStr ).getTime();
 	const days  = Math.floor( diff / 86400000 );
 	const weeks = Math.floor( days / 7 );
-	if ( days === 0 ) return __( 'Today', 'stepwise' );
-	if ( days === 1 ) return __( '1 day ago', 'stepwise' );
-	if ( days < 14 ) return `${ days } ${ __( 'days ago', 'stepwise' ) }`;
-	if ( weeks < 8 ) return `${ weeks } ${ __( 'weeks ago', 'stepwise' ) }`;
+	if ( days === 0 ) return __( 'Today', 'routinekit' );
+	if ( days === 1 ) return __( '1 day ago', 'routinekit' );
+	if ( days < 14 ) return `${ days } ${ __( 'days ago', 'routinekit' ) }`;
+	if ( weeks < 8 ) return `${ weeks } ${ __( 'weeks ago', 'routinekit' ) }`;
 	return new Date( dateStr ).toLocaleDateString();
 };
 
@@ -35,7 +35,7 @@ const ProgressCell = ( { workflow } ) => {
 	const neverRun   = ! workflow.last_run_at;
 
 	if ( total === 0 || neverRun ) {
-		return <span className="ap-progress-none">{ __( 'Not started', 'stepwise' ) }</span>;
+		return <span className="ap-progress-none">{ __( 'Not started', 'routinekit' ) }</span>;
 	}
 
 	const pct = total ? Math.round( ( completed / total ) * 100 ) : 0;
@@ -63,17 +63,17 @@ const WorkflowRow = ( { workflow, checked, onCheck, onStartRun } ) => {
 	const [ showPushModal, setShowPushModal ]   = useState( false );
 	const [ showArchiveModal, setShowArchiveModal ] = useState( false );
 
-	const { deleteWorkflow, createWorkflow, saveWorkflow } = useDispatch( 'stepwise/workflows' );
+	const { deleteWorkflow, createWorkflow, saveWorkflow } = useDispatch( 'routinekit/workflows' );
 
-	const activeExecution = useSelect( ( select ) => select( 'stepwise/execution' ).getActiveExecution() );
+	const activeExecution = useSelect( ( select ) => select( 'routinekit/execution' ).getActiveExecution() );
 	const isThisWorkflowRunning = activeExecution?.workflow_id === workflow.id && activeExecution?.status === 'in_progress';
 
 	const stepCount = workflow.steps?.length ?? 0;
-	const editUrl   = `${ adminUrl }admin.php?page=stepwise&workflow_id=${ workflow.id }`;
-	const exportUrl = `${ window.stepwiseData?.restUrl ?? '' }workflows/${ workflow.id }/export`;
+	const editUrl   = `${ adminUrl }admin.php?page=routinekit&workflow_id=${ workflow.id }`;
+	const exportUrl = `${ window.routinekitData?.restUrl ?? '' }workflows/${ workflow.id }/export`;
 
 	const handleDelete = async () => {
-		if ( ! window.confirm( __( 'Delete this workflow? This cannot be undone.', 'stepwise' ) ) ) return;
+		if ( ! window.confirm( __( 'Delete this workflow? This cannot be undone.', 'routinekit' ) ) ) return;
 		setIsDeleting( true );
 		await deleteWorkflow( workflow.id );
 	};
@@ -92,7 +92,7 @@ const WorkflowRow = ( { workflow, checked, onCheck, onStartRun } ) => {
 	const handleDuplicate = async () => {
 		setDuplicating( true );
 		await createWorkflow( {
-			title:       workflow.title + ' ' + __( '(Copy)', 'stepwise' ),
+			title:       workflow.title + ' ' + __( '(Copy)', 'routinekit' ),
 			description: workflow.description,
 			status:      'draft',
 		} );
@@ -105,7 +105,7 @@ const WorkflowRow = ( { workflow, checked, onCheck, onStartRun } ) => {
 			const blob = new Blob( [ JSON.stringify( data, null, 2 ) ], { type: 'application/json' } );
 			const a    = document.createElement( 'a' );
 			a.href     = URL.createObjectURL( blob );
-			a.download = `${ workflow.title.replace( /[^a-z0-9]+/gi, '-' ).toLowerCase() }-stepwise.json`;
+			a.download = `${ workflow.title.replace( /[^a-z0-9]+/gi, '-' ).toLowerCase() }-routinekit.json`;
 			a.click();
 			URL.revokeObjectURL( a.href );
 		} catch {
@@ -126,7 +126,7 @@ const WorkflowRow = ( { workflow, checked, onCheck, onStartRun } ) => {
 	const handleRun = () => {
 		if ( ! hasCategory ) {
 			// eslint-disable-next-line no-alert
-			alert( __( 'Please select a category for this workflow before running it.', 'stepwise' ) );
+			alert( __( 'Please select a category for this workflow before running it.', 'routinekit' ) );
 			return;
 		}
 		doRun();
@@ -152,7 +152,7 @@ const WorkflowRow = ( { workflow, checked, onCheck, onStartRun } ) => {
 				{ workflow.source !== 'local' && (
 					<span className="ap-workflow-row__source-wrap">
 						<span className="ap-workflow-row__source">
-							{ workflow.source === 'saas' ? __( 'Assigned', 'stepwise' ) : __( 'Imported', 'stepwise' ) }
+							{ workflow.source === 'saas' ? __( 'Assigned', 'routinekit' ) : __( 'Imported', 'routinekit' ) }
 						</span>
 						{ workflow.source === 'saas' && workflow.source_site_url && (
 							<span className="ap-workflow-row__source-domain">
@@ -163,20 +163,20 @@ const WorkflowRow = ( { workflow, checked, onCheck, onStartRun } ) => {
 				) }
 				{ canEdit && (
 					<div className="ap-workflow-row__actions">
-						<a href={ editUrl }>{ __( 'Edit', 'stepwise' ) }</a>
+						<a href={ editUrl }>{ __( 'Edit', 'routinekit' ) }</a>
 						<span className="ap-row-sep">|</span>
 						<button className="ap-row-action" onClick={ handleDuplicate } disabled={ isDuplicating }>
-							{ isDuplicating ? '…' : __( 'Duplicate', 'stepwise' ) }
+							{ isDuplicating ? '…' : __( 'Duplicate', 'routinekit' ) }
 						</button>
 						<span className="ap-row-sep">|</span>
 						<button className="ap-row-action" onClick={ handleExport }>
-							{ __( 'Export (JSON)', 'stepwise' ) }
+							{ __( 'Export (JSON)', 'routinekit' ) }
 						</button>
 						{ workflow.status !== 'archived' && (
 							<>
 								<span className="ap-row-sep">|</span>
-								<button className="ap-row-action ap-row-action--muted" onClick={ handleArchive }>
-									{ __( 'Archive', 'stepwise' ) }
+								<button className="ap-row-action" onClick={ handleArchive }>
+									{ __( 'Archive', 'routinekit' ) }
 								</button>
 							</>
 						) }
@@ -184,15 +184,15 @@ const WorkflowRow = ( { workflow, checked, onCheck, onStartRun } ) => {
 							<>
 								<span className="ap-row-sep">|</span>
 								<button className="ap-row-action ap-row-action--danger" onClick={ handleDelete } disabled={ isDeleting }>
-									{ isDeleting ? __( 'Deleting…', 'stepwise' ) : __( 'Delete', 'stepwise' ) }
+									{ isDeleting ? __( 'Deleting…', 'routinekit' ) : __( 'Delete', 'routinekit' ) }
 								</button>
 							</>
 						) }
 						{ ! canDelete && (
 							<>
 								<span className="ap-row-sep">|</span>
-								<span className="ap-row-action ap-row-action--muted" title={ __( 'Cannot delete — workflow has been pushed or run.', 'stepwise' ) }>
-									{ __( 'Delete', 'stepwise' ) }
+								<span className="ap-row-action ap-row-action--muted" title={ __( 'Cannot delete — workflow has been pushed or run.', 'routinekit' ) }>
+									{ __( 'Delete', 'routinekit' ) }
 								</span>
 							</>
 						) }
@@ -210,39 +210,39 @@ const WorkflowRow = ( { workflow, checked, onCheck, onStartRun } ) => {
 
 			<td className="ap-col-status">
 				<Badge variant={ workflow.status }>
-					{ workflow.status === 'active'   ? __( 'Active', 'stepwise' )
-					: workflow.status === 'draft'    ? __( 'Draft', 'stepwise' )
-					:                                  __( 'Archived', 'stepwise' ) }
+					{ workflow.status === 'active'   ? __( 'Active', 'routinekit' )
+					: workflow.status === 'draft'    ? __( 'Draft', 'routinekit' )
+					:                                  __( 'Archived', 'routinekit' ) }
 				</Badge>
 				{ saasConnected && isPushed && (
-					<Badge variant="pushed">{ __( 'Cloud', 'stepwise' ) }</Badge>
+					<Badge variant="pushed">{ __( 'Cloud', 'routinekit' ) }</Badge>
 				) }
 			</td>
 
 			<td className="ap-col-action">
 				{ canRun && isRunnable && (
 					<button
-						className={ `stepwise-btn stepwise-btn--sm stepwise-btn--run ${ runState === 'started' ? 'stepwise-btn--success' : isThisWorkflowRunning ? 'stepwise-btn--running' : 'stepwise-btn--primary' }` }
+						className={ `routinekit-btn routinekit-btn--sm routinekit-btn--run ${ runState === 'started' ? 'routinekit-btn--success' : isThisWorkflowRunning ? 'routinekit-btn--running' : 'routinekit-btn--primary' }` }
 						onClick={ handleRun }
 						disabled={ runState !== 'idle' || isThisWorkflowRunning }
 						title={
-							isThisWorkflowRunning ? __( 'This workflow is currently running', 'stepwise' )
-							: ! hasCategory       ? __( 'Select a category before running', 'stepwise' )
+							isThisWorkflowRunning ? __( 'This workflow is currently running', 'routinekit' )
+							: ! hasCategory       ? __( 'Select a category before running', 'routinekit' )
 							: undefined
 						}
 					>
 						{ isThisWorkflowRunning && <span className="ap-btn-spinner" /> }
 						{ ! isThisWorkflowRunning && runState === 'starting' && <span className="ap-btn-spinner" /> }
 						{ ! isThisWorkflowRunning && runState === 'started' && '✓ ' }
-						{ isThisWorkflowRunning     ? __( 'Running…', 'stepwise' )
-						: runState === 'starting'   ? __( 'Starting…', 'stepwise' )
-						: runState === 'started'    ? __( 'Started!', 'stepwise' )
-						:                             `▶ ${ __( 'Run Workflow', 'stepwise' ) }` }
+						{ isThisWorkflowRunning     ? __( 'Running…', 'routinekit' )
+						: runState === 'starting'   ? __( 'Starting…', 'routinekit' )
+						: runState === 'started'    ? __( 'Started!', 'routinekit' )
+						:                             `▶ ${ __( 'Run Workflow', 'routinekit' ) }` }
 					</button>
 				) }
 				{ canEdit && ( ! isActive || stepCount === 0 ) && (
-					<a href={ editUrl } className="stepwise-btn stepwise-btn--secondary stepwise-btn--sm">
-						{ __( 'Edit Draft', 'stepwise' ) }
+					<a href={ editUrl } className="routinekit-btn routinekit-btn--secondary routinekit-btn--sm">
+						{ __( 'Edit Draft', 'routinekit' ) }
 					</a>
 				) }
 			</td>
@@ -258,29 +258,29 @@ const WorkflowRow = ( { workflow, checked, onCheck, onStartRun } ) => {
 		) }
 		{ showArchiveModal && createPortal(
 			<Modal
-				title={ __( 'Archive Workflow', 'stepwise' ) }
+				title={ __( 'Archive Workflow', 'routinekit' ) }
 				onClose={ () => ! isArchiving && setShowArchiveModal( false ) }
 				size="sm"
 				footer={
 					<>
 						<Button variant="ghost" onClick={ () => setShowArchiveModal( false ) } disabled={ isArchiving }>
-							{ __( 'Cancel', 'stepwise' ) }
+							{ __( 'Cancel', 'routinekit' ) }
 						</Button>
 						<Button variant="primary" onClick={ confirmArchive } disabled={ isArchiving }>
-							{ isArchiving ? __( 'Archiving…', 'stepwise' ) : __( 'Archive', 'stepwise' ) }
+							{ isArchiving ? __( 'Archiving…', 'routinekit' ) : __( 'Archive', 'routinekit' ) }
 						</Button>
 					</>
 				}
 			>
 				{ isThisWorkflowRunning && (
 					<div style={ { background: '#fef3c7', border: '1px solid #f59e0b', borderRadius: '6px', padding: '10px 14px', marginBottom: '14px', fontSize: '13px', lineHeight: 1.6 } }>
-						<strong>{ __( 'This workflow is currently running.', 'stepwise' ) }</strong>
+						<strong>{ __( 'This workflow is currently running.', 'routinekit' ) }</strong>
 						<br />
-						{ __( 'Archiving it will pause the active execution. The run history and completed steps will be preserved, but the session cannot be resumed.', 'stepwise' ) }
+						{ __( 'Archiving it will pause the active execution. The run history and completed steps will be preserved, but the session cannot be resumed.', 'routinekit' ) }
 					</div>
 				) }
 				<p style={ { fontSize: '13px', lineHeight: 1.6 } }>
-					{ __( 'This workflow will be hidden from the active list. Its steps, run history, and completed records will be preserved and can be reviewed at any time.', 'stepwise' ) }
+					{ __( 'This workflow will be hidden from the active list. Its steps, run history, and completed records will be preserved and can be reviewed at any time.', 'routinekit' ) }
 				</p>
 			</Modal>,
 			document.body

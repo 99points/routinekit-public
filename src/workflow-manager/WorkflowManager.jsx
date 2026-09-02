@@ -19,49 +19,49 @@ const {
 	canEdit         = false,
 	canRun          = false,
 	saasConnected   = false,
-} = window.stepwiseData ?? {};
+} = window.routinekitData ?? {};
 
 const FREE_LOCAL_LIMIT = 3;
 
 // ── Connect Gate Modal ────────────────────────────────────────────────────────
 const ConnectGateModal = ( { onClose, onContinue } ) => {
-	const settingsUrl = adminUrl + 'admin.php?page=stepwise-settings#cloud';
+	const settingsUrl = adminUrl + 'admin.php?page=routinekit-settings#cloud';
 	return (
 		<Modal
-			title={ __( 'You\'re on a roll.', 'stepwise' ) }
+			title={ __( 'You\'re on a roll.', 'routinekit' ) }
 			onClose={ onClose }
 			size="sm"
 			footer={
 				<>
 					<Button variant="ghost" onClick={ onContinue }>
-						{ __( 'Maybe later', 'stepwise' ) }
+						{ __( 'Maybe later', 'routinekit' ) }
 					</Button>
-					<a href={ settingsUrl } className="stepwise-btn stepwise-btn--primary">
-						{ __( 'Connect free →', 'stepwise' ) }
+					<a href={ settingsUrl } className="routinekit-btn routinekit-btn--primary">
+						{ __( 'Connect free →', 'routinekit' ) }
 					</a>
 				</>
 			}
 		>
 			<div className="ap-gate-modal">
 				<p className="ap-gate-modal__lead">
-					{ __( 'Connecting your free Stepwise account unlocks cloud features — push workflows to client sites, track completions, and manage everything from one dashboard.', 'stepwise' ) }
+					{ __( 'Connecting your free RoutineKit account unlocks cloud features — push workflows to client sites, track completions, and manage everything from one dashboard.', 'routinekit' ) }
 				</p>
 				<ul className="ap-gate-modal__perks">
 					<li>
 						<span className="ap-gate-modal__perk-icon">🌐</span>
-						<span>{ __( 'Push any workflow to client sites in one click', 'stepwise' ) }</span>
+						<span>{ __( 'Push any workflow to client sites in one click', 'routinekit' ) }</span>
 					</li>
 					<li>
 						<span className="ap-gate-modal__perk-icon">♾️</span>
-						<span>{ __( 'Unlimited workflows — build as many as you need', 'stepwise' ) }</span>
+						<span>{ __( 'Unlimited workflows — build as many as you need', 'routinekit' ) }</span>
 					</li>
 					<li>
 						<span className="ap-gate-modal__perk-icon">⚡</span>
-						<span>{ __( 'Sync updates to all connected sites instantly', 'stepwise' ) }</span>
+						<span>{ __( 'Sync updates to all connected sites instantly', 'routinekit' ) }</span>
 					</li>
 				</ul>
 				<p className="ap-gate-modal__sub">
-					{ __( 'Takes 30 seconds. No credit card.', 'stepwise' ) }
+					{ __( 'Takes 30 seconds. No credit card.', 'routinekit' ) }
 				</p>
 			</div>
 		</Modal>
@@ -71,28 +71,28 @@ const ConnectGateModal = ( { onClose, onContinue } ) => {
 // ── Switch Run Confirmation Modal ─────────────────────────────────────────────
 const SwitchRunModal = ( { currentTitle, nextTitle, onConfirm, onCancel } ) => (
 	<Modal
-		title={ __( 'Switch active workflow?', 'stepwise' ) }
+		title={ __( 'Switch active workflow?', 'routinekit' ) }
 		onClose={ onCancel }
 		size="sm"
 		footer={
 			<>
 				<Button variant="ghost" onClick={ onCancel }>
-					{ __( 'Keep current run', 'stepwise' ) }
+					{ __( 'Keep current run', 'routinekit' ) }
 				</Button>
 				<Button variant="primary" onClick={ onConfirm }>
-					{ __( 'Switch workflow', 'stepwise' ) }
+					{ __( 'Switch workflow', 'routinekit' ) }
 				</Button>
 			</>
 		}
 	>
 		<p style={ { marginBottom: 12 } }>
-			{ __( 'You have a run in progress:', 'stepwise' ) }{ ' ' }
+			{ __( 'You have a run in progress:', 'routinekit' ) }{ ' ' }
 			<strong>{ currentTitle }</strong>
 		</p>
 		<p style={ { marginBottom: 0 } }>
-			{ __( 'Switching to', 'stepwise' ) }{ ' ' }
+			{ __( 'Switching to', 'routinekit' ) }{ ' ' }
 			<strong>{ nextTitle }</strong>{ ' ' }
-			{ __( 'will pause your current run. Your progress is saved — click Run on it again to resume from where you left off.', 'stepwise' ) }
+			{ __( 'will pause your current run. Your progress is saved — click Run on it again to resume from where you left off.', 'routinekit' ) }
 		</p>
 	</Modal>
 );
@@ -106,12 +106,12 @@ const WorkflowManager = () => {
 	const [ showGate, setShowGate ]                   = useState( false );
 	const [ pendingRun, setPendingRun ]               = useState( null ); // { workflowId, workflowTitle }
 
-	const { fetchWorkflows } = useDispatch( 'stepwise/workflows' );
-	const { startExecution, fetchActiveExecution } = useDispatch( 'stepwise/execution' );
+	const { fetchWorkflows } = useDispatch( 'routinekit/workflows' );
+	const { startExecution, fetchActiveExecution } = useDispatch( 'routinekit/execution' );
 
-	const workflows      = useSelect( ( select ) => select( 'stepwise/workflows' ).getWorkflows() );
-	const isLoading      = useSelect( ( select ) => select( 'stepwise/workflows' ).isLoading() );
-	const activeExecution = useSelect( ( select ) => select( 'stepwise/execution' ).getActiveExecution() );
+	const workflows      = useSelect( ( select ) => select( 'routinekit/workflows' ).getWorkflows() );
+	const isLoading      = useSelect( ( select ) => select( 'routinekit/workflows' ).isLoading() );
+	const activeExecution = useSelect( ( select ) => select( 'routinekit/execution' ).getActiveExecution() );
 
 	useEffect( () => {
 		fetchWorkflows();
@@ -135,7 +135,7 @@ const WorkflowManager = () => {
 
 		if ( conflictExists ) {
 			const wf = workflows.find( ( w ) => w.id === workflowId );
-			setPendingRun( { workflowId, workflowTitle: wf?.title ?? __( 'this workflow', 'stepwise' ) } );
+			setPendingRun( { workflowId, workflowTitle: wf?.title ?? __( 'this workflow', 'routinekit' ) } );
 			return;
 		}
 
@@ -151,12 +151,12 @@ const WorkflowManager = () => {
 	return (
 		<div className="ap-workflow-manager">
 			<div className="ap-workflow-manager__header">
-				<h1 className="ap-page-title">{ __( 'Workflows', 'stepwise' ) }</h1>
+				<h1 className="ap-page-title">{ __( 'Workflows', 'routinekit' ) }</h1>
 				{ canEdit && (
 					<div className="ap-workflow-manager__actions">
 						<button
 							type="button"
-							className="stepwise-btn stepwise-btn--ghost stepwise-btn--sm"
+							className="routinekit-btn routinekit-btn--ghost routinekit-btn--sm"
 							onClick={ () => {
 								if ( ! saasConnected && workflows.length >= FREE_LOCAL_LIMIT ) {
 									setShowGate( true );
@@ -165,15 +165,15 @@ const WorkflowManager = () => {
 								setShowTemplates( true );
 							} }
 						>
-							{ __( 'Templates', 'stepwise' ) }
+							{ __( 'Templates', 'routinekit' ) }
 						</button>
 						<div className="ap-import-dropdown" style={ { position: 'relative' } }>
 							<button
 								type="button"
-								className="stepwise-btn stepwise-btn--ghost stepwise-btn--sm"
+								className="routinekit-btn routinekit-btn--ghost routinekit-btn--sm"
 								onClick={ () => setShowImportMenu( ( v ) => ! v ) }
 							>
-								{ __( 'Import Workflow', 'stepwise' ) } ▾
+								{ __( 'Import Workflow', 'routinekit' ) } ▾
 							</button>
 							{ showImportMenu && (
 								<>
@@ -187,7 +187,7 @@ const WorkflowManager = () => {
 											className="ap-import-dropdown__item"
 											onClick={ () => { setShowImportMenu( false ); setShowImportJson( true ); } }
 										>
-											{ __( 'Import JSON', 'stepwise' ) }
+											{ __( 'Import JSON', 'routinekit' ) }
 										</button>
 										{ /* Import via URL — temporarily hidden */ }
 									</div>
@@ -199,7 +199,7 @@ const WorkflowManager = () => {
 							onClick={ handleCreate }
 							disabled={ isLoading }
 						>
-							{ __( 'Add New Workflow', 'stepwise' ) }
+							{ __( 'Add New Workflow', 'routinekit' ) }
 						</Button>
 					</div>
 				) }
@@ -209,7 +209,7 @@ const WorkflowManager = () => {
 			{ isLoading && (
 				<div className="ap-loading">
 					<span className="spinner is-active" />
-					{ __( 'Loading workflows…', 'stepwise' ) }
+					{ __( 'Loading workflows…', 'routinekit' ) }
 				</div>
 			) }
 
@@ -223,18 +223,18 @@ const WorkflowManager = () => {
 			{ /* Capture status bar */ }
 			{ captureEnabled && (
 				<div className="ap-capture-bar">
-					<strong>{ __( 'Auto-capture is on.', 'stepwise' ) }</strong>
-					{ ' ' }{ __( 'Stepwise is watching for setting changes on this site.', 'stepwise' ) }
+					<strong>{ __( 'Auto-capture is on.', 'routinekit' ) }</strong>
+					{ ' ' }{ __( 'RoutineKit is watching for setting changes on this site.', 'routinekit' ) }
 					{ ' ' }
-					<a href={ `${ adminUrl }admin.php?page=stepwise-capture` } className="ap-capture-bar__link">
-						{ __( 'View uncaptured steps →', 'stepwise' ) }
+					<a href={ `${ adminUrl }admin.php?page=routinekit-capture` } className="ap-capture-bar__link">
+						{ __( 'View uncaptured steps →', 'routinekit' ) }
 					</a>
 				</div>
 			) }
 
 			{ pendingRun && (
 				<SwitchRunModal
-					currentTitle={ activeExecution?.workflow_title ?? __( 'current workflow', 'stepwise' ) }
+					currentTitle={ activeExecution?.workflow_title ?? __( 'current workflow', 'routinekit' ) }
 					nextTitle={ pendingRun.workflowTitle }
 					onConfirm={ confirmSwitch }
 					onCancel={ () => setPendingRun( null ) }

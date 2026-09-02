@@ -6,7 +6,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * Reads JSON files from /templates/ and imports them as workflows + steps.
  */
-class Stepwise_Templates {
+class Routinekit_Templates {
 
 	/**
 	 * Return a list of all available template keys and metadata.
@@ -15,7 +15,7 @@ class Stepwise_Templates {
 	 */
 	public static function get_available(): array {
 		$templates = [];
-		$dir       = STEPWISE_TEMPLATES_DIR;
+		$dir       = ROUTINEKIT_TEMPLATES_DIR;
 
 		if ( ! is_dir( $dir ) ) {
 			return $templates;
@@ -44,7 +44,7 @@ class Stepwise_Templates {
 	 */
 	public static function get_available_with_steps(): array {
 		$templates = [];
-		$dir       = STEPWISE_TEMPLATES_DIR;
+		$dir       = ROUTINEKIT_TEMPLATES_DIR;
 
 		if ( ! is_dir( $dir ) ) {
 			return $templates;
@@ -72,21 +72,21 @@ class Stepwise_Templates {
 	 * Import a template by key. Creates a workflow + steps in the DB.
 	 *
 	 * @param string $template_key
-	 * @return Stepwise_Workflow|WP_Error
+	 * @return Routinekit_Workflow|WP_Error
 	 */
 	public static function import( string $template_key ) {
-		$file = STEPWISE_TEMPLATES_DIR . sanitize_file_name( $template_key ) . '.json';
+		$file = ROUTINEKIT_TEMPLATES_DIR . sanitize_file_name( $template_key ) . '.json';
 
 		if ( ! file_exists( $file ) ) {
-			return new WP_Error( 'stepwise_not_found', __( 'Template not found.', 'stepwise' ) );
+			return new WP_Error( 'routinekit_not_found', __( 'Template not found.', 'routinekit' ) );
 		}
 
 		$data = self::read_file( $file );
 		if ( ! $data ) {
-			return new WP_Error( 'stepwise_invalid', __( 'Template file is invalid JSON.', 'stepwise' ) );
+			return new WP_Error( 'routinekit_invalid', __( 'Template file is invalid JSON.', 'routinekit' ) );
 		}
 
-		$workflow = Stepwise_Workflow::create( [
+		$workflow = Routinekit_Workflow::create( [
 			'title'        => $data['title'],
 			'description'  => $data['description'] ?? '',
 			'status'       => 'active',
@@ -100,7 +100,7 @@ class Stepwise_Templates {
 		}
 
 		foreach ( $data['steps'] as $step_data ) {
-			Stepwise_Step::create( array_merge( $step_data, [ 'workflow_id' => $workflow->id ] ) );
+			Routinekit_Step::create( array_merge( $step_data, [ 'workflow_id' => $workflow->id ] ) );
 		}
 
 		return $workflow;

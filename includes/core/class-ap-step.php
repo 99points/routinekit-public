@@ -5,9 +5,9 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Step CRUD model.
  *
- * Wraps all database operations for the stepwise_steps table.
+ * Wraps all database operations for the routinekit_steps table.
  */
-class Stepwise_Step {
+class Routinekit_Step {
 
 	/** @var int */
 	public int $id;
@@ -48,11 +48,11 @@ class Stepwise_Step {
 	 * @param int $id
 	 * @return static|null
 	 */
-	public static function get( int $id ): ?Stepwise_Step {
+	public static function get( int $id ): ?Routinekit_Step {
 		global $wpdb;
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}stepwise_steps WHERE id = %d LIMIT 1",
+				"SELECT * FROM {$wpdb->prefix}routinekit_steps WHERE id = %d LIMIT 1",
 				$id
 			)
 		);
@@ -69,7 +69,7 @@ class Stepwise_Step {
 		global $wpdb;
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}stepwise_steps
+				"SELECT * FROM {$wpdb->prefix}routinekit_steps
 				 WHERE workflow_id = %d
 				 ORDER BY sort_order ASC, id ASC",
 				$workflow_id
@@ -80,7 +80,7 @@ class Stepwise_Step {
 
 	/**
 	 * Batch-fetch steps for multiple workflows in a single query.
-	 * Returns an array keyed by workflow_id, each value being an array of Stepwise_Step objects.
+	 * Returns an array keyed by workflow_id, each value being an array of Routinekit_Step objects.
 	 *
 	 * @param int[] $workflow_ids
 	 * @return array<int, static[]>
@@ -94,7 +94,7 @@ class Stepwise_Step {
 		$placeholders = implode( ',', array_fill( 0, count( $ids ), '%d' ) );
 		$rows         = $wpdb->get_results( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}stepwise_steps WHERE workflow_id IN ($placeholders) ORDER BY sort_order ASC, id ASC", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+				"SELECT * FROM {$wpdb->prefix}routinekit_steps WHERE workflow_id IN ($placeholders) ORDER BY sort_order ASC, id ASC", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 				...$ids
 			)
 		);
@@ -116,19 +116,19 @@ class Stepwise_Step {
 
 		$workflow_id = absint( $data['workflow_id'] ?? 0 );
 		if ( ! $workflow_id ) {
-			return new WP_Error( 'stepwise_invalid', __( 'workflow_id is required.', 'stepwise' ) );
+			return new WP_Error( 'routinekit_invalid', __( 'workflow_id is required.', 'routinekit' ) );
 		}
 
 		$title = sanitize_text_field( $data['title'] ?? '' );
 		if ( empty( $title ) ) {
-			return new WP_Error( 'stepwise_invalid', __( 'Step title is required.', 'stepwise' ) );
+			return new WP_Error( 'routinekit_invalid', __( 'Step title is required.', 'routinekit' ) );
 		}
 
 		// Default sort_order to end of list
 		if ( ! isset( $data['sort_order'] ) ) {
 			$max = (int) $wpdb->get_var(
 				$wpdb->prepare(
-					"SELECT MAX(sort_order) FROM {$wpdb->prefix}stepwise_steps WHERE workflow_id = %d",
+					"SELECT MAX(sort_order) FROM {$wpdb->prefix}routinekit_steps WHERE workflow_id = %d",
 					$workflow_id
 				)
 			);
@@ -139,7 +139,10 @@ class Stepwise_Step {
 			'workflow_id'       => $workflow_id,
 			'title'             => $title,
 			'description'       => sanitize_textarea_field( $data['description'] ?? '' ),
-			'deep_link'         => isset( $data['deep_link'] ) ? esc_url( $data['deep_link'] ) : null,
+			// esc_url_raw, not esc_url: this value is stored, not printed. esc_url()
+			// encodes & as &#038;, which turns "?page=x&tab=y" into a query string
+			// whose second parameter is literally named "#038;tab".
+			'deep_link'         => isset( $data['deep_link'] ) ? esc_url_raw( $data['deep_link'] ) : null,
 			'deep_link_type'    => in_array( $data['deep_link_type'] ?? '', [ 'static', 'dynamic' ], true )
 				? $data['deep_link_type']
 				: 'static',
@@ -152,14 +155,14 @@ class Stepwise_Step {
 		];
 
 		$result = $wpdb->insert(
-			$wpdb->prefix . 'stepwise_steps',
+			$wpdb->prefix . 'routinekit_steps',
 			$insert,
 			[ '%d', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%s' ]
 		);
 
 		if ( false === $result ) {
-			stepwise_log( 'Step insert failed: ' . $wpdb->last_error, 'step' );
-			return new WP_Error( 'stepwise_db_error', __( 'Could not create step.', 'stepwise' ) );
+			routinekit_log( 'Step insert failed: ' . $wpdb->last_error, 'step' );
+			return new WP_Error( 'routinekit_db_error', __( 'Could not create step.', 'routinekit' ) );
 		}
 
 		return static::get( (int) $wpdb->insert_id );
@@ -187,7 +190,8 @@ class Stepwise_Step {
 			$formats[]             = '%s';
 		}
 		if ( isset( $data['deep_link'] ) ) {
-			$update['deep_link'] = esc_url( $data['deep_link'] );
+			// esc_url_raw for storage — see the note in create().
+			$update['deep_link'] = esc_url_raw( $data['deep_link'] );
 			$formats[]           = '%s';
 		}
 		if ( isset( $data['deep_link_type'] ) && in_array( $data['deep_link_type'], [ 'static', 'dynamic' ], true ) ) {
@@ -208,11 +212,11 @@ class Stepwise_Step {
 		}
 
 		if ( empty( $update ) ) {
-			return static::get( $id ) ?? new WP_Error( 'stepwise_not_found', __( 'Step not found.', 'stepwise' ) );
+			return static::get( $id ) ?? new WP_Error( 'routinekit_not_found', __( 'Step not found.', 'routinekit' ) );
 		}
 
 		$result = $wpdb->update(
-			$wpdb->prefix . 'stepwise_steps',
+			$wpdb->prefix . 'routinekit_steps',
 			$update,
 			[ 'id' => $id ],
 			$formats,
@@ -220,7 +224,7 @@ class Stepwise_Step {
 		);
 
 		if ( false === $result ) {
-			return new WP_Error( 'stepwise_db_error', __( 'Could not update step.', 'stepwise' ) );
+			return new WP_Error( 'routinekit_db_error', __( 'Could not update step.', 'routinekit' ) );
 		}
 
 		return static::get( $id );
@@ -237,7 +241,7 @@ class Stepwise_Step {
 		global $wpdb;
 		foreach ( $order_map as $item ) {
 			$wpdb->update(
-				$wpdb->prefix . 'stepwise_steps',
+				$wpdb->prefix . 'routinekit_steps',
 				[ 'sort_order' => absint( $item['sort_order'] ) ],
 				[ 'id'         => absint( $item['id'] ) ],
 				[ '%d' ],
@@ -255,7 +259,7 @@ class Stepwise_Step {
 	 */
 	public static function delete( int $id ): bool {
 		global $wpdb;
-		return (bool) $wpdb->delete( $wpdb->prefix . 'stepwise_steps', [ 'id' => $id ], [ '%d' ] );
+		return (bool) $wpdb->delete( $wpdb->prefix . 'routinekit_steps', [ 'id' => $id ], [ '%d' ] );
 	}
 
 	/**
@@ -264,7 +268,7 @@ class Stepwise_Step {
 	 * @param object $row
 	 * @return static
 	 */
-	public static function from_row( object $row ): Stepwise_Step {
+	public static function from_row( object $row ): Routinekit_Step {
 		$instance                  = new static();
 		$instance->id              = (int) $row->id;
 		$instance->workflow_id     = (int) $row->workflow_id;
