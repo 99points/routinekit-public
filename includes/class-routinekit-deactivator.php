@@ -16,6 +16,7 @@ class Routinekit_Deactivator {
 	public static function deactivate(): void {
 		wp_clear_scheduled_hook( 'routinekit_cleanup_capture_buffer' );
 		wp_clear_scheduled_hook( 'routinekit_saas_heartbeat' );
+		wp_clear_scheduled_hook( 'stepwise_saas_heartbeat' ); // legacy — clears any pre-rebrand cron still in the DB
 
 		// Clear any pending capture transients for all users
 		global $wpdb;
