@@ -22,6 +22,9 @@ EXCLUDES=(
   ".git"
   ".gitignore"
   ".distignore"
+  # Directory banners, icons and screenshots belong in the SVN /assets/ directory,
+  # not in the plugin itself. Nothing in the plugin loads them at runtime.
+  "assets/images"
 )
 
 echo "→ Building JS assets…"
