@@ -83,23 +83,32 @@ class Routinekit_REST_Step_Notes {
 			],
 		] );
 
-		// SaaS → plugin inbound sync (shared notes from other sites)
-		register_rest_route( $this->namespace, '/sync/notes', [
-			[
-				'methods'             => WP_REST_Server::CREATABLE,
-				'callback'            => [ $this, 'sync_inbound' ],
-				'permission_callback' => [ $this, 'sync_permission' ],
-			],
-		] );
+		// SaaS → plugin inbound sync (shared notes from other sites).
+		//
+		// Registered under two namespaces. routinekit/v1 is current; stepwise/v1 is a
+		// backwards-compatibility alias retained only so that sites still running the
+		// pre-rename build keep receiving note sync during the upgrade window — the
+		// cloud service fans a note out to every connected peer at once, and those
+		// peers upgrade on their own schedule. Both aliases require the same site API
+		// key (see sync_permission()); neither is a public or unauthenticated route.
+		// The alias can be dropped once all connected sites have upgraded.
+		foreach ( [ $this->namespace, 'stepwise/v1' ] as $ns ) {
+			register_rest_route( $ns, '/sync/notes', [
+				[
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => [ $this, 'sync_inbound' ],
+					'permission_callback' => [ $this, 'sync_permission' ],
+				],
+			] );
 
-		// SaaS → plugin delete a sideloaded note
-		register_rest_route( $this->namespace, '/sync/notes/(?P<saas_note_id>[a-zA-Z0-9\-_]+)', [
-			[
-				'methods'             => WP_REST_Server::DELETABLE,
-				'callback'            => [ $this, 'sync_delete' ],
-				'permission_callback' => [ $this, 'sync_permission' ],
-			],
-		] );
+			register_rest_route( $ns, '/sync/notes/(?P<saas_note_id>[a-zA-Z0-9\-_]+)', [
+				[
+					'methods'             => WP_REST_Server::DELETABLE,
+					'callback'            => [ $this, 'sync_delete' ],
+					'permission_callback' => [ $this, 'sync_permission' ],
+				],
+			] );
+		}
 	}
 
 	// ── GET /steps/:step_id/notes ─────────────────────────────────────────────

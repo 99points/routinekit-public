@@ -228,9 +228,9 @@ class Routinekit_SaaS_Client {
 
 	private function get_headers() {
 		return [
-			'X-RoutineKit-Key' => $this->api_key,
-			'Content-Type'     => 'application/json',
-			'Accept'           => 'application/json',
+			'X-Stepwise-Key' => $this->api_key,
+			'Content-Type'   => 'application/json',
+			'Accept'         => 'application/json',
 		];
 	}
 

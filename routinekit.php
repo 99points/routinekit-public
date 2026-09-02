@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:       RoutineKit — Reusable Configuration Checklists
- * Plugin URI:        https://wpstepwise.com
+ * Plugin URI:        https://profiles.wordpress.org/codeleftover/
  * Description:       RoutineKit lets you build reusable, step-by-step site configuration checklists and run them across client sites — saving hours of repetitive WordPress setup work.
  * Version:           1.0.0
  * Requires at least: 6.0
@@ -23,6 +23,9 @@ require_once plugin_dir_path( __FILE__ ) . 'includes/class-routinekit-deactivato
 
 register_activation_hook( __FILE__,   [ 'Routinekit_Activator',   'activate'   ] );
 register_deactivation_hook( __FILE__, [ 'Routinekit_Deactivator', 'deactivate' ] );
+
+// No load_plugin_textdomain() call: WordPress.org has loaded translations for
+// hosted plugins automatically since 4.6, and this plugin requires 6.0+.
 
 function routinekit_run(): void {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-routinekit.php';

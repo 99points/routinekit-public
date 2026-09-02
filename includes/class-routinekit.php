@@ -34,33 +34,33 @@ class Routinekit {
 		require_once $includes . 'class-routinekit-loader.php';
 
 		// Core models
-		require_once $includes . 'core/class-ap-workflow.php';
-		require_once $includes . 'core/class-ap-step.php';
-		require_once $includes . 'core/class-ap-execution.php';
-		require_once $includes . 'core/class-ap-capture.php';
-		require_once $includes . 'core/class-ap-deeplinks.php';
-		require_once $includes . 'core/class-ap-templates.php';
+		require_once $includes . 'core/class-routinekit-workflow.php';
+		require_once $includes . 'core/class-routinekit-step.php';
+		require_once $includes . 'core/class-routinekit-execution.php';
+		require_once $includes . 'core/class-routinekit-capture.php';
+		require_once $includes . 'core/class-routinekit-deeplinks.php';
+		require_once $includes . 'core/class-routinekit-templates.php';
 
 		// Admin
-		require_once $includes . 'admin/class-ap-admin.php';
-		require_once $includes . 'admin/class-ap-settings.php';
-		require_once $includes . 'admin/class-ap-notices.php';
-		require_once $includes . 'admin/class-ap-saas-admin.php';
+		require_once $includes . 'admin/class-routinekit-admin.php';
+		require_once $includes . 'admin/class-routinekit-settings.php';
+		require_once $includes . 'admin/class-routinekit-notices.php';
+		require_once $includes . 'admin/class-routinekit-saas-admin.php';
 
 		// REST API
-		require_once $includes . 'api/class-ap-rest-workflows.php';
-		require_once $includes . 'api/class-ap-rest-steps.php';
-		require_once $includes . 'api/class-ap-rest-executions.php';
-		require_once $includes . 'api/class-ap-rest-capture.php';
-		require_once $includes . 'api/class-ap-rest-evidence.php';
-		require_once $includes . 'api/class-ap-rest-saas.php';
-		require_once $includes . 'api/class-ap-rest-templates.php';
-		require_once $includes . 'api/class-ap-rest-step-notes.php';
+		require_once $includes . 'api/class-routinekit-rest-workflows.php';
+		require_once $includes . 'api/class-routinekit-rest-steps.php';
+		require_once $includes . 'api/class-routinekit-rest-executions.php';
+		require_once $includes . 'api/class-routinekit-rest-capture.php';
+		require_once $includes . 'api/class-routinekit-rest-evidence.php';
+		require_once $includes . 'api/class-routinekit-rest-saas.php';
+		require_once $includes . 'api/class-routinekit-rest-templates.php';
+		require_once $includes . 'api/class-routinekit-rest-step-notes.php';
 
 		// SaaS (Pro)
-		require_once $includes . 'saas/class-ap-saas-client.php';
-		require_once $includes . 'saas/class-ap-saas-sync.php';
-		require_once $includes . 'saas/class-ap-saas-auth.php';
+		require_once $includes . 'saas/class-routinekit-saas-client.php';
+		require_once $includes . 'saas/class-routinekit-saas-sync.php';
+		require_once $includes . 'saas/class-routinekit-saas-auth.php';
 	}
 
 	/**

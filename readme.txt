@@ -111,7 +111,9 @@ When you enter a license key and connect to RoutineKit Cloud, this plugin sends 
 
 **When this happens:** Only after you explicitly enter an API key in RoutineKit > Settings > Cloud Connection. The connection can be removed at any time from the same screen, after which no further data is sent.
 
-* RoutineKit Cloud service: https://app.wpstepwise.com
+This service is operated by the plugin author. It is optional — the plugin is fully functional without it.
+
+* Service endpoint: https://app.wpstepwise.com
 * Privacy policy: https://wpstepwise.com/privacy
 * Terms of service: https://wpstepwise.com/terms
 

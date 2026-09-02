@@ -280,6 +280,7 @@ class Routinekit_Activator {
 			screenshot_attachment_id BIGINT(20) UNSIGNED DEFAULT NULL,
 			is_sideloaded           TINYINT(1) NOT NULL DEFAULT 0,
 			source_site_label       VARCHAR(255) DEFAULT NULL,
+			source_site_url         VARCHAR(500) DEFAULT NULL,
 			created_at              DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 			updated_at              DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 			PRIMARY KEY  (id),
@@ -302,7 +303,11 @@ class Routinekit_Activator {
 		$defaults = [
 			'routinekit_capture_enabled'      => '1',
 			'routinekit_capture_scope'        => 'all_changes',
-			'routinekit_capture_exclude'      => '[]',
+			// Comma-separated patterns, matching register_setting()'s default and the
+			// format read by Routinekit_Capture::is_excluded(). Seeding '[]' here would
+			// leave a fresh install with no exclusions at all, capturing session_tokens
+			// and transients as workflow steps.
+			'routinekit_capture_exclude'      => 'session_tokens, transient_*, _site_transient_*',
 			'routinekit_capture_retention'    => '30',
 			'routinekit_capture_min_changes'  => '1',
 			'routinekit_runner_position'      => 'right',

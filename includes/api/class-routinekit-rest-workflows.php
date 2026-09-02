@@ -384,7 +384,7 @@ class Routinekit_REST_Workflows extends WP_REST_Controller {
 		}
 
 		if ( Routinekit_SaaS_Auth::is_connected() ) {
-			$key = $request->get_header( 'X-RoutineKit-Key' );
+			$key = $request->get_header( 'X-Stepwise-Key' );
 			if ( ! empty( $key ) && $this->verify_saas_key( $key ) ) {
 				return true;
 			}

@@ -1,6 +1,7 @@
 const defaultConfig = require( '@wordpress/scripts/config/webpack.config' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
+const fs = require( 'fs' );
 
 const CopyPlugin = require( 'copy-webpack-plugin' );
 
@@ -84,5 +85,23 @@ module.exports = {
 				{ from: path.resolve( __dirname, 'src/vanilla/html2canvas.min.js' ),  to: 'html2canvas.min.js' },
 			],
 		} ),
+		// Inject the ABSPATH guard into all generated .asset.php files so WordPress.org
+		// review tools do not flag them as missing direct-access protection.
+		{
+			apply( compiler ) {
+				compiler.hooks.afterEmit.tap( 'AbspathGuard', ( compilation ) => {
+					const outDir = path.resolve( __dirname, 'assets/js' );
+					fs.readdirSync( outDir )
+						.filter( ( f ) => f.endsWith( '.asset.php' ) )
+						.forEach( ( f ) => {
+							const file = path.join( outDir, f );
+							const src  = fs.readFileSync( file, 'utf8' );
+							if ( ! src.includes( 'ABSPATH' ) ) {
+								fs.writeFileSync( file, src.replace( '<?php ', "<?php defined( 'ABSPATH' ) || exit; " ) );
+							}
+						} );
+				} );
+			},
+		},
 	],
 };

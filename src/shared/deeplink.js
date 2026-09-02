@@ -3,7 +3,7 @@
  *
  * Deep links are stored relative to wp-admin — "admin.php?page=x",
  * "options-general.php" — matching the built-in library format in
- * class-ap-deeplinks.php. They must be resolved against adminUrl before use as
+ * class-routinekit-deeplinks.php. They must be resolved against adminUrl before use as
  * an href: a bare relative value resolves against the *current* page instead,
  * so on a subdirectory install "wordpress/wp-admin/admin.php" is read as the
  * host "wordpress".
