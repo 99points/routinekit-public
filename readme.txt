@@ -96,7 +96,7 @@ RoutineKit communicates with an external service **only when you explicitly conn
 
 = RoutineKit Cloud =
 
-When you enter a license key and connect to RoutineKit Cloud, this plugin sends data to and receives data from `https://app.wpstepwise.com`.
+When you enter a license key and connect to RoutineKit Cloud, this plugin sends data to and receives data from `https://app.routinekit.dev`.
 
 **Data sent:**
 * Your site URL, site name, and WordPress version (on connect and heartbeat)
@@ -113,9 +113,9 @@ When you enter a license key and connect to RoutineKit Cloud, this plugin sends 
 
 This service is operated by the plugin author. It is optional — the plugin is fully functional without it.
 
-* Service endpoint: https://app.wpstepwise.com
-* Privacy policy: https://wpstepwise.com/privacy
-* Terms of service: https://wpstepwise.com/terms
+* Service endpoint: https://app.routinekit.dev
+* Privacy policy: https://routinekit.dev/privacy
+* Terms of service: https://routinekit.dev/terms
 
 == Privacy Policy ==
 
@@ -125,7 +125,7 @@ The Auto-Capture buffer stores: the option name, old value, new value, the URL o
 
 Execution audit trails store: which user ran a workflow, which steps were completed or skipped, timestamps, and any notes or evidence files uploaded. This data is stored locally in your database.
 
-If you connect to RoutineKit Cloud (Pro), please review the RoutineKit Cloud privacy policy at https://wpstepwise.com/privacy.
+If you connect to RoutineKit Cloud (Pro), please review the RoutineKit Cloud privacy policy at https://routinekit.dev/privacy.
 
 == Source Code ==
 

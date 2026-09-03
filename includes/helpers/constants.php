@@ -11,7 +11,7 @@ define( 'ROUTINEKIT_TEMPLATES_DIR',      ROUTINEKIT_PLUGIN_DIR . 'templates/' );
 define( 'ROUTINEKIT_FREE_WORKFLOW_LIMIT', 0 ); // Unused — no workflow limit on any plan. Kept for back-compat only.
 // IMPORTANT: build-zip.sh MUST replace this with the production HTTPS URL before release.
 // If this value reaches production unchanged, all SaaS features will silently fail.
-define( 'ROUTINEKIT_SAAS_DEFAULT_URL',   'http://routinekit-saas.test' ); // Swapped to prod URL by build-zip.sh
+define( 'ROUTINEKIT_SAAS_DEFAULT_URL',   'http://routinekit-saas.test' ); // Swapped to https://app.routinekit.dev by build-zip.sh
 define( 'ROUTINEKIT_REST_NAMESPACE',     'routinekit/v1' );
 // All license plan slugs that unlock Pro features. Add new plans here — never in scattered in_array() calls.
 define( 'ROUTINEKIT_PRO_PLANS',         [ 'agency', 'agency_pro' ] );

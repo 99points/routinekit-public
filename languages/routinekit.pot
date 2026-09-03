@@ -1,2197 +1,2407 @@
 # Copyright (C) 2026 Zeeshan Rasool
-# This file is distributed under the GPL v2 or later.
+# This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Stepwise 1.0.0\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/stepwise\n"
+"Project-Id-Version: RoutineKit — Reusable Configuration Checklists 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/routinekit\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-23T09:55:01+00:00\n"
+"POT-Creation-Date: 2026-09-03T07:31:39+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
-"X-Domain: stepwise\n"
+"X-Domain: routinekit\n"
 
 #. Plugin Name of the plugin
-#: stepwise.php
-#: includes/admin/class-ap-admin.php:32
-#: includes/admin/class-ap-admin.php:33
-#: includes/class-stepwise.php:128
-msgid "Stepwise"
-msgstr ""
-
-#. Plugin URI of the plugin
-#: stepwise.php
-msgid "https://wpstepwise.com"
+#: routinekit.php
+msgid "RoutineKit — Reusable Configuration Checklists"
 msgstr ""
 
 #. Description of the plugin
-#: stepwise.php
-msgid "Reusable configuration workflows for WordPress agencies managing multiple client sites."
+#: routinekit.php
+msgid "RoutineKit lets you build reusable, step-by-step site configuration checklists and run them across client sites — saving hours of repetitive WordPress setup work."
 msgstr ""
 
 #. Author of the plugin
-#: stepwise.php
+#: routinekit.php
 msgid "Zeeshan Rasool"
 msgstr ""
 
 #. Author URI of the plugin
-#: stepwise.php
+#: routinekit.php
 msgid "https://profiles.wordpress.org/codeleftover/"
 msgstr ""
 
-#: includes/admin/class-ap-admin.php:43
-#: includes/admin/class-ap-admin.php:44
-#: assets/js/149.js:1
-#: src/workflow-manager/WorkflowManager.jsx:58
+#: includes/admin/class-routinekit-admin.php:38
+#: includes/admin/class-routinekit-admin.php:76
+#: includes/admin/class-routinekit-admin.php:77
+#: src/workflow-manager/WorkflowManager.jsx:154
 msgid "Workflows"
 msgstr ""
 
-#: includes/admin/class-ap-admin.php:52
-#: includes/admin/class-ap-admin.php:53
+#: includes/admin/class-routinekit-admin.php:46
+#: includes/admin/class-routinekit-admin.php:106
+#: includes/admin/class-routinekit-admin.php:107
+msgid "Upgrade to Pro"
+msgstr ""
+
+#: includes/admin/class-routinekit-admin.php:64
+#: includes/admin/class-routinekit-admin.php:65
+#: includes/class-routinekit.php:163
+msgid "RoutineKit"
+msgstr ""
+
+#: includes/admin/class-routinekit-admin.php:85
+#: includes/admin/class-routinekit-admin.php:86
 msgid "Settings"
 msgstr ""
 
-#: includes/admin/class-ap-admin.php:62
-#: includes/admin/class-ap-admin.php:63
-#: assets/js/132.js:1
+#: includes/admin/class-routinekit-admin.php:95
+#: includes/admin/class-routinekit-admin.php:96
 #: src/capture/CapturePage.jsx:83
 msgid "Captured Steps"
 msgstr ""
 
-#: includes/admin/class-ap-admin.php:73
-msgid "Upgrade to Pro"
+#: includes/admin/class-routinekit-admin.php:486
+msgid ""
+"You're connected to RoutineKit Cloud.\n"
+"\n"
+"Disconnect first (Settings → Cloud) to free your license slot before deleting.\n"
+"\n"
+"Delete anyway without disconnecting?"
 msgstr ""
 
-#: includes/admin/class-ap-admin.php:74
-msgid "⭐ Upgrade to Pro"
-msgstr ""
-
-#: includes/admin/class-ap-admin.php:336
-#: includes/admin/class-ap-admin.php:349
-#: includes/admin/class-ap-admin.php:356
-#: includes/admin/class-ap-admin.php:367
+#: includes/admin/class-routinekit-admin.php:517
+#: includes/admin/class-routinekit-admin.php:530
+#: includes/admin/class-routinekit-admin.php:537
+#: includes/admin/class-routinekit-admin.php:548
 msgid "You do not have permission to access this page."
 msgstr ""
 
-#: includes/admin/class-ap-notices.php:41
+#. translators: 1: settings link
+#: includes/admin/class-routinekit-notices.php:43
 #, php-format
-msgid "You have reached the <strong>%1$d active workflow</strong> limit on the free plan. <a href=\"%2$s\">Upgrade to Pro</a> for unlimited workflows."
+msgid "<strong>RoutineKit Cloud disconnected.</strong> This site's URL doesn't match the registered URL — it looks like this site was cloned or migrated (e.g. copied to a staging subdomain). Your Cloud connection has been cleared to prevent data from mixing with the original site. If this is a staging copy, you can leave it disconnected. If this is a new or migrated site, <a href=\"%s\">reconnect with your license key →</a> (it will count as a separate site)."
 msgstr ""
 
-#: includes/admin/class-ap-saas-admin.php:15
-#: includes/admin/class-ap-saas-admin.php:42
+#: includes/admin/class-routinekit-saas-admin.php:15
+#: includes/admin/class-routinekit-saas-admin.php:42
 msgid "Insufficient permissions."
 msgstr ""
 
-#: includes/admin/class-ap-saas-admin.php:23
+#: includes/admin/class-routinekit-saas-admin.php:23
 msgid "API key is required."
 msgstr ""
 
-#: includes/api/class-ap-rest-capture.php:137
-#: includes/api/class-ap-rest-saas.php:86
-#: includes/api/class-ap-rest-steps.php:80
-#: includes/api/class-ap-rest-steps.php:110
-#: includes/api/class-ap-rest-steps.php:192
-#: includes/api/class-ap-rest-workflows.php:144
-#: includes/api/class-ap-rest-workflows.php:196
-#: includes/api/class-ap-rest-workflows.php:225
-#: includes/api/class-ap-rest-workflows.php:245
-#: includes/api/class-ap-rest-workflows.php:250
-#: includes/core/class-ap-execution.php:102
-#: includes/core/class-ap-workflow.php:186
+#: includes/api/class-routinekit-rest-capture.php:157
+#: includes/api/class-routinekit-rest-saas.php:98
+#: includes/api/class-routinekit-rest-saas.php:167
+#: includes/api/class-routinekit-rest-step-notes.php:120
+#: includes/api/class-routinekit-rest-steps.php:80
+#: includes/api/class-routinekit-rest-steps.php:110
+#: includes/api/class-routinekit-rest-steps.php:201
+#: includes/api/class-routinekit-rest-workflows.php:184
+#: includes/api/class-routinekit-rest-workflows.php:224
+#: includes/api/class-routinekit-rest-workflows.php:265
+#: includes/api/class-routinekit-rest-workflows.php:289
+#: includes/api/class-routinekit-rest-workflows.php:370
+#: includes/api/class-routinekit-rest-workflows.php:374
+#: includes/core/class-routinekit-execution.php:121
+#: includes/core/class-routinekit-workflow.php:202
 msgid "Workflow not found."
 msgstr ""
 
-#: includes/api/class-ap-rest-capture.php:141
+#: includes/api/class-routinekit-rest-capture.php:161
 msgid "capture_ids cannot be empty."
 msgstr ""
 
-#: includes/api/class-ap-rest-capture.php:158
+#: includes/api/class-routinekit-rest-capture.php:175
 msgid "No matching captures found."
 msgstr ""
 
-#: includes/api/class-ap-rest-capture.php:293
-#: includes/api/class-ap-rest-executions.php:283
-#: includes/api/class-ap-rest-steps.php:216
-#: includes/api/class-ap-rest-workflows.php:390
+#. translators: %d: number of additional captured option changes
+#: includes/api/class-routinekit-rest-capture.php:195
+#, php-format
+msgid "(+%d more)"
+msgstr ""
+
+#: includes/api/class-routinekit-rest-capture.php:268
+msgid "Could not save capture."
+msgstr ""
+
+#: includes/api/class-routinekit-rest-capture.php:440
+#: includes/api/class-routinekit-rest-executions.php:393
+#: includes/api/class-routinekit-rest-steps.php:239
+#: includes/api/class-routinekit-rest-templates.php:83
+#: includes/api/class-routinekit-rest-workflows.php:393
 msgid "You do not have permission to access this resource."
 msgstr ""
 
-#: includes/api/class-ap-rest-evidence.php:60
-#: includes/api/class-ap-rest-evidence.php:138
+#: includes/api/class-routinekit-rest-evidence.php:61
+#: includes/api/class-routinekit-rest-evidence.php:142
 msgid "Step completion not found."
 msgstr ""
 
-#: includes/api/class-ap-rest-evidence.php:69
+#: includes/api/class-routinekit-rest-evidence.php:70
 msgid "No file uploaded. Send the file as multipart/form-data with key \"evidence\"."
 msgstr ""
 
-#: includes/api/class-ap-rest-evidence.php:90
+#: includes/api/class-routinekit-rest-evidence.php:94
 msgid "Unsupported file type. Allowed: JPEG, PNG, GIF, WebP, PDF."
 msgstr ""
 
-#: includes/api/class-ap-rest-evidence.php:99
+#: includes/api/class-routinekit-rest-evidence.php:103
 msgid "Evidence file must be 10 MB or smaller."
 msgstr ""
 
-#: includes/api/class-ap-rest-evidence.php:157
+#: includes/api/class-routinekit-rest-evidence.php:161
 msgid "You do not have permission to upload evidence."
 msgstr ""
 
-#: includes/api/class-ap-rest-executions.php:137
-#: includes/api/class-ap-rest-executions.php:152
-#: includes/api/class-ap-rest-executions.php:171
-#: includes/api/class-ap-rest-executions.php:209
-msgid "Execution not found."
-msgstr ""
-
-#: includes/api/class-ap-rest-executions.php:238
+#: includes/api/class-routinekit-rest-executions.php:150
+#: includes/api/class-routinekit-rest-executions.php:348
 msgid "Unknown"
 msgstr ""
 
-#: includes/api/class-ap-rest-executions.php:271
+#: includes/api/class-routinekit-rest-executions.php:189
+#: includes/api/class-routinekit-rest-executions.php:207
+#: includes/api/class-routinekit-rest-executions.php:229
+#: includes/api/class-routinekit-rest-executions.php:277
+#: includes/api/class-routinekit-rest-executions.php:319
+msgid "Execution not found."
+msgstr ""
+
+#: includes/api/class-routinekit-rest-executions.php:192
+msgid "You do not have permission to view this execution."
+msgstr ""
+
+#: includes/api/class-routinekit-rest-executions.php:210
+msgid "You do not have permission to cancel this execution."
+msgstr ""
+
+#: includes/api/class-routinekit-rest-executions.php:232
+#: includes/api/class-routinekit-rest-executions.php:280
+msgid "You do not have permission to modify this execution."
+msgstr ""
+
+#: includes/api/class-routinekit-rest-executions.php:238
+msgid "Step does not belong to this workflow."
+msgstr ""
+
+#: includes/api/class-routinekit-rest-executions.php:283
+msgid "Cannot reopen a step on a completed execution."
+msgstr ""
+
+#: includes/api/class-routinekit-rest-executions.php:381
 msgid "You do not have permission to run workflows."
 msgstr ""
 
-#: includes/api/class-ap-rest-saas.php:73
-#: includes/api/class-ap-rest-saas.php:136
-msgid "Not connected to AlignPress Cloud."
+#: includes/api/class-routinekit-rest-saas.php:85
+#: includes/api/class-routinekit-rest-saas.php:207
+msgid "Not connected to RoutineKit Cloud."
 msgstr ""
 
-#: includes/api/class-ap-rest-steps.php:96
-#: includes/api/class-ap-rest-steps.php:144
-#: includes/api/class-ap-rest-steps.php:176
-#: includes/core/class-ap-step.php:183
+#: includes/api/class-routinekit-rest-saas.php:131
+msgid "Could not lock workflow before pushing. Please try again."
+msgstr ""
+
+#: includes/api/class-routinekit-rest-saas.php:175
+#: src/step-builder/StepBuilder.jsx:195
+msgid "Could not save group assignment."
+msgstr ""
+
+#: includes/api/class-routinekit-rest-step-notes.php:115
+#: includes/api/class-routinekit-rest-step-notes.php:148
+#: includes/api/class-routinekit-rest-steps.php:96
+#: includes/api/class-routinekit-rest-steps.php:147
+#: includes/api/class-routinekit-rest-steps.php:182
+#: includes/core/class-routinekit-step.php:215
 msgid "Step not found."
 msgstr ""
 
-#: includes/api/class-ap-rest-steps.php:197
+#: includes/api/class-routinekit-rest-step-notes.php:195
+#: includes/api/class-routinekit-rest-step-notes.php:233
+#: includes/api/class-routinekit-rest-step-notes.php:309
+msgid "Note not found."
+msgstr ""
+
+#: includes/api/class-routinekit-rest-step-notes.php:200
+msgid "You cannot delete this note."
+msgstr ""
+
+#: includes/api/class-routinekit-rest-step-notes.php:203
+msgid "Sideloaded notes can only be deleted by the originating site."
+msgstr ""
+
+#: includes/api/class-routinekit-rest-step-notes.php:236
+#: includes/api/class-routinekit-rest-step-notes.php:312
+msgid "You cannot modify this note."
+msgstr ""
+
+#: includes/api/class-routinekit-rest-step-notes.php:239
+msgid "Cannot upload to a sideloaded note."
+msgstr ""
+
+#: includes/api/class-routinekit-rest-step-notes.php:244
+msgid "Send file as multipart with key \"screenshot\"."
+msgstr ""
+
+#: includes/api/class-routinekit-rest-step-notes.php:256
+msgid "Screenshots must be JPEG, PNG, GIF, or WebP."
+msgstr ""
+
+#: includes/api/class-routinekit-rest-step-notes.php:259
+msgid "Screenshot must be 10 MB or smaller."
+msgstr ""
+
+#: includes/api/class-routinekit-rest-step-notes.php:352
+msgid "Missing required fields."
+msgstr ""
+
+#: includes/api/class-routinekit-rest-step-notes.php:509
+msgid "You do not have permission."
+msgstr ""
+
+#: includes/api/class-routinekit-rest-step-notes.php:519
+msgid "Invalid sync key."
+msgstr ""
+
+#: includes/api/class-routinekit-rest-steps.php:113
+msgid "Steps cannot be added after a workflow has been pushed to the cloud."
+msgstr ""
+
+#: includes/api/class-routinekit-rest-steps.php:150
+msgid "Steps cannot be edited after a workflow has been pushed to the cloud."
+msgstr ""
+
+#: includes/api/class-routinekit-rest-steps.php:185
+msgid "Steps cannot be deleted after a workflow has been pushed to the cloud."
+msgstr ""
+
+#: includes/api/class-routinekit-rest-steps.php:204
+msgid "Steps cannot be reordered after a workflow has been pushed to the cloud."
+msgstr ""
+
+#: includes/api/class-routinekit-rest-steps.php:209
 msgid "order must be an array of {id, sort_order} objects."
 msgstr ""
 
-#. translators: %d: limit
-#: includes/api/class-ap-rest-workflows.php:161
-#, php-format
-msgid "Free plan is limited to %d active workflows. Upgrade to Pro for unlimited workflows."
+#: includes/api/class-routinekit-rest-steps.php:219
+msgid "One or more steps do not belong to this workflow."
 msgstr ""
 
-#: includes/api/class-ap-rest-workflows.php:230
+#: includes/api/class-routinekit-rest-workflows.php:269
+msgid "This workflow cannot be deleted because it has been pushed to the cloud. Archive it instead."
+msgstr ""
+
+#: includes/api/class-routinekit-rest-workflows.php:274
 msgid "Could not delete workflow."
 msgstr ""
 
-#: includes/api/class-ap-rest-workflows.php:279
-#: includes/api/class-ap-rest-workflows.php:320
-msgid "Workflow limit reached."
-msgstr ""
-
-#: includes/api/class-ap-rest-workflows.php:284
+#: includes/api/class-routinekit-rest-workflows.php:319
 msgid "Invalid workflow JSON. title and steps are required."
 msgstr ""
 
-#: includes/api/class-ap-rest-workflows.php:317
-msgid "Import from URL requires a Pro license."
+#: includes/class-routinekit.php:164
+msgid "RoutineKit captures wp_options changes during admin sessions to help build workflow steps (Auto-Capture). This data is stored only in your own database and is never sent to external servers on the free plan."
 msgstr ""
 
-#. translators: %s: error message
-#: includes/api/class-ap-rest-workflows.php:335
-#, php-format
-msgid "Could not fetch URL: %s"
-msgstr ""
-
-#. translators: %d: HTTP status code
-#: includes/api/class-ap-rest-workflows.php:348
-#, php-format
-msgid "Remote URL returned status %d."
-msgstr ""
-
-#: includes/api/class-ap-rest-workflows.php:359
-msgid "URL did not return valid workflow JSON. title and steps are required."
-msgstr ""
-
-#: includes/class-stepwise.php:129
-msgid "AlignPress captures wp_options changes during admin sessions to help build workflow steps (Auto-Capture). This data is stored only in your own database and is never sent to external servers on the free plan."
-msgstr ""
-
-#: includes/class-stepwise.php:130
+#: includes/class-routinekit.php:165
 msgid "Data stored locally: option name, old value, new value, admin page URL, and the user ID of the person who made the change. Retained for a configurable period (default 7 days) and deleted automatically."
 msgstr ""
 
-#: includes/class-stepwise.php:131
+#: includes/class-routinekit.php:166
 msgid "Execution audit trails store: which user ran a workflow, which steps were completed or skipped, timestamps, and any uploaded evidence files."
 msgstr ""
 
-#. translators: %s: URL to AlignPress privacy policy
-#: includes/class-stepwise.php:135
+#. translators: %s: URL to RoutineKit privacy policy
+#: includes/class-routinekit.php:170
 #, php-format
-msgid "If you connect to AlignPress Cloud (Pro), see the <a href=\"%s\">AlignPress Cloud Privacy Policy</a>."
+msgid "If you connect to RoutineKit Cloud (Pro), see the <a href=\"%s\">RoutineKit Cloud Privacy Policy</a>."
 msgstr ""
 
-#: includes/core/class-ap-execution.php:128
+#: includes/core/class-routinekit-execution.php:127
+msgid "This workflow is in draft and cannot be run."
+msgstr ""
+
+#: includes/core/class-routinekit-execution.php:189
 msgid "Could not start execution."
 msgstr ""
 
-#: includes/core/class-ap-execution.php:281
+#: includes/core/class-routinekit-execution.php:362
 msgid "Invalid SaaS assignment payload."
 msgstr ""
 
-#: includes/core/class-ap-execution.php:306
+#: includes/core/class-routinekit-execution.php:387
 msgid "Could not create execution from assignment."
 msgstr ""
 
-#: includes/core/class-ap-step.php:91
+#: includes/core/class-routinekit-step.php:119
 msgid "workflow_id is required."
 msgstr ""
 
-#: includes/core/class-ap-step.php:96
+#: includes/core/class-routinekit-step.php:124
 msgid "Step title is required."
 msgstr ""
 
-#: includes/core/class-ap-step.php:134
+#: includes/core/class-routinekit-step.php:165
 msgid "Could not create step."
 msgstr ""
 
-#: includes/core/class-ap-step.php:195
+#: includes/core/class-routinekit-step.php:227
 msgid "Could not update step."
 msgstr ""
 
-#: includes/core/class-ap-templates.php:49
+#: includes/core/class-routinekit-templates.php:81
 msgid "Template not found."
 msgstr ""
 
-#: includes/core/class-ap-templates.php:54
+#: includes/core/class-routinekit-templates.php:86
 msgid "Template file is invalid JSON."
 msgstr ""
 
-#: includes/core/class-ap-workflow.php:133
+#: includes/core/class-routinekit-workflow.php:141
 msgid "Workflow title is required."
 msgstr ""
 
-#: includes/core/class-ap-workflow.php:144
+#: includes/core/class-routinekit-workflow.php:152
 msgid "Could not create workflow."
 msgstr ""
 
-#: includes/core/class-ap-workflow.php:198
+#: includes/core/class-routinekit-workflow.php:214
 msgid "Could not update workflow."
 msgstr ""
 
-#: includes/saas/class-ap-saas-auth.php:25
+#: includes/saas/class-routinekit-saas-auth.php:25
 msgid "Invalid response from SaaS."
 msgstr ""
 
-#: assets/js/132.js:1
-#: assets/js/296.js:1
-#: src/capture/CapturePreview.jsx:10
-msgid "Detected changes:"
+#. translators: %d: workflow ID
+#: includes/saas/class-routinekit-saas-sync.php:184
+#, php-format
+msgid "Workflow #%d"
 msgstr ""
 
-#: assets/js/132.js:1
-#: assets/js/296.js:1
-#: src/capture/AddToWorkflowModal.jsx:46
-msgid "Configure"
+#. translators: %1$s: workflow title, %2$s: site name
+#: includes/saas/class-routinekit-saas-sync.php:196
+#, php-format
+msgid "[%2$s] Workflow completed: %1$s"
 msgstr ""
 
-#: assets/js/132.js:1
-#: assets/js/296.js:1
-#: src/capture/AddToWorkflowModal.jsx:51
-#: src/capture/CapturePage.jsx:137
-#: src/capture/CaptureToast.jsx:98
-msgid "Add to Workflow"
+#. translators: %s: site name
+#: includes/saas/class-routinekit-saas-sync.php:199
+#, php-format
+msgid "A workflow was just completed on %s."
 msgstr ""
 
-#: assets/js/132.js:1
-#: assets/js/149.js:1
-#: assets/js/296.js:1
-#: assets/js/707.js:1
-#: assets/js/707.js:2
-#: assets/js/887.js:1
-#: assets/js/945.js:1
-#: src/capture/AddToWorkflowModal.jsx:57
-#: src/runner/RunnerStep.jsx:122
-#: src/settings/Settings.jsx:699
-#: src/step-builder/AddStepForm.jsx:102
-#: src/step-builder/StepBuilder.jsx:266
-#: src/step-builder/StepItem.jsx:99
-#: src/workflow-manager/CreateWorkflowModal.jsx:35
-#: src/workflow-manager/ImportUrlModal.jsx:64
-#: src/workflow-manager/TemplatePickerModal.jsx:65
-msgid "Cancel"
+#. translators: %s: workflow title
+#: includes/saas/class-routinekit-saas-sync.php:201
+#, php-format
+msgid "Workflow: %s"
 msgstr ""
 
-#: assets/js/132.js:1
-#: assets/js/296.js:1
-#: assets/js/707.js:1
-#: src/capture/AddToWorkflowModal.jsx:65
-#: src/step-builder/AddStepForm.jsx:99
-msgid "Adding…"
+#. translators: %s: user display name
+#: includes/saas/class-routinekit-saas-sync.php:204
+#, php-format
+msgid "Completed by: %s"
 msgstr ""
 
-#: assets/js/132.js:1
-#: assets/js/296.js:1
-#: assets/js/707.js:1
-#: src/capture/AddToWorkflowModal.jsx:65
-#: src/step-builder/AddStepForm.jsx:40
-#: src/step-builder/AddStepForm.jsx:99
-msgid "Add Step"
+#. translators: %s: completion datetime
+#: includes/saas/class-routinekit-saas-sync.php:207
+#, php-format
+msgid "Completed at: %s"
 msgstr ""
 
-#: assets/js/132.js:1
-#: assets/js/296.js:1
-#: src/capture/AddToWorkflowModal.jsx:40
+#: src/capture/AddToWorkflowModal.jsx:48
 msgid "Something went wrong."
 msgstr ""
 
-#: assets/js/132.js:1
-#: assets/js/296.js:1
-#: src/capture/AddToWorkflowModal.jsx:77
+#: src/capture/AddToWorkflowModal.jsx:54
+msgid "Configure"
+msgstr ""
+
+#: src/capture/AddToWorkflowModal.jsx:59
+#: src/capture/CapturePage.jsx:137
+#: src/capture/CaptureToast.jsx:113
+msgid "Add to Workflow"
+msgstr ""
+
+#: src/capture/AddToWorkflowModal.jsx:65
+#: src/runner/Runner.jsx:400
+#: src/runner/RunnerStep.jsx:173
+#: src/settings/Settings.jsx:696
+#: src/step-builder/AddStepForm.jsx:85
+#: src/step-builder/PushToSaasModal.jsx:77
+#: src/step-builder/StepBuilder.jsx:401
+#: src/step-builder/StepBuilder.jsx:499
+#: src/step-builder/StepItem.jsx:92
+#: src/workflow-manager/CreateWorkflowModal.jsx:35
+#: src/workflow-manager/ImportJsonModal.jsx:61
+#: src/workflow-manager/ImportUrlModal.jsx:52
+#: src/workflow-manager/TemplatePickerModal.jsx:69
+#: src/workflow-manager/WorkflowRow.jsx:267
+msgid "Cancel"
+msgstr ""
+
+#: src/capture/AddToWorkflowModal.jsx:73
+#: src/runner/Runner.jsx:397
+#: src/step-builder/AddStepForm.jsx:82
+msgid "Adding…"
+msgstr ""
+
+#: src/capture/AddToWorkflowModal.jsx:73
+#: src/step-builder/AddStepForm.jsx:37
+#: src/step-builder/AddStepForm.jsx:82
+msgid "Add Step"
+msgstr ""
+
+#: src/capture/AddToWorkflowModal.jsx:85
 msgid "Workflow"
 msgstr ""
 
-#: assets/js/132.js:1
-#: assets/js/296.js:1
-#: src/capture/AddToWorkflowModal.jsx:82
+#: src/capture/AddToWorkflowModal.jsx:90
 msgid "No active workflows found. Create a workflow first."
 msgstr ""
 
-#: assets/js/132.js:1
-#: assets/js/296.js:1
-#: src/capture/AddToWorkflowModal.jsx:92
+#: src/capture/AddToWorkflowModal.jsx:100
 msgid "— Select a workflow —"
 msgstr ""
 
-#: assets/js/132.js:1
-#: assets/js/296.js:1
-#: assets/js/707.js:1
-#: src/capture/AddToWorkflowModal.jsx:102
-#: src/step-builder/StepItem.jsx:57
+#: src/capture/AddToWorkflowModal.jsx:110
+#: src/step-builder/StepItem.jsx:56
 msgid "Step Title"
 msgstr ""
 
-#: assets/js/132.js:1
-#: assets/js/296.js:1
-#: src/capture/AddToWorkflowModal.jsx:110
+#: src/capture/AddToWorkflowModal.jsx:118
 msgid "Auto-generated from page name"
 msgstr ""
 
-#: assets/js/132.js:1
-#: src/capture/CapturePage.jsx:85
-msgid "Back to Workflows"
-msgstr ""
-
-#: assets/js/132.js:1
-#: src/capture/CapturePage.jsx:89
-msgid "AlignPress detected these setting changes. Select one or more to add as a workflow step, or dismiss them."
-msgstr ""
-
-#: assets/js/132.js:1
-#: src/capture/CapturePage.jsx:102
-msgid "Loading…"
-msgstr ""
-
-#: assets/js/132.js:1
-#: src/capture/CapturePage.jsx:108
-msgid "No pending captured changes."
-msgstr ""
-
-#: assets/js/132.js:1
-#: src/capture/CapturePage.jsx:110
-msgid "AlignPress will detect setting changes as you navigate WP admin."
-msgstr ""
-
-#: assets/js/132.js:1
-#: src/capture/CapturePage.jsx:125
-msgid "selected"
-msgstr ""
-
-#: assets/js/132.js:1
-#: src/capture/CapturePage.jsx:126
-msgid "Select all"
-msgstr ""
-
-#: assets/js/132.js:1
-#: assets/js/296.js:1
-#: assets/js/887.js:1
-#: src/capture/CapturePage.jsx:145
-#: src/capture/CaptureToast.jsx:105
-#: src/runner/Runner.jsx:112
-msgid "Dismiss"
-msgstr ""
-
-#: assets/js/132.js:1
 #: src/capture/CapturePage.jsx:57
 msgid "Clear all captured changes? This cannot be undone."
 msgstr ""
 
-#: assets/js/132.js:1
 #: src/capture/CapturePage.jsx:63
 msgid "All captured changes cleared."
 msgstr ""
 
-#: assets/js/132.js:1
-#: assets/js/945.js:1
+#: src/capture/CapturePage.jsx:85
+msgid "Back to Workflows"
+msgstr ""
+
+#: src/capture/CapturePage.jsx:89
+msgid "RoutineKit detected these setting changes. Select one or more to add as a workflow step, or dismiss them."
+msgstr ""
+
+#: src/capture/CapturePage.jsx:102
+#: src/runner/RunnerNotes.jsx:421
+msgid "Loading…"
+msgstr ""
+
+#: src/capture/CapturePage.jsx:108
+msgid "No pending captured changes."
+msgstr ""
+
+#: src/capture/CapturePage.jsx:110
+msgid "RoutineKit will detect setting changes as you navigate WP admin."
+msgstr ""
+
+#: src/capture/CapturePage.jsx:125
+msgid "selected"
+msgstr ""
+
+#: src/capture/CapturePage.jsx:126
+msgid "Select all"
+msgstr ""
+
+#: src/capture/CapturePage.jsx:145
+#: src/capture/CaptureToast.jsx:120
+#: src/runner/Runner.jsx:313
+#: src/runner/Runner.jsx:324
+#: src/runner/Runner.jsx:334
+#: src/step-builder/StepBuilder.jsx:137
+msgid "Dismiss"
+msgstr ""
+
 #: src/capture/CapturePage.jsx:155
-#: src/settings/Settings.jsx:766
+#: src/settings/Settings.jsx:786
 msgid "Clearing…"
 msgstr ""
 
-#: assets/js/132.js:1
 #: src/capture/CapturePage.jsx:155
 msgid "Clear All"
 msgstr ""
 
-#: assets/js/132.js:1
 #: src/capture/CapturePage.jsx:164
 msgid "Page"
 msgstr ""
 
-#: assets/js/132.js:1
 #: src/capture/CapturePage.jsx:165
 msgid "Setting"
 msgstr ""
 
-#: assets/js/132.js:1
 #: src/capture/CapturePage.jsx:166
 msgid "Old Value"
 msgstr ""
 
-#: assets/js/132.js:1
 #: src/capture/CapturePage.jsx:167
 msgid "New Value"
 msgstr ""
 
-#: assets/js/132.js:1
-#: assets/js/707.js:1
 #: src/capture/CapturePage.jsx:168
-#: src/step-builder/StepItem.jsx:121
+#: src/step-builder/StepItem.jsx:111
 msgid "Captured"
 msgstr ""
 
-#: assets/js/132.js:1
 #: src/capture/CapturePage.jsx:202
 #: src/capture/CapturePage.jsx:207
 msgid "(empty)"
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/WorkflowRow.jsx:14
-msgid "Today"
+#: src/capture/CapturePreview.jsx:10
+msgid "Detected changes:"
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/WorkflowRow.jsx:15
-msgid "1 day ago"
+#: src/capture/CaptureToast.jsx:93
+#: src/runner/RunnerNotes.jsx:30
+#: src/step-builder/PushToSaasModal.jsx:55
+msgid "Close"
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/WorkflowRow.jsx:16
-msgid "days ago"
+#: src/capture/CaptureToast.jsx:100
+msgid "setting changed"
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/WorkflowRow.jsx:17
-msgid "weeks ago"
+#: src/capture/CaptureToast.jsx:101
+msgid "settings changed"
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/WorkflowRow.jsx:29
-msgid "Not started"
+#: src/capture/CaptureToast.jsx:104
+msgid "Add to workflow?"
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/WorkflowRow.jsx:107
-msgid "Assigned"
+#: src/runner/AuditTrail.jsx:18
+msgid "Loading audit trail…"
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/WorkflowRow.jsx:107
-msgid "Imported"
+#: src/runner/AuditTrail.jsx:24
+#: src/step-builder/StepBuilder.jsx:316
+msgid "—"
 msgstr ""
 
-#: assets/js/149.js:1
-#: assets/js/707.js:1
-#: assets/js/707.js:2
-#: src/step-builder/StepBuilder.jsx:282
-#: src/step-builder/StepItem.jsx:131
-#: src/workflow-manager/WorkflowRow.jsx:112
-msgid "Edit"
+#: src/runner/AuditTrail.jsx:32
+msgid "Started:"
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/WorkflowRow.jsx:73
-msgid "(Copy)"
+#: src/runner/AuditTrail.jsx:34
+msgid "Completed:"
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/WorkflowRow.jsx:115
-msgid "Duplicate"
+#: src/runner/AuditTrail.jsx:39
+msgid "No steps completed yet."
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/WorkflowRow.jsx:119
-msgid "Export (JSON)"
+#: src/runner/AuditTrail.jsx:62
+#: src/runner/RunnerStep.jsx:144
+msgid "Skipped:"
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/WorkflowRow.jsx:64
-msgid "Delete this workflow? This cannot be undone."
+#: src/runner/AuditTrail.jsx:73
+msgid "View evidence"
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/WorkflowRow.jsx:123
+#: src/runner/AuditTrail.jsx:85
+msgid "▲ Hide changes"
+msgstr ""
+
+#: src/runner/AuditTrail.jsx:86
+msgid "▼ View option changes"
+msgstr ""
+
+#: src/runner/AuditTrail.jsx:93
+msgid "Option"
+msgstr ""
+
+#: src/runner/AuditTrail.jsx:94
+msgid "After"
+msgstr ""
+
+#: src/runner/EvidenceUpload.jsx:21
+msgid "Unsupported file type. Use JPEG, PNG, GIF, WebP, or PDF."
+msgstr ""
+
+#: src/runner/EvidenceUpload.jsx:25
+msgid "File must be"
+msgstr ""
+
+#: src/runner/EvidenceUpload.jsx:25
+msgid "or smaller."
+msgstr ""
+
+#: src/runner/EvidenceUpload.jsx:44
+#: src/runner/RunnerNotes.jsx:86
+msgid "Upload failed."
+msgstr ""
+
+#: src/runner/EvidenceUpload.jsx:70
+msgid "Could not remove evidence."
+msgstr ""
+
+#: src/runner/EvidenceUpload.jsx:79
+msgid "Attachment"
+msgstr ""
+
+#: src/runner/EvidenceUpload.jsx:88
+msgid "Evidence"
+msgstr ""
+
+#: src/runner/EvidenceUpload.jsx:91
+msgid "View uploaded evidence"
+msgstr ""
+
+#: src/runner/EvidenceUpload.jsx:100
+#: src/runner/RunnerNotes.jsx:160
+#: src/step-builder/StepBuilder.jsx:254
+msgid "Remove"
+msgstr ""
+
+#: src/runner/EvidenceUpload.jsx:114
+#: src/runner/RunnerNotes.jsx:171
+msgid "Uploading…"
+msgstr ""
+
+#: src/runner/EvidenceUpload.jsx:114
+msgid "Upload screenshot or PDF"
+msgstr ""
+
+#: src/runner/Runner.jsx:163
+msgid "Could not add step."
+msgstr ""
+
+#: src/runner/Runner.jsx:239
+msgid "Abandon this workflow run? Progress will be lost."
+msgstr ""
+
+#: src/runner/Runner.jsx:261
+msgid "Workflow Runner"
+msgstr ""
+
+#: src/runner/Runner.jsx:281
+msgid "Unpin — panel will close on navigation"
+msgstr ""
+
+#: src/runner/Runner.jsx:281
+msgid "Pin open — keep panel open on all pages"
+msgstr ""
+
+#: src/runner/Runner.jsx:282
+msgid "Pinned open (click to unpin)"
+msgstr ""
+
+#: src/runner/Runner.jsx:282
+msgid "Pin open across pages"
+msgstr ""
+
+#: src/runner/Runner.jsx:292
+msgid "Minimise runner"
+msgstr ""
+
+#: src/runner/Runner.jsx:293
+msgid "Minimise"
+msgstr ""
+
+#: src/runner/Runner.jsx:310
+msgid "Your run was stopped — either you started a new run or an admin reset the workflow."
+msgstr ""
+
+#: src/runner/Runner.jsx:321
+msgid "This run is paused. Go to Workflows and click Run to resume from where you left off."
+msgstr ""
+
+#: src/runner/Runner.jsx:331
+msgid "Workflow complete!"
+msgstr ""
+
+#: src/runner/Runner.jsx:378
+msgid "Add step"
+msgstr ""
+
+#: src/runner/Runner.jsx:387
+msgid "Step title…"
+msgstr ""
+
+#: src/runner/Runner.jsx:397
+msgid "Add"
+msgstr ""
+
+#: src/runner/Runner.jsx:408
+msgid "Abandon run"
+msgstr ""
+
+#: src/runner/RunnerLauncher.jsx:110
+msgid "Capture Step"
+msgstr ""
+
+#: src/runner/RunnerLauncher.jsx:127
+msgid "Open Workflow"
+msgstr ""
+
+#: src/runner/RunnerLauncher.jsx:130
+msgid "Running"
+msgstr ""
+
+#: src/runner/RunnerLauncher.jsx:130
+#: src/runner/RunnerLauncher.jsx:191
+#: src/runner/RunnerProgress.jsx:21
+msgid "Step"
+msgstr ""
+
+#: src/runner/RunnerLauncher.jsx:130
+#: src/runner/RunnerProgress.jsx:21
+msgid "of"
+msgstr ""
+
+#: src/runner/RunnerLauncher.jsx:146
+msgid "Close dock"
+msgstr ""
+
+#: src/runner/RunnerLauncher.jsx:147
+msgid "RoutineKit Run Dock"
+msgstr ""
+
+#: src/runner/RunnerLauncher.jsx:192
+msgid "Run Dock"
+msgstr ""
+
+#: src/runner/RunnerNotes.jsx:18
+msgid "By default, notes are private to this site — only users here can see them. Turn this on to broadcast the note (and any screenshot) to all connected sites that share this workflow via RoutineKit Cloud."
+msgstr ""
+
+#: src/runner/RunnerNotes.jsx:33
+#: src/runner/RunnerNotes.jsx:152
+msgid "Screenshot"
+msgstr ""
+
+#: src/runner/RunnerNotes.jsx:55
+msgid "More info"
+msgstr ""
+
+#: src/runner/RunnerNotes.jsx:75
+#: src/runner/RunnerNotes.jsx:193
+msgid "JPEG, PNG, GIF, or WebP only."
+msgstr ""
+
+#: src/runner/RunnerNotes.jsx:108
+msgid "Delete this note?"
+msgstr ""
+
+#: src/runner/RunnerNotes.jsx:132
+msgid "shared"
+msgstr ""
+
+#: src/runner/RunnerNotes.jsx:135
+msgid "private"
+msgstr ""
+
+#: src/runner/RunnerNotes.jsx:139
+msgid "Delete note"
+msgstr ""
+
+#: src/runner/RunnerNotes.jsx:155
+msgid "Click to expand"
+msgstr ""
+
+#: src/runner/RunnerNotes.jsx:157
+msgid "1 of 1"
+msgstr ""
+
+#: src/runner/RunnerNotes.jsx:171
+msgid "+ Add screenshot"
+msgstr ""
+
+#: src/runner/RunnerNotes.jsx:248
+#: src/runner/RunnerNotes.jsx:254
+msgid "Capture failed. Try pasting a screenshot instead."
+msgstr ""
+
+#: src/runner/RunnerNotes.jsx:303
+msgid "Could not post note."
+msgstr ""
+
+#: src/runner/RunnerNotes.jsx:317
+msgid "Add a note…"
+msgstr ""
+
+#: src/runner/RunnerNotes.jsx:328
+msgid "Remove screenshot"
+msgstr ""
+
+#: src/runner/RunnerNotes.jsx:333
+msgid "Attach image"
+msgstr ""
+
+#: src/runner/RunnerNotes.jsx:347
+msgid "Capture page screenshot"
+msgstr ""
+
+#: src/runner/RunnerNotes.jsx:369
+msgid "Posting…"
+msgstr ""
+
+#: src/runner/RunnerNotes.jsx:369
+msgid "Post"
+msgstr ""
+
+#: src/runner/RunnerNotes.jsx:380
+msgid "Share to all sites"
+msgstr ""
+
+#: src/runner/RunnerNotes.jsx:418
+#: src/step-builder/StepItem.jsx:67
+msgid "Notes"
+msgstr ""
+
+#: src/runner/RunnerNotes.jsx:435
+msgid "No notes yet."
+msgstr ""
+
+#: src/runner/RunnerNotes.jsx:456
+msgid "just now"
+msgstr ""
+
+#: src/runner/RunnerStep.jsx:21
+#: src/step-builder/StepItem.jsx:39
+msgid "Delete this step? This cannot be undone."
+msgstr ""
+
+#: src/runner/RunnerStep.jsx:81
+msgid "Drag to reorder"
+msgstr ""
+
+#: src/runner/RunnerStep.jsx:95
+#: src/runner/RunnerStep.jsx:96
+msgid "Reopen step"
+msgstr ""
+
+#: src/runner/RunnerStep.jsx:95
+#: src/runner/RunnerStep.jsx:96
+msgid "Mark complete"
+msgstr ""
+
+#: src/runner/RunnerStep.jsx:104
+msgid "Skipped"
+msgstr ""
+
+#: src/runner/RunnerStep.jsx:125
+msgid "Go to settings →"
+msgstr ""
+
+#: src/runner/RunnerStep.jsx:138
+#: src/workflow-manager/WorkflowRow.jsx:187
 msgid "Deleting…"
 msgstr ""
 
-#: assets/js/149.js:1
-#: assets/js/707.js:1
-#: src/step-builder/StepItem.jsx:140
-#: src/workflow-manager/WorkflowRow.jsx:123
-msgid "Delete"
+#: src/runner/RunnerStep.jsx:138
+msgid "Delete step"
 msgstr ""
 
-#: assets/js/149.js:1
-#: assets/js/707.js:1
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:275
-#: src/step-builder/StepBuilder.jsx:146
-#: src/step-builder/StepBuilder.jsx:150
+#: src/runner/RunnerStep.jsx:154
+msgid "Skip"
+msgstr ""
+
+#: src/runner/RunnerStep.jsx:165
+msgid "Reason for skipping (optional)…"
+msgstr ""
+
+#: src/runner/RunnerStep.jsx:170
+msgid "Skipping…"
+msgstr ""
+
+#: src/runner/RunnerStep.jsx:170
+msgid "Confirm skip"
+msgstr ""
+
+#: src/settings/Settings.jsx:66
+msgid "Save failed."
+msgstr ""
+
+#: src/settings/Settings.jsx:108
+msgid "Administrator"
+msgstr ""
+
+#: src/settings/Settings.jsx:109
+msgid "Editor"
+msgstr ""
+
+#: src/settings/Settings.jsx:110
+msgid "Author"
+msgstr ""
+
+#: src/settings/Settings.jsx:111
+msgid "Contributor"
+msgstr ""
+
+#: src/settings/Settings.jsx:135
+msgid "only"
+msgstr ""
+
+#: src/settings/Settings.jsx:146
+msgid "Auto-Capture"
+msgstr ""
+
+#: src/settings/Settings.jsx:147
+msgid "Automatically detect and record WordPress option changes as workflow steps."
+msgstr ""
+
+#: src/settings/Settings.jsx:150
+msgid "Enable Auto-Capture"
+msgstr ""
+
+#: src/settings/Settings.jsx:151
+msgid "Monitor this site for setting changes in real time."
+msgstr ""
+
+#: src/settings/Settings.jsx:161
+msgid "Capture Scope"
+msgstr ""
+
+#: src/settings/Settings.jsx:162
+msgid "Which option changes should be recorded."
+msgstr ""
+
+#: src/settings/Settings.jsx:169
+msgid "All option changes"
+msgstr ""
+
+#: src/settings/Settings.jsx:170
+msgid "Plugin settings pages only"
+msgstr ""
+
+#: src/settings/Settings.jsx:175
+msgid "Exclude options"
+msgstr ""
+
+#: src/settings/Settings.jsx:176
+msgid "Comma-separated option names to always ignore. Wildcards (*) supported."
+msgstr ""
+
+#: src/settings/Settings.jsx:188
+msgid "Capture retention"
+msgstr ""
+
+#: src/settings/Settings.jsx:189
+msgid "How long to keep unassigned captured steps before auto-deleting."
+msgstr ""
+
+#: src/settings/Settings.jsx:197
+msgid "days"
+msgstr ""
+
+#: src/settings/Settings.jsx:205
+msgid "Notifications & Toast"
+msgstr ""
+
+#: src/settings/Settings.jsx:206
+msgid "Control when and how the floating notification appears."
+msgstr ""
+
+#: src/settings/Settings.jsx:209
+msgid "Show toast notifications"
+msgstr ""
+
+#: src/settings/Settings.jsx:210
+msgid "Display a floating prompt when changes are detected."
+msgstr ""
+
+#: src/settings/Settings.jsx:220
+msgid "Minimum changes to trigger toast"
+msgstr ""
+
+#: src/settings/Settings.jsx:221
+msgid "Only show the toast when this many or more options changed."
+msgstr ""
+
+#: src/settings/Settings.jsx:233
+msgid "changes"
+msgstr ""
+
+#: src/settings/Settings.jsx:238
+msgid "Toast auto-dismiss"
+msgstr ""
+
+#: src/settings/Settings.jsx:239
+msgid "Automatically hide the toast after a period of inactivity."
+msgstr ""
+
+#: src/settings/Settings.jsx:246
+msgid "Never (manual dismiss)"
+msgstr ""
+
+#: src/settings/Settings.jsx:247
+msgid "5 seconds"
+msgstr ""
+
+#: src/settings/Settings.jsx:248
+msgid "8 seconds"
+msgstr ""
+
+#: src/settings/Settings.jsx:249
+msgid "15 seconds"
+msgstr ""
+
+#: src/settings/Settings.jsx:250
+msgid "30 seconds"
+msgstr ""
+
+#: src/settings/Settings.jsx:255
+msgid "Persistent launcher button"
+msgstr ""
+
+#: src/settings/Settings.jsx:256
+msgid "Show the RoutineKit floating button on every admin page."
+msgstr ""
+
+#: src/settings/Settings.jsx:265
+msgid "This is the ▶ RoutineKit button visible in the bottom-right corner."
+msgstr ""
+
+#: src/settings/Settings.jsx:273
+msgid "Workflow Defaults"
+msgstr ""
+
+#: src/settings/Settings.jsx:274
+msgid "Default values applied when creating a new workflow."
+msgstr ""
+
+#: src/settings/Settings.jsx:277
+msgid "Default status"
+msgstr ""
+
+#: src/settings/Settings.jsx:278
+msgid "New workflows start as Active or Draft."
+msgstr ""
+
+#: src/settings/Settings.jsx:281
+#: src/step-builder/StepBuilder.jsx:340
+#: src/step-builder/StepBuilder.jsx:344
 #: src/workflow-manager/CreateWorkflowModal.jsx:90
 #: src/workflow-manager/WorkflowList.jsx:45
-#: src/workflow-manager/WorkflowRow.jsx:139
+#: src/workflow-manager/WorkflowRow.jsx:213
 msgid "Active"
 msgstr ""
 
-#: assets/js/149.js:1
-#: assets/js/707.js:1
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:275
-#: src/step-builder/StepBuilder.jsx:146
-#: src/step-builder/StepBuilder.jsx:150
+#: src/settings/Settings.jsx:281
+#: src/step-builder/StepBuilder.jsx:340
+#: src/step-builder/StepBuilder.jsx:344
 #: src/workflow-manager/CreateWorkflowModal.jsx:91
 #: src/workflow-manager/WorkflowList.jsx:46
-#: src/workflow-manager/WorkflowRow.jsx:140
+#: src/workflow-manager/WorkflowRow.jsx:214
 msgid "Draft"
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/WorkflowList.jsx:47
-#: src/workflow-manager/WorkflowRow.jsx:141
-msgid "Archived"
+#: src/settings/Settings.jsx:297
+msgid "Default category"
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/WorkflowRow.jsx:151
-msgid "This workflow is currently running"
+#: src/settings/Settings.jsx:298
+msgid "Pre-fill the category field on new workflows."
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/WorkflowRow.jsx:156
-msgid "Running…"
+#: src/settings/Settings.jsx:306
+#: src/step-builder/StepBuilder.jsx:359
+#: src/step-builder/StepBuilder.jsx:363
+msgid "— None —"
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/WorkflowRow.jsx:157
-msgid "Starting…"
+#: src/settings/Settings.jsx:312
+msgid "Show \"Run\" button in list table"
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/WorkflowRow.jsx:158
-msgid "Started!"
+#: src/settings/Settings.jsx:313
+msgid "Display the Run Workflow button in the workflows table."
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/WorkflowRow.jsx:159
-msgid "Run Workflow"
+#: src/settings/Settings.jsx:325
+msgid "Team & Access"
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/WorkflowRow.jsx:164
-msgid "Edit Draft"
+#: src/settings/Settings.jsx:326
+msgid "Control which WordPress user roles can view and run workflows on this site."
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/EmptyState.jsx:6
-msgid "No workflows yet"
+#: src/settings/Settings.jsx:329
+msgid "Roles that can view workflows"
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/EmptyState.jsx:8
-msgid "Create your first workflow to start building reusable configuration checklists for your client sites."
+#: src/settings/Settings.jsx:330
+msgid "These roles will see the RoutineKit menu item."
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/TemplatePickerModal.jsx:95
-#: src/workflow-manager/WorkflowList.jsx:44
-msgid "All"
+#: src/settings/Settings.jsx:336
+msgid "Roles that can run workflows"
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/WorkflowList.jsx:75
-msgid "item"
+#: src/settings/Settings.jsx:337
+msgid "Restrict who can execute a workflow on this site."
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/WorkflowList.jsx:75
-msgid "items"
+#: src/settings/Settings.jsx:343
+msgid "Roles that can edit workflows"
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/WorkflowList.jsx:87
-msgid "Workflow Name"
+#: src/settings/Settings.jsx:344
+msgid "Who can create, edit, and delete workflows on this site."
 msgstr ""
 
-#: assets/js/149.js:1
-#: assets/js/707.js:2
-#: src/step-builder/StepBuilder.jsx:294
-#: src/workflow-manager/WorkflowList.jsx:88
-msgid "Steps"
+#: src/settings/Settings.jsx:352
+msgid "Email Notifications"
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/WorkflowList.jsx:89
-msgid "Last Run"
+#: src/settings/Settings.jsx:353
+msgid "Send email alerts for key workflow events on this site."
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/WorkflowList.jsx:90
-msgid "Progress"
+#: src/settings/Settings.jsx:356
+msgid "Notify when workflow assigned"
 msgstr ""
 
-#: assets/js/149.js:1
+#: src/settings/Settings.jsx:357
+msgid "Email admin when a new workflow is pushed to this site from the agency dashboard."
+msgstr ""
+
+#: src/settings/Settings.jsx:367
+msgid "Notify when workflow completed"
+msgstr ""
+
+#: src/settings/Settings.jsx:368
+msgid "Email admin when a user finishes all steps of a workflow."
+msgstr ""
+
+#: src/settings/Settings.jsx:378
+msgid "Notify when step skipped"
+msgstr ""
+
+#: src/settings/Settings.jsx:379
+msgid "Email when a required step is skipped with a reason."
+msgstr ""
+
+#: src/settings/Settings.jsx:389
+msgid "Notification email address"
+msgstr ""
+
+#: src/settings/Settings.jsx:390
+msgid "Where these emails are sent. Defaults to the site admin email."
+msgstr ""
+
+#: src/settings/Settings.jsx:397
+msgid "admin@clientsite.com"
+msgstr ""
+
+#: src/settings/Settings.jsx:413
+#: src/step-builder/StepBuilder.jsx:496
+#: src/step-builder/StepItem.jsx:89
+msgid "Saving…"
+msgstr ""
+
+#: src/settings/Settings.jsx:413
+msgid "Save Settings"
+msgstr ""
+
+#: src/settings/Settings.jsx:415
+msgid "✓ Saved"
+msgstr ""
+
+#: src/settings/Settings.jsx:418
+msgid "Documentation"
+msgstr ""
+
+#: src/settings/Settings.jsx:420
+msgid "Support"
+msgstr ""
+
+#: src/settings/Settings.jsx:444
+msgid "License & Pro Features"
+msgstr ""
+
+#: src/settings/Settings.jsx:445
+msgid "Unlock multi-site management, template library, team sharing, and more."
+msgstr ""
+
+#: src/settings/Settings.jsx:453
+msgid "Your site is connected to RoutineKit Cloud."
+msgstr ""
+
+#: src/settings/Settings.jsx:461
+#: src/upgrade/UpgradePage.jsx:128
+#: src/upgrade/UpgradePage.jsx:175
+msgid "Free"
+msgstr ""
+
+#: src/settings/Settings.jsx:463
+#: src/upgrade/UpgradePage.jsx:133
+msgid "Unlimited workflows"
+msgstr ""
+
+#: src/settings/Settings.jsx:464
+msgid "Up to 3 connected sites"
+msgstr ""
+
+#: src/settings/Settings.jsx:465
+#: src/upgrade/UpgradePage.jsx:18
+msgid "RoutineKit Cloud dashboard"
+msgstr ""
+
+#: src/settings/Settings.jsx:466
+#: src/settings/Settings.jsx:487
+#: src/upgrade/UpgradePage.jsx:21
+msgid "Auto-capture"
+msgstr ""
+
+#: src/settings/Settings.jsx:467
+#: src/upgrade/UpgradePage.jsx:19
+msgid "JSON export"
+msgstr ""
+
+#: src/settings/Settings.jsx:468
+#: src/upgrade/UpgradePage.jsx:22
+msgid "Multiple site groups"
+msgstr ""
+
+#: src/settings/Settings.jsx:469
+msgid "Cloud template library"
+msgstr ""
+
+#: src/settings/Settings.jsx:470
+#: src/settings/Settings.jsx:486
+#: src/upgrade/UpgradePage.jsx:26
+msgid "Team members"
+msgstr ""
+
+#: src/settings/Settings.jsx:477
+msgid "$149 / year"
+msgstr ""
+
+#: src/settings/Settings.jsx:479
+msgid "Up to 50 sites — just $0.25/site/mo"
+msgstr ""
+
+#: src/settings/Settings.jsx:482
+msgid "Up to 50 connected sites"
+msgstr ""
+
+#: src/settings/Settings.jsx:483
+msgid "Multiple site groups & fleet push"
+msgstr ""
+
+#: src/settings/Settings.jsx:484
+#: src/upgrade/UpgradePage.jsx:23
+msgid "Cloud workflow template library"
+msgstr ""
+
+#: src/settings/Settings.jsx:485
+#: src/upgrade/UpgradePage.jsx:24
+msgid "Import from URL"
+msgstr ""
+
+#: src/settings/Settings.jsx:491
+#: src/upgrade/UpgradePage.jsx:52
+msgid "Get Agency →"
+msgstr ""
+
+#: src/settings/Settings.jsx:499
+msgid "$249 / year"
+msgstr ""
+
+#: src/settings/Settings.jsx:501
+msgid "Unlimited sites — $0.21/site/mo at 100, less as you grow"
+msgstr ""
+
+#: src/settings/Settings.jsx:504
+msgid "Everything in Agency"
+msgstr ""
+
+#: src/settings/Settings.jsx:505
+msgid "Unlimited connected sites"
+msgstr ""
+
+#: src/settings/Settings.jsx:506
+#: src/upgrade/UpgradePage.jsx:27
+msgid "Priority email support"
+msgstr ""
+
+#: src/settings/Settings.jsx:507
+#: src/upgrade/UpgradePage.jsx:28
+msgid "Early access to new features"
+msgstr ""
+
+#: src/settings/Settings.jsx:511
+#: src/upgrade/UpgradePage.jsx:64
+msgid "Get Agency Pro →"
+msgstr ""
+
+#: src/settings/Settings.jsx:516
+msgid "Upgrade to Agency Pro →"
+msgstr ""
+
+#: src/settings/Settings.jsx:551
+msgid "Sync complete."
+msgstr ""
+
+#: src/settings/Settings.jsx:553
+msgid "Sync failed."
+msgstr ""
+
+#: src/settings/Settings.jsx:562
+msgid "RoutineKit Cloud Connection"
+msgstr ""
+
+#: src/settings/Settings.jsx:563
+msgid "Connect to your RoutineKit agency account to sync and assign workflows across sites."
+msgstr ""
+
+#: src/settings/Settings.jsx:567
+msgid "Connected"
+msgstr ""
+
+#: src/settings/Settings.jsx:567
+msgid "Not Connected"
+msgstr ""
+
+#: src/settings/Settings.jsx:571
+msgid "License Key"
+msgstr ""
+
+#: src/settings/Settings.jsx:572
+msgid "Enter your RoutineKit Pro license key to connect."
+msgstr ""
+
+#: src/settings/Settings.jsx:587
+msgid "Disconnect this site from RoutineKit Cloud?"
+msgstr ""
+
+#: src/settings/Settings.jsx:594
+msgid "Disconnect failed."
+msgstr ""
+
+#: src/settings/Settings.jsx:600
+msgid "Disconnecting…"
+msgstr ""
+
+#: src/settings/Settings.jsx:600
+msgid "Disconnect"
+msgstr ""
+
+#: src/settings/Settings.jsx:629
+msgid "Connection failed. Please check your key."
+msgstr ""
+
+#: src/settings/Settings.jsx:635
+msgid "Connecting…"
+msgstr ""
+
+#: src/settings/Settings.jsx:635
+msgid "Connect"
+msgstr ""
+
+#: src/settings/Settings.jsx:644
+msgid "Last Sync"
+msgstr ""
+
+#: src/settings/Settings.jsx:645
+msgid "When workflows were last synced from your agency account."
+msgstr ""
+
+#: src/settings/Settings.jsx:649
+#: src/step-builder/StepBuilder.jsx:386
+msgid "Never"
+msgstr ""
+
+#: src/settings/Settings.jsx:652
+msgid "Syncing…"
+msgstr ""
+
+#: src/settings/Settings.jsx:652
+msgid "↻ Sync Now"
+msgstr ""
+
+#: src/settings/Settings.jsx:674
+msgid "Type"
+msgstr ""
+
+#: src/settings/Settings.jsx:676
+msgid "to confirm:"
+msgstr ""
+
+#: src/settings/Settings.jsx:732
+msgid "Could not save that setting."
+msgstr ""
+
+#: src/settings/Settings.jsx:745
+msgid "Failed to clear captures."
+msgstr ""
+
+#: src/settings/Settings.jsx:758
+msgid "Reset failed."
+msgstr ""
+
+#: src/settings/Settings.jsx:767
+#: src/settings/Settings.jsx:872
+msgid "Danger Zone"
+msgstr ""
+
+#: src/settings/Settings.jsx:768
+msgid "These actions are irreversible. Proceed with caution."
+msgstr ""
+
+#: src/settings/Settings.jsx:776
+msgid "Delete All Captured Steps"
+msgstr ""
+
+#: src/settings/Settings.jsx:777
+msgid "Remove all unassigned auto-captured steps. Assigned steps in workflows are unaffected."
+msgstr ""
+
+#: src/settings/Settings.jsx:779
+msgid "✓ Captured steps cleared."
+msgstr ""
+
+#: src/settings/Settings.jsx:787
+msgid "Yes, Clear"
+msgstr ""
+
+#: src/settings/Settings.jsx:794
+msgid "Clear Captured Steps"
+msgstr ""
+
+#: src/settings/Settings.jsx:802
+msgid "Reset All Plugin Data"
+msgstr ""
+
+#: src/settings/Settings.jsx:803
+msgid "Permanently delete all workflows, steps, and settings. This cannot be undone."
+msgstr ""
+
+#: src/settings/Settings.jsx:811
+msgid "Resetting…"
+msgstr ""
+
+#: src/settings/Settings.jsx:812
+msgid "Yes, Reset Everything"
+msgstr ""
+
+#: src/settings/Settings.jsx:816
+msgid "Reset Everything"
+msgstr ""
+
+#: src/settings/Settings.jsx:824
+msgid "Delete All Data on Uninstall"
+msgstr ""
+
+#: src/settings/Settings.jsx:826
+msgid "Off by default: deleting RoutineKit from the Plugins screen keeps your workflows, steps, and settings, so you can reinstall without losing work. Turn this on to erase everything when the plugin is deleted."
+msgstr ""
+
+#: src/settings/Settings.jsx:870
+msgid "General"
+msgstr ""
+
+#: src/settings/Settings.jsx:871
+msgid "Cloud Connection"
+msgstr ""
+
+#: src/settings/Settings.jsx:877
+msgid "RoutineKit Settings"
+msgstr ""
+
+#: src/shared/SavedToast.jsx:30
+msgid "Saved"
+msgstr ""
+
+#: src/step-builder/AddStepForm.jsx:45
+msgid "New Step"
+msgstr ""
+
+#: src/step-builder/AddStepForm.jsx:49
+msgid "Title"
+msgstr ""
+
+#: src/step-builder/AddStepForm.jsx:58
+msgid "e.g. Install security plugin"
+msgstr ""
+
+#: src/step-builder/AddStepForm.jsx:65
+msgid "Deep Link"
+msgstr ""
+
+#: src/step-builder/AddStepForm.jsx:76
+#: src/step-builder/StepItem.jsx:83
+msgid "Required step"
+msgstr ""
+
+#: src/step-builder/CapturedStepsPanel.jsx:44
+msgid "WordPress Changes"
+msgstr ""
+
+#: src/step-builder/CapturedStepsPanel.jsx:54
+msgid "No pending WordPress option changes detected."
+msgstr ""
+
+#: src/step-builder/CapturedStepsPanel.jsx:57
+msgid "To add steps manually, use the ⊕ Capture Step button on any admin page."
+msgstr ""
+
+#: src/step-builder/CapturedStepsPanel.jsx:63
+msgid "WordPress detected these setting changes — add them as steps:"
+msgstr ""
+
+#: src/step-builder/CapturedStepsPanel.jsx:86
+msgid "+ Add"
+msgstr ""
+
+#: src/step-builder/DeepLinkInput.jsx:54
+msgid "Browse deep-links"
+msgstr ""
+
+#: src/step-builder/DeepLinkInput.jsx:56
+msgid "Browse"
+msgstr ""
+
+#: src/step-builder/DeepLinkInput.jsx:68
+msgid "Search deep-links…"
+msgstr ""
+
+#: src/step-builder/DeepLinkInput.jsx:73
+msgid "No results"
+msgstr ""
+
+#: src/step-builder/PushToSaasModal.jsx:41
+msgid "Push failed."
+msgstr ""
+
+#: src/step-builder/PushToSaasModal.jsx:50
+#: src/step-builder/StepBuilder.jsx:83
+#: src/step-builder/StepBuilder.jsx:520
+msgid "Push to Cloud"
+msgstr ""
+
+#: src/step-builder/PushToSaasModal.jsx:60
+msgid "No groups assigned to this workflow yet."
+msgstr ""
+
+#: src/step-builder/PushToSaasModal.jsx:63
+msgid "Open the workflow in the step builder, use the \"Assign to Group\" panel to tag which groups should receive it, then come back and push."
+msgstr ""
+
+#: src/step-builder/PushToSaasModal.jsx:71
+msgid "Before you push…"
+msgstr ""
+
+#: src/step-builder/PushToSaasModal.jsx:80
+msgid "Pushing…"
+msgstr ""
+
+#: src/step-builder/PushToSaasModal.jsx:80
+msgid "Yes, push it"
+msgstr ""
+
+#: src/step-builder/PushToSaasModal.jsx:86
+msgid "Make sure your workflow is finalised before pushing. Once pushed to the cloud:"
+msgstr ""
+
+#: src/step-builder/PushToSaasModal.jsx:89
+msgid "You cannot add, remove, or reorder steps"
+msgstr ""
+
+#: src/step-builder/PushToSaasModal.jsx:90
+msgid "Step titles and settings are locked"
+msgstr ""
+
+#: src/step-builder/PushToSaasModal.jsx:93
+msgid "✓ You can still run the workflow, complete steps, and add notes normally."
+msgstr ""
+
+#: src/step-builder/PushToSaasModal.jsx:96
+msgid "Will be pushed to:"
+msgstr ""
+
+#: src/step-builder/RunHistory.jsx:7
+msgid "Completed"
+msgstr ""
+
+#: src/step-builder/RunHistory.jsx:8
+msgid "In Progress"
+msgstr ""
+
+#: src/step-builder/RunHistory.jsx:9
+msgid "Paused"
+msgstr ""
+
+#: src/step-builder/RunHistory.jsx:10
+msgid "Abandoned"
+msgstr ""
+
+#: src/step-builder/RunHistory.jsx:11
+msgid "Pending"
+msgstr ""
+
+#: src/step-builder/RunHistory.jsx:48
+msgid "Loading run history…"
+msgstr ""
+
+#: src/step-builder/RunHistory.jsx:58
+msgid "No runs yet."
+msgstr ""
+
+#: src/step-builder/RunHistory.jsx:60
+msgid "Use the Run button on the Workflows list to start a run."
+msgstr ""
+
+#: src/step-builder/RunHistory.jsx:73
+msgid "run"
+msgstr ""
+
+#: src/step-builder/RunHistory.jsx:74
+msgid "runs"
+msgstr ""
+
+#: src/step-builder/RunHistory.jsx:81
 #: src/workflow-manager/CreateWorkflowModal.jsx:82
 #: src/workflow-manager/WorkflowList.jsx:91
 msgid "Status"
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/WorkflowList.jsx:99
-msgid "No workflows match your filter."
+#: src/step-builder/RunHistory.jsx:82
+msgid "Started"
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/CreateWorkflowModal.jsx:30
-msgid "Create New Workflow"
+#: src/step-builder/RunHistory.jsx:83
+msgid "Completed / Paused"
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/CreateWorkflowModal.jsx:43
-msgid "Creating…"
+#: src/step-builder/RunHistory.jsx:84
+msgid "Run by"
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/CreateWorkflowModal.jsx:43
-msgid "Create Workflow"
+#: src/step-builder/RunHistory.jsx:107
+msgid "paused by"
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/CreateWorkflowModal.jsx:51
-msgid "Workflow Title"
+#: src/step-builder/RunHistory.jsx:119
+msgid "Hide audit trail ▲"
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/CreateWorkflowModal.jsx:60
-msgid "e.g. New Site Setup"
+#: src/step-builder/RunHistory.jsx:120
+msgid "View audit trail ▼"
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/CreateWorkflowModal.jsx:68
-msgid "Description"
+#: src/step-builder/StepBuilder.jsx:39
+msgid "Run this on multiple sites"
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/CreateWorkflowModal.jsx:75
-msgid "Optional — describe when to use this workflow."
+#: src/step-builder/StepBuilder.jsx:42
+msgid "Connect your free RoutineKit account to push this workflow to client sites, track completions, and manage everything from one dashboard — no re-building required."
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/ImportUrlModal.jsx:59
-msgid "Import Workflow from URL"
+#: src/step-builder/StepBuilder.jsx:45
+#: src/workflow-manager/WorkflowManager.jsx:40
+msgid "Connect free →"
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/ImportUrlModal.jsx:72
-#: src/workflow-manager/TemplatePickerModal.jsx:68
-msgid "Importing…"
+#: src/step-builder/StepBuilder.jsx:68
+#: src/step-builder/StepBuilder.jsx:97
+msgid "Activate the workflow"
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/ImportUrlModal.jsx:72
-msgid "Import"
+#: src/step-builder/StepBuilder.jsx:69
+#: src/step-builder/StepBuilder.jsx:98
+msgid "Set status to Active so it can be run."
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/ImportUrlModal.jsx:52
-msgid "Failed to import from URL."
+#: src/step-builder/StepBuilder.jsx:73
+#: src/step-builder/StepBuilder.jsx:102
+msgid "Run the workflow"
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/ImportUrlModal.jsx:81
-msgid "Workflow JSON URL"
+#: src/step-builder/StepBuilder.jsx:74
+#: src/step-builder/StepBuilder.jsx:103
+msgid "Hit Run — the runner appears on every admin page while it's active."
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/ImportUrlModal.jsx:95
-msgid "Paste the URL of a workflow JSON exported from another AlignPress installation."
+#: src/step-builder/StepBuilder.jsx:78
+#: src/step-builder/StepBuilder.jsx:107
+msgid "Add steps as you go"
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/TemplatePickerModal.jsx:60
-msgid "Choose a Template"
+#: src/step-builder/StepBuilder.jsx:79
+msgid "Document each task from the runner. Steps stay editable until you push to cloud."
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/TemplatePickerModal.jsx:53
-msgid "Failed to import template."
+#: src/step-builder/StepBuilder.jsx:84
+msgid "When steps are finalised — locks them and uploads to your cloud."
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/TemplatePickerModal.jsx:68
-msgid "Import Template"
+#: src/step-builder/StepBuilder.jsx:89
+msgid "Assign to a group"
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/TemplatePickerModal.jsx:79
-msgid "No templates available. Contact your AlignPress admin."
+#: src/step-builder/StepBuilder.jsx:90
+msgid "Distribute to all sites in a group."
 msgstr ""
 
-#: assets/js/149.js:1
-#: assets/js/707.js:2
-#: src/step-builder/StepBuilder.jsx:298
-#: src/workflow-manager/TemplatePickerModal.jsx:137
-msgid "steps"
+#: src/step-builder/StepBuilder.jsx:108
+msgid "Document each task from the runner sidebar."
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/WorkflowManager.jsx:67
-msgid "Templates"
+#: src/step-builder/StepBuilder.jsx:128
+msgid "Workflow ready"
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/WorkflowManager.jsx:74
-msgid "Import from URL requires Pro"
+#: src/step-builder/StepBuilder.jsx:129
+#, js-format
+msgid "%1$d of %2$d complete"
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/WorkflowManager.jsx:76
-msgid "Import URL"
+#: src/step-builder/StepBuilder.jsx:133
+msgid "You're all set — this workflow is live."
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/WorkflowManager.jsx:85
-msgid "Upgrade for More"
+#: src/step-builder/StepBuilder.jsx:134
+msgid "Get this workflow ready to run"
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/WorkflowManager.jsx:86
-msgid "Add New Workflow"
+#: src/step-builder/StepBuilder.jsx:178
+msgid "Could not load groups."
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/WorkflowManager.jsx:95
-msgid "You've reached the 3-workflow limit on the free plan."
+#: src/step-builder/StepBuilder.jsx:214
+msgid "Could not remove group assignment."
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/WorkflowManager.jsx:99
-msgid "Upgrade to Pro for unlimited workflows →"
+#: src/step-builder/StepBuilder.jsx:225
+msgid "This site has not been added to any groups yet. Groups are created and managed from your RoutineKit Cloud dashboard — add this site to a group there first."
 msgstr ""
 
-#: assets/js/149.js:1
-#: src/workflow-manager/WorkflowManager.jsx:107
-msgid "Loading workflows…"
-msgstr ""
-
-#: assets/js/149.js:1
-#: src/workflow-manager/WorkflowManager.jsx:121
-msgid "Auto-capture is on."
-msgstr ""
-
-#: assets/js/149.js:1
-#: src/workflow-manager/WorkflowManager.jsx:122
-msgid "AlignPress is watching for setting changes on this site."
-msgstr ""
-
-#: assets/js/149.js:1
-#: src/workflow-manager/WorkflowManager.jsx:125
-msgid "View uncaptured steps →"
-msgstr ""
-
-#: assets/js/296.js:1
-#: src/capture/CaptureToast.jsx:78
-msgid "Close"
-msgstr ""
-
-#: assets/js/296.js:1
-#: src/capture/CaptureToast.jsx:85
-msgid "setting changed"
-msgstr ""
-
-#: assets/js/296.js:1
-#: src/capture/CaptureToast.jsx:86
-msgid "settings changed"
-msgstr ""
-
-#: assets/js/296.js:1
-#: src/capture/CaptureToast.jsx:89
-msgid "Add to workflow?"
-msgstr ""
-
-#: assets/js/648.js:1
-#: src/upgrade/UpgradePage.jsx:14
-msgid "Active workflows per site"
-msgstr ""
-
-#: assets/js/648.js:1
-#: src/upgrade/UpgradePage.jsx:15
-msgid "Connected sites"
-msgstr ""
-
-#: assets/js/648.js:1
-#: src/upgrade/UpgradePage.jsx:16
-msgid "Auto-capture retention"
-msgstr ""
-
-#: assets/js/648.js:1
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:458
-#: src/upgrade/UpgradePage.jsx:17
-msgid "JSON export"
-msgstr ""
-
-#: assets/js/648.js:1
-#: src/upgrade/UpgradePage.jsx:18
-msgid "Workflow template library"
-msgstr ""
-
-#: assets/js/648.js:1
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:477
-#: src/upgrade/UpgradePage.jsx:19
-msgid "Import from URL"
-msgstr ""
-
-#: assets/js/648.js:1
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:475
-#: src/upgrade/UpgradePage.jsx:20
-msgid "Site groups & fleet assignment"
-msgstr ""
-
-#: assets/js/648.js:1
-#: src/upgrade/UpgradePage.jsx:21
-msgid "Team members (Owner + Executor)"
-msgstr ""
-
-#: assets/js/648.js:1
-#: src/upgrade/UpgradePage.jsx:22
-msgid "Fleet dashboard"
-msgstr ""
-
-#: assets/js/648.js:1
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:498
-#: src/upgrade/UpgradePage.jsx:23
-msgid "Priority email support"
-msgstr ""
-
-#: assets/js/648.js:1
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:499
-#: src/upgrade/UpgradePage.jsx:24
-msgid "Early access to new features"
-msgstr ""
-
-#: assets/js/648.js:1
-#: src/upgrade/UpgradePage.jsx:41
-#: src/upgrade/UpgradePage.jsx:171
-msgid "Agency"
-msgstr ""
-
-#: assets/js/648.js:1
-#: src/upgrade/UpgradePage.jsx:43
-#: src/upgrade/UpgradePage.jsx:54
-msgid "/yr"
-msgstr ""
-
-#: assets/js/648.js:1
-#: src/upgrade/UpgradePage.jsx:44
-msgid "~$12/mo billed annually"
-msgstr ""
-
-#: assets/js/648.js:1
-#: src/upgrade/UpgradePage.jsx:45
-msgid "Up to 50 sites"
-msgstr ""
-
-#: assets/js/648.js:1
-#: src/upgrade/UpgradePage.jsx:46
-msgid "That's just $0.25/site/mo"
-msgstr ""
-
-#: assets/js/648.js:1
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:483
-#: src/upgrade/UpgradePage.jsx:48
-msgid "Get Agency →"
-msgstr ""
-
-#: assets/js/648.js:1
-#: src/upgrade/UpgradePage.jsx:52
-#: src/upgrade/UpgradePage.jsx:172
-msgid "Agency Pro"
-msgstr ""
-
-#: assets/js/648.js:1
-#: src/upgrade/UpgradePage.jsx:55
-msgid "~$21/mo billed annually"
-msgstr ""
-
-#: assets/js/648.js:1
-#: src/upgrade/UpgradePage.jsx:56
-msgid "Unlimited sites"
-msgstr ""
-
-#: assets/js/648.js:1
-#: src/upgrade/UpgradePage.jsx:57
-msgid "$0.42/site/mo at 50 sites — less as you grow"
-msgstr ""
-
-#: assets/js/648.js:1
-#: src/upgrade/UpgradePage.jsx:59
-msgid "BEST VALUE"
-msgstr ""
-
-#: assets/js/648.js:1
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:503
-#: src/upgrade/UpgradePage.jsx:60
-msgid "Get Agency Pro →"
-msgstr ""
-
-#: assets/js/648.js:1
-#: src/upgrade/UpgradePage.jsx:78
-msgid "You're on AlignPress Pro"
-msgstr ""
-
-#: assets/js/648.js:1
-#: src/upgrade/UpgradePage.jsx:79
-msgid "All Pro features are unlocked on this site."
-msgstr ""
-
-#: assets/js/648.js:1
-#: src/upgrade/UpgradePage.jsx:80
-msgid "← Back to Settings"
-msgstr ""
-
-#: assets/js/648.js:1
-#: src/upgrade/UpgradePage.jsx:102
-msgid "Activation failed. Check your license key and try again."
-msgstr ""
-
-#: assets/js/648.js:1
-#: src/upgrade/UpgradePage.jsx:114
-msgid "Upgrade to AlignPress Pro"
-msgstr ""
-
-#: assets/js/648.js:1
-#: src/upgrade/UpgradePage.jsx:116
-msgid "Billed annually. No per-site fees. Cancel anytime."
-msgstr ""
-
-#: assets/js/648.js:1
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:453
-#: src/upgrade/UpgradePage.jsx:124
-#: src/upgrade/UpgradePage.jsx:170
-msgid "Free"
-msgstr ""
-
-#: assets/js/648.js:1
-#: src/upgrade/UpgradePage.jsx:128
-msgid "1 site"
-msgstr ""
-
-#: assets/js/648.js:1
-#: src/upgrade/UpgradePage.jsx:130
-msgid "Current plan"
-msgstr ""
-
-#: assets/js/648.js:1
-#: src/upgrade/UpgradePage.jsx:165
-msgid "Compare plans"
-msgstr ""
-
-#: assets/js/648.js:1
-#: src/upgrade/UpgradePage.jsx:169
-msgid "Feature"
-msgstr ""
-
-#: assets/js/648.js:1
-#: src/upgrade/UpgradePage.jsx:192
-msgid "How to get started"
-msgstr ""
-
-#: assets/js/648.js:1
-#: src/upgrade/UpgradePage.jsx:195
-msgid "Choose a plan above"
-msgstr ""
-
-#: assets/js/648.js:1
-#: src/upgrade/UpgradePage.jsx:195
-msgid "Click \"Get Agency\" or \"Get Agency Pro\" — you'll be taken to the AlignPress dashboard to create your account."
-msgstr ""
-
-#: assets/js/648.js:1
-#: src/upgrade/UpgradePage.jsx:196
-msgid "Copy your license key"
-msgstr ""
-
-#: assets/js/648.js:1
-#: src/upgrade/UpgradePage.jsx:196
-msgid "After subscribing, find your license key in the AlignPress dashboard. It looks like AP-XXXX-XXXX-XXXX-XXXX."
-msgstr ""
-
-#: assets/js/648.js:1
-#: src/upgrade/UpgradePage.jsx:197
-msgid "Activate below"
-msgstr ""
-
-#: assets/js/648.js:1
-#: src/upgrade/UpgradePage.jsx:197
-msgid "Paste the key into the field below and click Activate. Pro features unlock instantly — no restart needed."
-msgstr ""
-
-#: assets/js/648.js:1
-#: src/upgrade/UpgradePage.jsx:210
-msgid "Already have a license key?"
-msgstr ""
-
-#: assets/js/648.js:1
-#: src/upgrade/UpgradePage.jsx:213
-msgid "✓ License activated! Reloading…"
-msgstr ""
-
-#: assets/js/648.js:1
-#: src/upgrade/UpgradePage.jsx:228
-msgid "Activating…"
-msgstr ""
-
-#: assets/js/648.js:1
-#: src/upgrade/UpgradePage.jsx:228
-msgid "Activate"
-msgstr ""
-
-#: assets/js/648.js:1
-#: src/upgrade/UpgradePage.jsx:233
-msgid "You can also activate in "
-msgstr ""
-
-#: assets/js/648.js:1
-#: src/upgrade/UpgradePage.jsx:234
-msgid "Settings → Cloud"
-msgstr ""
-
-#: assets/js/648.js:1
-#: src/upgrade/UpgradePage.jsx:235
-msgid "."
-msgstr ""
-
-#: assets/js/707.js:1
-#: src/step-builder/DeepLinkInput.jsx:54
-msgid "Browse deep-links"
-msgstr ""
-
-#: assets/js/707.js:1
-#: src/step-builder/DeepLinkInput.jsx:56
-msgid "Browse"
-msgstr ""
-
-#: assets/js/707.js:1
-#: src/step-builder/DeepLinkInput.jsx:68
-msgid "Search deep-links…"
-msgstr ""
-
-#: assets/js/707.js:1
-#: src/step-builder/DeepLinkInput.jsx:73
-msgid "No results"
-msgstr ""
-
-#: assets/js/707.js:1
-#: src/step-builder/AddStepForm.jsx:69
-#: src/step-builder/StepItem.jsx:68
-msgid "Instructions"
-msgstr ""
-
-#: assets/js/707.js:1
-#: src/step-builder/StepItem.jsx:73
-msgid "Optional step instructions or notes…"
-msgstr ""
-
-#: assets/js/707.js:1
-#: src/step-builder/StepItem.jsx:79
-msgid "Deep Link (where to perform this step)"
-msgstr ""
-
-#: assets/js/707.js:1
-#: src/step-builder/AddStepForm.jsx:93
-#: src/step-builder/StepItem.jsx:90
-msgid "Required step"
-msgstr ""
-
-#: assets/js/707.js:1
-#: assets/js/707.js:2
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:405
-#: src/step-builder/StepBuilder.jsx:263
-#: src/step-builder/StepItem.jsx:96
-msgid "Saving…"
-msgstr ""
-
-#: assets/js/707.js:1
-#: src/step-builder/StepItem.jsx:96
-msgid "Save Step"
-msgstr ""
-
-#: assets/js/707.js:1
-#: src/step-builder/StepItem.jsx:40
-msgid "Delete this step? This cannot be undone."
-msgstr ""
-
-#: assets/js/707.js:1
-#: src/step-builder/StepList.jsx:26
-msgid "No steps yet. Add your first step below."
-msgstr ""
-
-#: assets/js/707.js:1
-#: src/step-builder/AddStepForm.jsx:48
-msgid "New Step"
-msgstr ""
-
-#: assets/js/707.js:1
-#: src/step-builder/AddStepForm.jsx:52
-msgid "Title"
-msgstr ""
-
-#: assets/js/707.js:1
-#: src/step-builder/AddStepForm.jsx:61
-msgid "e.g. Install security plugin"
-msgstr ""
-
-#: assets/js/707.js:1
-#: src/step-builder/AddStepForm.jsx:76
-msgid "Optional notes for the person running this step…"
-msgstr ""
-
-#: assets/js/707.js:1
-#: src/step-builder/AddStepForm.jsx:82
-msgid "Deep Link"
-msgstr ""
-
-#: assets/js/707.js:1
-#: src/step-builder/CapturedStepsPanel.jsx:37
-msgid "Auto-Captured Steps"
-msgstr ""
-
-#: assets/js/707.js:1
-#: src/step-builder/CapturedStepsPanel.jsx:46
-msgid "No recently detected option changes on this site."
-msgstr ""
-
-#: assets/js/707.js:1
-#: src/step-builder/CapturedStepsPanel.jsx:51
-msgid "Recently detected option changes on this site:"
-msgstr ""
-
-#: assets/js/707.js:1
-#: src/step-builder/CapturedStepsPanel.jsx:72
-msgid "+ Add"
-msgstr ""
-
-#: assets/js/707.js:1
-#: src/step-builder/StepBuilder.jsx:70
+#: src/step-builder/StepBuilder.jsx:234
+#: src/step-builder/StepBuilder.jsx:520
 msgid "Assign to Group"
 msgstr ""
 
-#: assets/js/707.js:1
-#: src/step-builder/StepBuilder.jsx:74
-msgid "Push this workflow to all sites in a group."
+#: src/step-builder/StepBuilder.jsx:238
+msgid "Push this workflow to every site in a group. Groups are created and managed from your RoutineKit Cloud dashboard."
 msgstr ""
 
-#: assets/js/707.js:1
-#: src/step-builder/StepBuilder.jsx:47
-msgid "No other sites in this group yet."
+#: src/step-builder/StepBuilder.jsx:254
+msgid "Removing…"
 msgstr ""
 
-#: assets/js/707.js:1
-#: src/step-builder/StepBuilder.jsx:50
-msgid "Assignment failed."
-msgstr ""
-
-#: assets/js/707.js:1
-#: src/step-builder/StepBuilder.jsx:85
+#: src/step-builder/StepBuilder.jsx:263
 msgid "Assigning…"
 msgstr ""
 
-#: assets/js/707.js:1
-#: src/step-builder/StepBuilder.jsx:85
+#: src/step-builder/StepBuilder.jsx:263
 msgid "Assign"
 msgstr ""
 
-#: assets/js/707.js:1
-#: src/step-builder/StepBuilder.jsx:61
-msgid "This site is not in any groups yet. Ask your SaaS admin to add it."
-msgstr ""
-
-#: assets/js/707.js:1
-#: assets/js/887.js:1
-#: src/runner/AuditTrail.jsx:24
-#: src/step-builder/StepBuilder.jsx:122
-msgid "—"
-msgstr ""
-
-#: assets/js/707.js:1
-#: src/step-builder/StepBuilder.jsx:133
+#: src/step-builder/StepBuilder.jsx:327
 msgid "Playbook Settings"
 msgstr ""
 
-#: assets/js/707.js:1
-#: src/step-builder/StepBuilder.jsx:140
+#: src/step-builder/StepBuilder.jsx:334
 msgid "STATUS"
 msgstr ""
 
-#: assets/js/707.js:1
-#: src/step-builder/StepBuilder.jsx:156
+#: src/step-builder/StepBuilder.jsx:350
 msgid "CATEGORY"
 msgstr ""
 
-#: assets/js/707.js:1
-#: src/step-builder/StepBuilder.jsx:165
-#: src/step-builder/StepBuilder.jsx:169
-msgid "— None —"
-msgstr ""
-
-#: assets/js/707.js:1
-#: src/step-builder/StepBuilder.jsx:174
+#: src/step-builder/StepBuilder.jsx:368
 msgid "CREATED"
 msgstr ""
 
-#: assets/js/707.js:1
-#: src/step-builder/StepBuilder.jsx:179
+#: src/step-builder/StepBuilder.jsx:373
 msgid "LAST MODIFIED"
 msgstr ""
 
-#: assets/js/707.js:1
-#: src/step-builder/StepBuilder.jsx:184
+#: src/step-builder/StepBuilder.jsx:378
 msgid "TIMES RUN"
 msgstr ""
 
 #. translators: %d: number of times run
-#: assets/js/707.js:2
-#: src/step-builder/StepBuilder.jsx:189
+#: src/step-builder/StepBuilder.jsx:383
 #, js-format
 msgid "%d times"
 msgstr ""
 
-#: assets/js/707.js:2
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:640
-#: src/step-builder/StepBuilder.jsx:192
-msgid "Never"
+#: src/step-builder/StepBuilder.jsx:395
+msgid "Deactivate Workflow?"
 msgstr ""
 
-#: assets/js/707.js:2
-#: src/step-builder/StepBuilder.jsx:241
+#: src/step-builder/StepBuilder.jsx:404
+msgid "Yes, Deactivate"
+msgstr ""
+
+#: src/step-builder/StepBuilder.jsx:409
+msgid "Setting this workflow to Draft will:"
+msgstr ""
+
+#: src/step-builder/StepBuilder.jsx:411
+msgid "Hide it from the Run Workflow list"
+msgstr ""
+
+#: src/step-builder/StepBuilder.jsx:412
+msgid "Prevent anyone from starting a new run"
+msgstr ""
+
+#: src/step-builder/StepBuilder.jsx:413
+msgid "Any run currently in progress will be allowed to finish"
+msgstr ""
+
+#: src/step-builder/StepBuilder.jsx:457
+msgid "Please select a category in Playbook Settings before pushing to the cloud."
+msgstr ""
+
+#: src/step-builder/StepBuilder.jsx:474
 msgid "All Workflows"
 msgstr ""
 
-#: assets/js/707.js:2
-#: src/step-builder/StepBuilder.jsx:258
+#: src/step-builder/StepBuilder.jsx:491
 msgid "Description (optional)"
 msgstr ""
 
-#: assets/js/707.js:2
-#: src/step-builder/StepBuilder.jsx:263
+#: src/step-builder/StepBuilder.jsx:496
 msgid "Save"
 msgstr ""
 
-#: assets/js/707.js:2
-#: src/step-builder/StepBuilder.jsx:297
+#: src/step-builder/StepBuilder.jsx:515
+msgid "✓ Pushed to Cloud"
+msgstr ""
+
+#: src/step-builder/StepBuilder.jsx:525
+#: src/step-builder/StepItem.jsx:121
+#: src/workflow-manager/WorkflowRow.jsx:166
+msgid "Edit"
+msgstr ""
+
+#: src/step-builder/StepBuilder.jsx:538
+#: src/step-builder/StepBuilder.jsx:559
+#: src/workflow-manager/WorkflowList.jsx:88
+msgid "Steps"
+msgstr ""
+
+#: src/step-builder/StepBuilder.jsx:546
+msgid "Run History"
+msgstr ""
+
+#: src/step-builder/StepBuilder.jsx:562
 msgid "step"
 msgstr ""
 
-#: assets/js/887.js:1
-#: src/runner/RunnerProgress.jsx:21
-msgid "Step"
+#: src/step-builder/StepBuilder.jsx:563
+#: src/workflow-manager/TemplatePickerModal.jsx:137
+msgid "steps"
 msgstr ""
 
-#: assets/js/887.js:1
-#: src/runner/RunnerProgress.jsx:21
-msgid "of"
+#: src/step-builder/StepBuilder.jsx:569
+msgid "Steps are locked — this workflow has been pushed to the cloud."
 msgstr ""
 
-#: assets/js/887.js:1
-#: src/runner/RunnerNotes.jsx:21
-msgid "Notes"
+#: src/step-builder/StepItem.jsx:72
+msgid "Deep Link (where to perform this step)"
 msgstr ""
 
-#: assets/js/887.js:1
-#: src/runner/RunnerNotes.jsx:28
-msgid "Optional notes for this step…"
+#: src/step-builder/StepItem.jsx:89
+msgid "Save Step"
 msgstr ""
 
-#: assets/js/887.js:1
-#: src/runner/RunnerNotes.jsx:16
-msgid "Add a note"
+#: src/step-builder/StepItem.jsx:130
+#: src/workflow-manager/WorkflowRow.jsx:187
+#: src/workflow-manager/WorkflowRow.jsx:195
+msgid "Delete"
 msgstr ""
 
-#: assets/js/887.js:1
-#: src/runner/EvidenceUpload.jsx:79
-#: src/runner/EvidenceUpload.jsx:88
-msgid "Evidence"
+#: src/step-builder/StepList.jsx:26
+msgid "No steps yet. Add your first step below."
 msgstr ""
 
-#: assets/js/887.js:1
-#: src/runner/EvidenceUpload.jsx:91
-msgid "View uploaded evidence"
+#: src/upgrade/UpgradePage.jsx:16
+msgid "Workflows per site"
 msgstr ""
 
-#: assets/js/887.js:1
-#: src/runner/EvidenceUpload.jsx:70
-msgid "Could not remove evidence."
+#: src/upgrade/UpgradePage.jsx:17
+msgid "Connected sites"
 msgstr ""
 
-#: assets/js/887.js:1
-#: src/runner/EvidenceUpload.jsx:100
-msgid "Remove"
+#: src/upgrade/UpgradePage.jsx:20
+msgid "Free workflow templates"
 msgstr ""
 
-#: assets/js/887.js:1
-#: src/runner/EvidenceUpload.jsx:21
-msgid "Unsupported file type. Use JPEG, PNG, GIF, WebP, or PDF."
+#: src/upgrade/UpgradePage.jsx:25
+msgid "Fleet push & assignment"
 msgstr ""
 
-#: assets/js/887.js:1
-#: src/runner/EvidenceUpload.jsx:25
-msgid "File must be"
+#: src/upgrade/UpgradePage.jsx:45
+#: src/upgrade/UpgradePage.jsx:176
+msgid "Agency"
 msgstr ""
 
-#: assets/js/887.js:1
-#: src/runner/EvidenceUpload.jsx:25
-msgid "or smaller."
+#: src/upgrade/UpgradePage.jsx:47
+#: src/upgrade/UpgradePage.jsx:58
+msgid "/yr"
 msgstr ""
 
-#: assets/js/887.js:1
-#: src/runner/EvidenceUpload.jsx:44
-msgid "Upload failed."
+#: src/upgrade/UpgradePage.jsx:48
+msgid "~$12/mo billed annually"
 msgstr ""
 
-#: assets/js/887.js:1
-#: src/runner/EvidenceUpload.jsx:114
-msgid "Uploading…"
+#: src/upgrade/UpgradePage.jsx:49
+msgid "Up to 50 sites"
 msgstr ""
 
-#: assets/js/887.js:1
-#: src/runner/EvidenceUpload.jsx:114
-msgid "Upload screenshot or PDF"
+#: src/upgrade/UpgradePage.jsx:50
+msgid "That's just $0.25/site/mo"
 msgstr ""
 
-#: assets/js/887.js:1
-#: src/runner/RunnerStep.jsx:58
-msgid "Go to settings →"
+#: src/upgrade/UpgradePage.jsx:56
+#: src/upgrade/UpgradePage.jsx:177
+msgid "Agency Pro"
 msgstr ""
 
-#: assets/js/887.js:1
-#: src/runner/RunnerStep.jsx:81
-msgid "Upload evidence before completing this step"
+#: src/upgrade/UpgradePage.jsx:59
+msgid "~$21/mo billed annually"
 msgstr ""
 
-#: assets/js/887.js:1
-#: src/runner/RunnerStep.jsx:84
-msgid "Marking done…"
+#: src/upgrade/UpgradePage.jsx:60
+msgid "Unlimited sites"
 msgstr ""
 
-#: assets/js/887.js:1
-#: src/runner/RunnerStep.jsx:85
-msgid "Mark Complete"
+#: src/upgrade/UpgradePage.jsx:61
+msgid "$0.21/site/mo at 100 sites — less as you grow"
 msgstr ""
 
-#: assets/js/887.js:1
-#: src/runner/RunnerStep.jsx:94
-msgid "Skip"
+#: src/upgrade/UpgradePage.jsx:63
+msgid "BEST VALUE"
 msgstr ""
 
-#: assets/js/887.js:1
-#: src/runner/RunnerStep.jsx:106
-msgid "Reason for skipping (optional)…"
+#: src/upgrade/UpgradePage.jsx:82
+msgid "You're on RoutineKit Pro"
 msgstr ""
 
-#: assets/js/887.js:1
-#: src/runner/RunnerStep.jsx:115
-msgid "Skipping…"
+#: src/upgrade/UpgradePage.jsx:83
+msgid "All Pro features are unlocked on this site."
 msgstr ""
 
-#: assets/js/887.js:1
-#: src/runner/RunnerStep.jsx:115
-msgid "Confirm Skip"
+#: src/upgrade/UpgradePage.jsx:84
+msgid "← Back to Settings"
 msgstr ""
 
-#: assets/js/887.js:1
-#: src/runner/AuditTrail.jsx:62
-#: src/runner/RunnerStep.jsx:135
-msgid "Skipped:"
+#: src/upgrade/UpgradePage.jsx:106
+msgid "Activation failed. Check your license key and try again."
 msgstr ""
 
-#: assets/js/887.js:1
-#: src/runner/Runner.jsx:90
-#: src/runner/RunnerLauncher.jsx:17
-msgid "Minimise runner"
+#: src/upgrade/UpgradePage.jsx:118
+msgid "Upgrade to Agency or Agency Pro"
 msgstr ""
 
-#: assets/js/887.js:1
-#: src/runner/RunnerLauncher.jsx:18
-msgid "Open runner"
+#: src/upgrade/UpgradePage.jsx:120
+msgid "Manage your full fleet. Billed annually. No per-site fees. Cancel anytime."
 msgstr ""
 
-#: assets/js/887.js:1
-#: src/runner/RunnerLauncher.jsx:20
-msgid "AlignPress Runner — workflow in progress"
+#: src/upgrade/UpgradePage.jsx:132
+msgid "Up to 3 sites"
 msgstr ""
 
-#: assets/js/887.js:1
-#: src/runner/RunnerLauncher.jsx:21
-msgid "AlignPress Runner"
+#: src/upgrade/UpgradePage.jsx:135
+msgid "Current plan"
 msgstr ""
 
-#: assets/js/887.js:1
-#: src/runner/AuditTrail.jsx:18
-msgid "Loading audit trail…"
+#: src/upgrade/UpgradePage.jsx:170
+msgid "Compare plans"
 msgstr ""
 
-#: assets/js/887.js:1
-#: src/runner/AuditTrail.jsx:32
-msgid "Started:"
+#: src/upgrade/UpgradePage.jsx:174
+msgid "Feature"
 msgstr ""
 
-#: assets/js/887.js:1
-#: src/runner/AuditTrail.jsx:34
-msgid "Completed:"
+#: src/upgrade/UpgradePage.jsx:197
+msgid "How to get started"
 msgstr ""
 
-#: assets/js/887.js:1
-#: src/runner/AuditTrail.jsx:39
-msgid "No steps completed yet."
+#: src/upgrade/UpgradePage.jsx:200
+msgid "Choose a plan above"
 msgstr ""
 
-#: assets/js/887.js:1
-#: src/runner/AuditTrail.jsx:73
-msgid "View evidence"
+#: src/upgrade/UpgradePage.jsx:200
+msgid "Click \"Get Agency\" or \"Get Agency Pro\" — you'll be taken to the RoutineKit dashboard to create your account."
 msgstr ""
 
-#: assets/js/887.js:1
-#: src/runner/AuditTrail.jsx:85
-msgid "▲ Hide changes"
+#: src/upgrade/UpgradePage.jsx:201
+msgid "Copy your license key"
 msgstr ""
 
-#: assets/js/887.js:1
-#: src/runner/AuditTrail.jsx:86
-msgid "▼ View option changes"
+#: src/upgrade/UpgradePage.jsx:201
+msgid "After subscribing, find your license key in the RoutineKit dashboard. It looks like SW-XXXX-XXXX-XXXX-XXXX."
 msgstr ""
 
-#: assets/js/887.js:1
-#: src/runner/AuditTrail.jsx:93
-msgid "Option"
+#: src/upgrade/UpgradePage.jsx:202
+msgid "Activate below"
 msgstr ""
 
-#: assets/js/887.js:1
-#: src/runner/AuditTrail.jsx:94
-msgid "After"
+#: src/upgrade/UpgradePage.jsx:202
+msgid "Paste the key into the field below and click Activate. Pro features unlock instantly — no restart needed."
 msgstr ""
 
-#: assets/js/887.js:1
-#: src/runner/Runner.jsx:81
-msgid "Workflow Runner"
+#: src/upgrade/UpgradePage.jsx:215
+msgid "Already have a license key?"
 msgstr ""
 
-#: assets/js/887.js:1
-#: src/runner/Runner.jsx:105
-msgid "Workflow complete!"
+#: src/upgrade/UpgradePage.jsx:218
+msgid "✓ License activated! Reloading…"
 msgstr ""
 
-#: assets/js/887.js:1
-#: src/runner/Runner.jsx:127
-msgid "All steps"
+#: src/upgrade/UpgradePage.jsx:233
+msgid "Activating…"
 msgstr ""
 
-#: assets/js/887.js:1
-#: src/runner/Runner.jsx:72
-msgid "Abandon this workflow run? Progress will be lost."
+#: src/upgrade/UpgradePage.jsx:233
+msgid "Activate"
 msgstr ""
 
-#: assets/js/887.js:1
-#: src/runner/Runner.jsx:151
-msgid "Abandon run"
+#: src/upgrade/UpgradePage.jsx:238
+msgid "Your key is stored locally and never shared. Activates instantly — no restart required."
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:60
-msgid "Save failed."
+#: src/workflow-manager/CreateWorkflowModal.jsx:30
+msgid "Create New Workflow"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:102
-msgid "Administrator"
+#: src/workflow-manager/CreateWorkflowModal.jsx:43
+msgid "Creating…"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:103
-msgid "Editor"
+#: src/workflow-manager/CreateWorkflowModal.jsx:43
+msgid "Create Workflow"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:104
-msgid "Author"
+#: src/workflow-manager/CreateWorkflowModal.jsx:51
+msgid "Workflow Title"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:105
-msgid "Contributor"
+#: src/workflow-manager/CreateWorkflowModal.jsx:60
+msgid "e.g. New Site Setup"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:129
-msgid "only"
+#: src/workflow-manager/CreateWorkflowModal.jsx:68
+msgid "Description"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:140
-msgid "Auto-Capture"
+#: src/workflow-manager/CreateWorkflowModal.jsx:75
+msgid "Optional — describe when to use this workflow."
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:141
-msgid "Automatically detect and record WordPress option changes as playbook steps."
+#: src/workflow-manager/EmptyState.jsx:6
+msgid "No workflows yet"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:144
-msgid "Enable Auto-Capture"
+#: src/workflow-manager/EmptyState.jsx:8
+msgid "Create your first workflow to start building reusable configuration checklists for your client sites."
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:145
-msgid "Monitor this site for setting changes in real time."
+#: src/workflow-manager/ImportJsonModal.jsx:31
+msgid "Invalid JSON file — please check and try again."
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:155
-msgid "Capture Scope"
+#: src/workflow-manager/ImportJsonModal.jsx:49
+msgid "Import failed."
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:156
-msgid "Which option changes should be recorded."
+#: src/workflow-manager/ImportJsonModal.jsx:56
+#: src/workflow-manager/WorkflowManager.jsx:176
+msgid "Import Workflow"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:163
-msgid "All option changes"
+#: src/workflow-manager/ImportJsonModal.jsx:69
+#: src/workflow-manager/ImportUrlModal.jsx:60
+#: src/workflow-manager/TemplatePickerModal.jsx:72
+msgid "Importing…"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:164
-msgid "Plugin settings pages only"
+#: src/workflow-manager/ImportJsonModal.jsx:69
+#: src/workflow-manager/ImportUrlModal.jsx:60
+msgid "Import"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:169
-msgid "Exclude options"
+#: src/workflow-manager/ImportJsonModal.jsx:78
+msgid "Workflow JSON file"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:170
-msgid "Comma-separated option names to always ignore. Wildcards (*) supported."
+#: src/workflow-manager/ImportJsonModal.jsx:95
+msgid "Select the .json file exported from another RoutineKit installation."
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:182
-msgid "Capture retention"
+#: src/workflow-manager/ImportUrlModal.jsx:40
+msgid "Failed to import from URL."
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:183
-msgid "How long to keep unassigned captured steps before auto-deleting."
+#: src/workflow-manager/ImportUrlModal.jsx:47
+msgid "Import Workflow from URL"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:191
-msgid "days"
+#: src/workflow-manager/ImportUrlModal.jsx:69
+msgid "Workflow JSON URL"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:199
-msgid "Notifications & Toast"
+#: src/workflow-manager/ImportUrlModal.jsx:83
+msgid "Paste the URL of a workflow JSON exported from another RoutineKit installation."
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:200
-msgid "Control when and how the floating notification appears."
+#: src/workflow-manager/TemplatePickerModal.jsx:23
+msgid "Could not load templates."
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:203
-msgid "Show toast notifications"
+#: src/workflow-manager/TemplatePickerModal.jsx:57
+msgid "Failed to import template."
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:204
-msgid "Display a floating prompt when changes are detected."
+#: src/workflow-manager/TemplatePickerModal.jsx:64
+msgid "Choose a Template"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:214
-msgid "Minimum changes to trigger toast"
+#: src/workflow-manager/TemplatePickerModal.jsx:72
+msgid "Import Template"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:215
-msgid "Only show the toast when this many or more options changed."
+#: src/workflow-manager/TemplatePickerModal.jsx:83
+msgid "No templates available."
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:227
-msgid "changes"
+#: src/workflow-manager/TemplatePickerModal.jsx:99
+#: src/workflow-manager/WorkflowList.jsx:44
+msgid "All"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:232
-msgid "Toast auto-dismiss"
+#: src/workflow-manager/WorkflowList.jsx:47
+#: src/workflow-manager/WorkflowRow.jsx:215
+msgid "Archived"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:233
-msgid "Automatically hide the toast after a period of inactivity."
+#: src/workflow-manager/WorkflowList.jsx:75
+msgid "item"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:240
-msgid "Never (manual dismiss)"
+#: src/workflow-manager/WorkflowList.jsx:75
+msgid "items"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:241
-msgid "5 seconds"
+#: src/workflow-manager/WorkflowList.jsx:87
+msgid "Workflow Name"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:242
-msgid "8 seconds"
+#: src/workflow-manager/WorkflowList.jsx:89
+msgid "Last Run"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:243
-msgid "15 seconds"
+#: src/workflow-manager/WorkflowList.jsx:90
+msgid "Progress"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:244
-msgid "30 seconds"
+#: src/workflow-manager/WorkflowList.jsx:99
+msgid "No workflows match your filter."
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:249
-msgid "Persistent launcher button"
+#: src/workflow-manager/WorkflowManager.jsx:31
+msgid "You're on a roll."
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:250
-msgid "Show the AlignPress floating button on every admin page."
+#: src/workflow-manager/WorkflowManager.jsx:37
+msgid "Maybe later"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:259
-msgid "This is the ▶ AlignPress button visible in the bottom-right corner."
+#: src/workflow-manager/WorkflowManager.jsx:47
+msgid "Connecting your free RoutineKit account unlocks cloud features — push workflows to client sites, track completions, and manage everything from one dashboard."
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:267
-msgid "Playbook Defaults"
+#: src/workflow-manager/WorkflowManager.jsx:52
+msgid "Push any workflow to client sites in one click"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:268
-msgid "Default values applied when creating a new playbook."
+#: src/workflow-manager/WorkflowManager.jsx:56
+msgid "Unlimited workflows — build as many as you need"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:271
-msgid "Default status"
+#: src/workflow-manager/WorkflowManager.jsx:60
+msgid "Sync updates to all connected sites instantly"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:272
-msgid "New playbooks start as Active or Draft."
+#: src/workflow-manager/WorkflowManager.jsx:64
+msgid "Takes 30 seconds. No credit card."
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:291
-msgid "Default category"
+#: src/workflow-manager/WorkflowManager.jsx:74
+msgid "Switch active workflow?"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:292
-msgid "Pre-fill the category field on new playbooks."
+#: src/workflow-manager/WorkflowManager.jsx:80
+msgid "Keep current run"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:299
-msgid "Uncategorized"
+#: src/workflow-manager/WorkflowManager.jsx:83
+msgid "Switch workflow"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:304
-msgid "Show \"Run\" button in list table"
+#: src/workflow-manager/WorkflowManager.jsx:89
+msgid "You have a run in progress:"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:305
-msgid "Display the Run Playbook button in the playbooks table."
+#: src/workflow-manager/WorkflowManager.jsx:93
+msgid "Switching to"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:317
-msgid "Team & Access"
+#: src/workflow-manager/WorkflowManager.jsx:95
+msgid "will pause your current run. Your progress is saved — click Run on it again to resume from where you left off."
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:318
-msgid "Control which WordPress user roles can view and run playbooks on this site."
+#: src/workflow-manager/WorkflowManager.jsx:138
+msgid "this workflow"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:321
-msgid "Roles that can view playbooks"
+#: src/workflow-manager/WorkflowManager.jsx:168
+msgid "Templates"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:322
-msgid "These roles will see the AlignPress menu item."
+#: src/workflow-manager/WorkflowManager.jsx:190
+msgid "Import JSON"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:328
-msgid "Roles that can run playbooks"
+#: src/workflow-manager/WorkflowManager.jsx:202
+msgid "Add New Workflow"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:329
-msgid "Restrict who can execute a playbook on this site."
+#: src/workflow-manager/WorkflowManager.jsx:212
+msgid "Loading workflows…"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:335
-msgid "Roles that can edit playbooks"
+#: src/workflow-manager/WorkflowManager.jsx:226
+msgid "Auto-capture is on."
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:336
-msgid "Who can create, edit, and delete playbooks on this site."
+#: src/workflow-manager/WorkflowManager.jsx:227
+msgid "RoutineKit is watching for setting changes on this site."
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:344
-msgid "Email Notifications"
+#: src/workflow-manager/WorkflowManager.jsx:230
+msgid "View uncaptured steps →"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:345
-msgid "Send email alerts for key playbook events on this site."
+#: src/workflow-manager/WorkflowManager.jsx:237
+msgid "current workflow"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:348
-msgid "Notify when playbook assigned"
+#: src/workflow-manager/WorkflowRow.jsx:23
+msgid "Today"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:349
-msgid "Email admin when a new playbook is pushed to this site from the agency dashboard."
+#: src/workflow-manager/WorkflowRow.jsx:24
+msgid "1 day ago"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:359
-msgid "Notify when playbook completed"
+#: src/workflow-manager/WorkflowRow.jsx:25
+msgid "days ago"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:360
-msgid "Email admin when a user finishes all steps of a playbook."
+#: src/workflow-manager/WorkflowRow.jsx:26
+msgid "weeks ago"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:370
-msgid "Notify when step skipped"
+#: src/workflow-manager/WorkflowRow.jsx:38
+msgid "Not started"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:371
-msgid "Email when a required step is skipped with a reason."
+#: src/workflow-manager/WorkflowRow.jsx:76
+msgid "Delete this workflow? This cannot be undone."
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:381
-msgid "Notification email address"
+#: src/workflow-manager/WorkflowRow.jsx:95
+msgid "(Copy)"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:382
-msgid "Where these emails are sent. Defaults to the site admin email."
+#: src/workflow-manager/WorkflowRow.jsx:129
+msgid "Please select a category for this workflow before running it."
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:389
-msgid "admin@clientsite.com"
+#: src/workflow-manager/WorkflowRow.jsx:155
+msgid "Assigned"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:405
-msgid "Save Settings"
+#: src/workflow-manager/WorkflowRow.jsx:155
+msgid "Imported"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:407
-msgid "✓ Saved"
+#: src/workflow-manager/WorkflowRow.jsx:169
+msgid "Duplicate"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:410
-msgid "Documentation"
+#: src/workflow-manager/WorkflowRow.jsx:173
+msgid "Export (JSON)"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:412
-msgid "Support"
+#: src/workflow-manager/WorkflowRow.jsx:179
+#: src/workflow-manager/WorkflowRow.jsx:270
+msgid "Archive"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:436
-msgid "License & Pro Features"
+#: src/workflow-manager/WorkflowRow.jsx:194
+msgid "Cannot delete — workflow has been pushed or run."
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:437
-msgid "Unlock multi-site management, template library, team sharing, and more."
+#: src/workflow-manager/WorkflowRow.jsx:218
+msgid "Cloud"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:445
-msgid "Your site is connected to AlignPress Cloud."
+#: src/workflow-manager/WorkflowRow.jsx:229
+msgid "This workflow is currently running"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:455
-msgid "3 active workflows"
+#: src/workflow-manager/WorkflowRow.jsx:230
+msgid "Select a category before running"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:456
-msgid "Single site"
+#: src/workflow-manager/WorkflowRow.jsx:237
+msgid "Running…"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:457
-msgid "Auto-capture (7 days)"
+#: src/workflow-manager/WorkflowRow.jsx:238
+msgid "Starting…"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:459
-msgid "Multi-site management"
+#: src/workflow-manager/WorkflowRow.jsx:239
+msgid "Started!"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:460
-#: src/settings/Settings.jsx:476
-msgid "Template library"
+#: src/workflow-manager/WorkflowRow.jsx:240
+msgid "Run Workflow"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:461
-#: src/settings/Settings.jsx:478
-msgid "Team members"
+#: src/workflow-manager/WorkflowRow.jsx:245
+msgid "Edit Draft"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:468
-msgid "$149 / year"
+#: src/workflow-manager/WorkflowRow.jsx:261
+msgid "Archive Workflow"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:470
-msgid "Up to 50 sites — just $0.25/site/mo"
+#: src/workflow-manager/WorkflowRow.jsx:270
+msgid "Archiving…"
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:473
-msgid "Unlimited workflows"
+#: src/workflow-manager/WorkflowRow.jsx:277
+msgid "This workflow is currently running."
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:474
-msgid "Up to 50 connected sites"
+#: src/workflow-manager/WorkflowRow.jsx:279
+msgid "Archiving it will pause the active execution. The run history and completed steps will be preserved, but the session cannot be resumed."
 msgstr ""
 
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:479
-msgid "Auto-capture (90 days)"
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:491
-msgid "$249 / year"
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:493
-msgid "Unlimited sites — $0.42/site/mo at 50 sites, less as you grow"
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:496
-msgid "Everything in Agency"
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:497
-msgid "Unlimited connected sites"
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:508
-msgid "Upgrade to Agency Pro →"
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:529
-msgid "AlignPress Cloud"
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:530
-msgid "Manage multiple WordPress sites from one agency dashboard."
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:534
-msgid "Cloud Connection is a Pro feature"
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:536
-msgid "Upgrade to Agency or Agency Pro to connect this site to your AlignPress dashboard, assign workflows across sites, share templates with your team, and manage everything from one place."
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:539
-msgid "✓ Multi-site management"
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:540
-msgid "✓ Workflow template library"
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:541
-msgid "✓ Fleet assignment"
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:542
-msgid "✓ Team members"
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:545
-msgid "Upgrade to Pro →"
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:583
-msgid "AlignPress Cloud Connection"
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:584
-msgid "Connect to your AlignPress agency account to sync and assign playbooks across sites."
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:588
-msgid "Connected"
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:588
-msgid "Not Connected"
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:592
-msgid "License Key"
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:593
-msgid "Enter your AlignPress Pro license key to connect."
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:608
-msgid "Disconnect"
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:626
-msgid "Connect"
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:635
-msgid "Last Sync"
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:636
-msgid "When playbooks were last synced from your agency account."
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:572
-msgid "Sync complete."
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:574
-msgid "Sync failed."
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:643
-msgid "Syncing…"
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:643
-msgid "↻ Sync Now"
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:650
-msgid "Site Nickname"
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:651
-msgid "How this site appears in your AlignPress agency dashboard."
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:658
-msgid "e.g. ClientSite — Production"
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:677
-msgid "Type"
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:679
-msgid "to confirm:"
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:747
-#: src/settings/Settings.jsx:817
-msgid "Danger Zone"
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:748
-msgid "These actions are irreversible. Proceed with caution."
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:756
-msgid "Delete All Captured Steps"
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:757
-msgid "Remove all unassigned auto-captured steps. Assigned steps in playbooks are unaffected."
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:759
-msgid "✓ Captured steps cleared."
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:725
-msgid "Failed to clear captures."
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:767
-msgid "Yes, Clear"
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:774
-msgid "Clear Captured Steps"
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:782
-msgid "Reset All Plugin Data"
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:783
-msgid "Permanently delete all playbooks, steps, and settings. This cannot be undone."
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:738
-msgid "Reset failed."
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:791
-msgid "Resetting…"
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:792
-msgid "Yes, Reset Everything"
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:796
-msgid "Reset Everything"
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:815
-msgid "General"
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:816
-msgid "Cloud Connection"
-msgstr ""
-
-#: assets/js/945.js:1
-#: src/settings/Settings.jsx:822
-msgid "AlignPress Settings"
+#: src/workflow-manager/WorkflowRow.jsx:283
+msgid "This workflow will be hidden from the active list. Its steps, run history, and completed records will be preserved and can be reviewed at any time."
 msgstr ""

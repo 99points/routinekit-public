@@ -415,9 +415,9 @@ const GeneralTab = () => {
 				{ saved && <span className="ap-settings-save-bar__saved">{ __( '✓ Saved', 'routinekit' ) }</span> }
 				<span className="ap-settings-save-bar__version">
 					RoutineKit v{ data().version ?? '1.0.0' } ·{ ' ' }
-					<a href="https://wpstepwise.com/docs" target="_blank" rel="noreferrer">{ __( 'Documentation', 'routinekit' ) }</a>
+					<a href="https://routinekit.dev/docs" target="_blank" rel="noreferrer">{ __( 'Documentation', 'routinekit' ) }</a>
 					{ ' · ' }
-					<a href="https://wpstepwise.com/support" target="_blank" rel="noreferrer">{ __( 'Support', 'routinekit' ) }</a>
+					<a href="https://routinekit.dev/support" target="_blank" rel="noreferrer">{ __( 'Support', 'routinekit' ) }</a>
 				</span>
 			</div>
 		</div>

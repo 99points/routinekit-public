@@ -6,7 +6,7 @@ PLUGIN_DIR="$(cd "$(dirname "$0")" && pwd)"
 DIST_DIR="$(dirname "$PLUGIN_DIR")/dist"
 ZIP_NAME="${PLUGIN_SLUG}.zip"
 OUT="$DIST_DIR/$ZIP_NAME"
-PROD_SAAS_URL="https://app.wpstepwise.com"
+PROD_SAAS_URL="https://app.routinekit.dev"
 
 # Excluded paths (relative to plugin root)
 EXCLUDES=(

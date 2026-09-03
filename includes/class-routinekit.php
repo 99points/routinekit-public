@@ -168,7 +168,7 @@ class Routinekit {
 				sprintf(
 					/* translators: %s: URL to RoutineKit privacy policy */
 					__( 'If you connect to RoutineKit Cloud (Pro), see the <a href="%s">RoutineKit Cloud Privacy Policy</a>.', 'routinekit' ),
-					'https://wpstepwise.com/privacy'
+					'https://routinekit.dev/privacy'
 				),
 				[ 'a' => [ 'href' => [] ] ]
 			) . '</p>';

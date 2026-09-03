@@ -5,7 +5,7 @@ import Button from '../shared/Button';
 
 // PHP always supplies saasUrl via wp_localize_script; the default is only a
 // guard against a missing routinekitData and must never point at a dev host.
-const { saasUrl = 'https://app.wpstepwise.com', adminUrl = '', isPro = false } = window.routinekitData ?? {};
+const { saasUrl = 'https://app.routinekit.dev', adminUrl = '', isPro = false } = window.routinekitData ?? {};
 
 const REGISTER_URL = saasUrl + '/register';
 const SETTINGS_URL = adminUrl + 'admin.php?page=routinekit-settings#cloud';
